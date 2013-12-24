@@ -1,0 +1,31 @@
+# git merge files
+*.orig
+
+# Ignore Python compiled objects
+*.pyc
+
+# Ignore Mac OS metadata files
+.DS_Store
+
+# Ignore Mac OS X extended file attribute files
+._*
+._*/
+
+# Ignore Vim .swp files and temp backups
+*.swp
+*~
+
+# Ignore pid files
+*.pid
+
+# Ignore .ropeproject folders
+.rope*/
+
+# ddesk local settings
+local_settings.py
+ddesk/local_settings.py
+ddesk/celeryconfig.py
+
+# Sublime workspace
+*.sublime-workspace
+
