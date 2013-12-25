@@ -29,3 +29,6 @@ ddesk/celeryconfig.py
 # Sublime workspace
 *.sublime-workspace
 
+#my notes
+.scratch
+

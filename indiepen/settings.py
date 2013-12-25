@@ -38,7 +38,8 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
     'south',
     'core',
-    'json_field'
+    'json_field',
+    'tastypie',
 )
 
 MIDDLEWARE_CLASSES = (

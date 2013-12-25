@@ -11,25 +11,44 @@ MEDIUM_CHOICES = (
     ('MUL', 'Multimedia'),
 )
 
-DURATION_CHOICES = (
+FREQUENCY_CHOICES = (
     ('DAI', 'Daily'),
     ('WEE', 'Weekly'),
     ('MON', 'Monthly'),
 )
 
+DURATION_CHOICES = (
+    ('1', '1 Month'),
+    ('2', '2 Months'),
+    ('3', '3 Months'),
+    ('4', '4 Months'),
+    ('5', '5 Months'),
+    ('6', '6 Months'),
+)
+
 class Badge(models.Model):
     title = models.CharField(max_length=300)
+
+    def __unicode__(self):
+        return self.title
 
 class Person(models.Model):
     user = models.OneToOneField(User)
     badges = models.ManyToManyField(Badge)
 
+    def __unicode__(self):
+        return self.user.email
+
 class Project(models.Model):
     title = models.CharField(max_length=300)
     members = models.ManyToManyField(Person)
     medium = models.CharField(max_length=3, choices=MEDIUM_CHOICES, default='TXT')
-    duration = models.CharField(max_length=3, choices=MEDIUM_CHOICES, default='WEE')
+    duration = models.CharField(max_length=3, choices=DURATION_CHOICES, default='1')
+    frequency = models.CharField(max_length=3, choices=FREQUENCY_CHOICES, default='WEE')
     ask = MoneyField(max_digits=10, decimal_places=2, default_currency='USD')
+
+    def __unicode__(self):
+        return self.title
 
 class Post(models.Model):
     title = models.CharField(max_length=60)
