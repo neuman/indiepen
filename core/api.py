@@ -20,3 +20,9 @@ class ProjectResource(ModelResource):
         queryset = cm.Project.objects.all()
         resource_name = 'project'
         excludes = ['ask']
+
+from tastypie.api import Api
+v1_api = Api(api_name='v1')
+v1_api.register(UserResource())
+v1_api.register(PersonResource())
+v1_api.register(ProjectResource())
