@@ -3,6 +3,7 @@ from tastypie.resources import ModelResource
 import core.models as cm 
 from django.contrib.auth.models import User
 from tastypie import fields
+from tastypie.authorization import Authorization
 
 class UserResource(ModelResource):
     class Meta:
@@ -20,6 +21,9 @@ class ProjectResource(ModelResource):
         queryset = cm.Project.objects.all()
         resource_name = 'project'
         excludes = ['ask']
+        authorization = Authorization()
+        list_allowed_methods = ['get', 'post', 'put']
+        detail_allowed_methods = ['get']
 
 from tastypie.api import Api
 v1_api = Api(api_name='v1')

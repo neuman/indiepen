@@ -1,11 +1,11 @@
 (function(){
-    window.Tweet = Backbone.Model.extend({
-        urlRoot: TWEET_API
+    window.Project = Backbone.Model.extend({
+        urlRoot: PROJECT_API
     });
 
-    window.Tweets = Backbone.Collection.extend({
-        urlRoot: TWEET_API,
-        model: Tweet, 
+    window.Projects = Backbone.Collection.extend({
+        urlRoot: PROJECT_API,
+        model: Project, 
 
         maybeFetch: function(options){
             // Helper function to fetch only if this collection has not been fetched before.
@@ -36,7 +36,7 @@
                 return;
             }
 
-            model = new Tweet({
+            model = new Project({
                 resource_uri: id
             });
 
@@ -46,9 +46,9 @@
 
     });
 
-    window.TweetView = Backbone.View.extend({
+    window.ProjectView = Backbone.View.extend({
         tagName: 'li',
-        className: 'tweet',
+        className: 'project',
 
         events: {
             'click .permalink': 'navigate'           
@@ -64,7 +64,7 @@
         },
 
         render: function(){
-            $(this.el).html(ich.tweetTemplate(this.model.toJSON()));
+            $(this.el).html(ich.projectTemplate(this.model.toJSON()));
             return this;
         }                                        
     });
@@ -73,12 +73,12 @@
     window.DetailApp = Backbone.View.extend({
 
         initialize: function(){
-          _.bindAll(this, 'render', 'home', 'saveTweet');    
+          _.bindAll(this, 'render', 'home', 'saveProject');    
         },
 
         events: {
             'click .home': 'home',
-            'click .save': 'saveTweet'
+            'click .save': 'saveProject'
         },
         
         home: function(e){
@@ -86,8 +86,8 @@
             e.preventDefault();
         },
 
-        saveTweet: function() {
-            this.model.set({message: this.$("#message").val()});
+        saveProject: function() {
+            this.model.set({title: this.$("#title").val()});
             this.model.save();
         },
 
@@ -99,25 +99,25 @@
 
     window.InputView = Backbone.View.extend({
         events: {
-            'click .tweet': 'createTweet',
-            'keypress #message': 'createOnEnter'
+            'click .project': 'createProject',
+            'keypress #title': 'createOnEnter'
         },
 
         createOnEnter: function(e){
             if((e.keyCode || e.which) == 13){
-                this.createTweet();
+                this.createProject();
                 e.preventDefault();
             }
 
         },
 
-        createTweet: function(){
-            var message = this.$('#message').val();
-            if(message){
+        createProject: function(){
+            var title = this.$('#title').val();
+            if(title){
                 this.collection.create({
-                    message: message
+                    title: title
                 });
-                this.$('#message').val('');
+                this.$('#title').val('');
             }
         }
 
@@ -137,9 +137,9 @@
             this.collection.each(this.addOne);
         },
 
-        addOne: function(tweet){
-            var view = new TweetView({
-                model: tweet
+        addOne: function(project){
+            var view = new ProjectView({
+                model: project
             });
             $(this.el).prepend(view.render().el);
             this.views.push(view);
@@ -163,7 +163,7 @@
             $(this.el).html(ich.listApp({}));
             var list = new ListView({
                 collection: this.collection,
-                el: this.$('#tweets')
+                el: this.$('#projects')
             });
             list.addAll();
             list.bind('all', this.rethrow, this);
@@ -194,21 +194,21 @@
     $(function(){
         window.app = window.app || {};
         app.router = new Router();
-        app.tweets = new Tweets();
+        app.projects = new Projects();
         app.list = new ListApp({
             el: $("#app"),
-            collection: app.tweets
+            collection: app.projects
         });
         app.detail = new DetailApp({
             el: $("#app")
         });
         app.router.bind('route:list', function(){
-            app.tweets.maybeFetch({
+            app.projects.maybeFetch({
                 success: _.bind(app.list.render, app.list)                
             });
         });
         app.router.bind('route:detail', function(id){
-            app.tweets.getOrFetch(app.tweets.urlRoot + id + '/', {
+            app.projects.getOrFetch(app.projects.urlRoot + id + '/', {
                 success: function(model){
                     app.detail.model = model;
                     app.detail.render();                    

@@ -16,19 +16,19 @@
     <script src="{{ STATIC_URL }}js/backbone-tastypie.js"></script>
     <script src="{{ STATIC_URL }}js/ICanHaz.min.js"></script>
     <script>
-      TWEET_API = "{% url "api_dispatch_list" api_name="v1" resource_name="project" %}";
+      PROJECT_API = "{% url "api_dispatch_list" api_name="v1" resource_name="project" %}";
       {% if data %}
       app = {loaded: true};
       {% endif %}
     </script>
     <script src="{{ STATIC_URL }}js/app.js"></script>
 
-    <script type="text/html" id="tweetTemplate">
-      {% straight_include "tweetTemplate.mustache" %}
+    <script type="text/html" id="projectTemplate">
+      {% straight_include "projectTemplate.mustache" %}
     </script>
 
-    <script type="text/html" id="editTweetTemplate">
-      {% straight_include "editTweetTemplate.mustache" %}
+    <script type="text/html" id="editProjectTemplate">
+      {% straight_include "editProjectTemplate.mustache" %}
     </script>
 
     <script type="text/html" id="listApp">

@@ -27,3 +27,6 @@ class DetailView(TemplateView):
         base = super(DetailView, self).get_context_data(**kwargs)
         base['data'] = self.get_detail(base['params']['pk'])
         return base
+
+class BootstrapView(TemplateView):
+    template_name = 'bootstrap.html'
