@@ -5,7 +5,7 @@ from api import v1_api
 from .models import Project
 
 class IndexView(TemplateView):
-    template_name = 'index.html'
+    template_name = 'app.html'
 
 
 class DetailView(TemplateView):
@@ -29,4 +29,9 @@ class DetailView(TemplateView):
         return base
 
 class BootstrapView(TemplateView):
+    template_name = 'bootstrap.html'
+
+class ProjectView(TemplateView):
+
+
     template_name = 'bootstrap.html'

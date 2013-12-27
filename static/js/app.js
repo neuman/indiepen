@@ -47,8 +47,8 @@
     });
 
     window.ProjectView = Backbone.View.extend({
-        tagName: 'li',
-        className: 'project',
+        tagName: 'div',
+        className: 'col-6 col-sm-6 col-lg-4',
 
         events: {
             'click .permalink': 'navigate'           

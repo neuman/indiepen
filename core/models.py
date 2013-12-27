@@ -41,6 +41,7 @@ class Person(models.Model):
 
 class Project(models.Model):
     title = models.CharField(max_length=300)
+    brief = models.TextField(default='')
     members = models.ManyToManyField(Person)
     medium = models.CharField(max_length=3, choices=MEDIUM_CHOICES, default='TXT')
     duration = models.CharField(max_length=3, choices=DURATION_CHOICES, default='1')
