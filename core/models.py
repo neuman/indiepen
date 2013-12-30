@@ -2,6 +2,7 @@ from django.db import models
 import moneyed
 from djmoney.models.fields import MoneyField
 from django.contrib.auth.models import User
+from django.db.models import Sum
 
 MEDIUM_CHOICES = (
     ('TXT', 'Text'),
@@ -50,6 +51,15 @@ class Project(models.Model):
 
     def __unicode__(self):
         return self.title
+
+    def get_total_pledged(self):
+        sums = Pledge.objects.filter(project=self).aggregate(Sum('ammount'))
+        if sums['ammount__sum'] == None:
+            total = 0
+        return total
+
+    def get_percent_pledged(self):
+        return (self.ask/self.get_total_pledged())*100
 
 class Post(models.Model):
     title = models.CharField(max_length=60)

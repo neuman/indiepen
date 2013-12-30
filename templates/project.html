@@ -1,0 +1,31 @@
+{% extends "bootstrap.html" %}
+
+{% block title %}Indiepen{% endblock %}
+
+{% block showcase %}
+  <div class="jumbotron">
+    <h1>{{ project.title }}</h1>
+    <p>{{ project.brief }}</p>
+    <p>Raised: {{ project.get_total_pledged }}</p>
+	<div class="progress progress-striped active">
+	  <div class="progress-bar"  role="progressbar" aria-valuenow="{{ project.get_percent_pledged }}" aria-valuemin="0" aria-valuemax="100" style="width: {{ project.get_percent_pledged }}%">
+	    <span class="sr-only">{{ project.get_percent_pledged }}% Complete</span>
+	  </div>
+	</div>
+	<ul class="list-group">
+	  <li class="list-group-item">Ask: {{ project.ask }}</li>
+	  <li class="list-group-item">Duration: {{ project.duration }}</li>
+	  <li class="list-group-item">Frequency: {{ frequency }}</li>
+	  <li class="list-group-item">Medium: {{ project.medium }}</li>
+	</ul>
+  </div>
+	<div class="row">
+	{% for backer in backers %}
+            <div class="col-6 col-sm-6 col-lg-4">
+              <h2>{{ project.title }}</h2>
+              <p>{{ project.brief }}</p>
+              <p><a class="btn btn-default" href="#" role="button">View details &raquo;</a></p>
+            </div><!--/span-->
+    {% endfor %}
+    </div><!--/row-->
+{% endblock %}

@@ -1,0 +1,15 @@
+{% extends "bootstrap.html" %}
+
+{% block title %}Indiepen{% endblock %}
+
+{% block showcase %}
+	<div class="row">
+	{% for project in projects %}
+            <div class="col-6 col-sm-6 col-lg-4">
+              <h2>{{ project.title }}</h2>
+              <p>{{ project.brief }}</p>
+              <p><a class="btn btn-default" href="#" role="button">View details &raquo;</a></p>
+            </div><!--/span-->
+    {% endfor %}
+    </div><!--/row-->
+{% endblock %}
