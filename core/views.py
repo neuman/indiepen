@@ -1,12 +1,25 @@
 from django.views.generic.base import TemplateView
 from django.http import Http404
 from django.shortcuts import render_to_response
+from django.views.generic import DetailView
 
 from api import v1_api
 import core.models as cm
+import core.forms as cf
 
 class IndexView(TemplateView):
-    template_name = 'app.html'
+    template_name = 'bootstrap.html'
+
+class MessageView(TemplateView):
+    template_name = 'message.html'
+    message = 'Message goes here.'
+
+    def get_context_data(self, **kwargs):
+        # Call the base implementation first to get a context
+        context = super(MessageView, self).get_context_data(**kwargs)
+        # Add in a QuerySet of all the books
+        context['message'] = self.message
+        return context
 
 
 class DetailView(TemplateView):
@@ -44,7 +57,7 @@ class ProjectView(TemplateView):
         context['total_pledged'] = project.get_total_pledged()
         return context
 
-from django.views.generic import DetailView
+
 
 class ProjectsView(TemplateView):
     template_name = 'list.html'
@@ -55,3 +68,31 @@ class ProjectsView(TemplateView):
         # Add in a QuerySet of all the books
         context['projects'] = cm.Project.objects.all()
         return context
+
+from django.views.generic.edit import FormView
+
+class PledgeFormView(FormView):
+    template_name = 'form.html'
+    form_class = cf.PledgeForm
+    success_url = '/'
+
+    def get_context_data(self, **kwargs):
+        # Call the base implementation first to get a context
+        context = super(PledgeFormView, self).get_context_data(**kwargs)
+        # Add in a QuerySet of all the books
+        context['verb'] = "Pledge"
+        return context 
+
+from django.views.generic.edit import CreateView
+
+class PledgeCreate(CreateView):
+    model = cm.Pledge
+    template_name = 'form.html'
+    fields = ['ammount']
+    success_url = '/'
+
+    def form_valid(self, form):
+        form.instance.created_by = self.request.user
+        form.instance.person = cm.Person.objects.get(user=self.request.user)
+        form.instance.project = cm.Project.objects.get(id=self.kwargs['instance_id'])
+        return super(PledgeCreate, self).form_valid(form)

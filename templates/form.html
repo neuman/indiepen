@@ -1,4 +1,12 @@
-<form action="" method="post">{% csrf_token %}
-    {{ form.as_p }}
-    <input type="submit" value="Send message" />
-</form>
+{% extends "bootstrap.html" %}
+
+{% block title %}Indiepen{% endblock %}
+
+{% block showcase %}
+<div class="input-group">
+	<form action="" method="post">{% csrf_token %}
+	    {{ form.as_p }}
+	    <input type="submit" value="{{ verb|default:"Submit" }}" />
+	</form>
+</div>
+{% endblock %}

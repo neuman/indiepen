@@ -3,6 +3,7 @@ import moneyed
 from djmoney.models.fields import MoneyField
 from django.contrib.auth.models import User
 from django.db.models import Sum
+from django.core.urlresolvers import reverse
 
 MEDIUM_CHOICES = (
     ('TXT', 'Text'),
@@ -35,7 +36,7 @@ class Badge(models.Model):
 
 class Person(models.Model):
     user = models.OneToOneField(User)
-    badges = models.ManyToManyField(Badge)
+    badges = models.ManyToManyField(Badge, null=True, blank=True)
 
     def __unicode__(self):
         return self.user.email
@@ -51,6 +52,12 @@ class Project(models.Model):
 
     def __unicode__(self):
         return self.title
+
+    def get_absolute_url(self):
+        return reverse(viewname='project', args=[self.id], current_app='core')
+
+    def get_create_pledge_url(self):
+        return reverse(viewname='pledge_create', args=[self.id], current_app='core')
 
     def get_total_pledged(self):
         sums = Pledge.objects.filter(project=self).aggregate(Sum('ammount'))
@@ -72,8 +79,8 @@ class Membership(models.Model):
 
 class Media(models.Model):
     original_file = models.FileField(upload_to='/')
-    internal_file = models.FileField(upload_to='/')
-    medium = models.CharField(max_length=3, choices=MEDIUM_CHOICES, default='TXT')
+    internal_file = models.FileField(upload_to='/', null=True, blank=True)
+    medium = models.CharField(max_length=3, choices=MEDIUM_CHOICES, default='TXT', null=True, blank=True)
 
 
 class Service(models.Model):
@@ -83,10 +90,10 @@ class Service(models.Model):
 
 
 class Pledge(models.Model):
-    person = models.ManyToManyField(Person)
-    project = models.ManyToManyField(Project)
+    person = models.ForeignKey(Person)
+    project = models.ForeignKey(Project)
     ammount = MoneyField(max_digits=10, decimal_places=2, default_currency='USD')
-    token = title = models.CharField(max_length=300)
+    token = models.CharField(max_length=300)
 
 class Contribution(models.Model):
     person = models.ManyToManyField(Person)

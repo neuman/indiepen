@@ -4,9 +4,11 @@
 
 {% block showcase %}
   <div class="jumbotron">
+  	<img class="img-thumbnail" src='http://static2.wikia.nocookie.net/__cb20121210005646/memoryalpha/en/images/6/6c/William_T._Riker,_2365.jpg'></img>
     <h1>{{ project.title }}</h1>
     <p>{{ project.brief }}</p>
     <p>Raised: {{ project.get_total_pledged }}</p>
+    <p><a href= {{ project.get_create_pledge_url }}>Pledge</a></p>
 	<div class="progress progress-striped active">
 	  <div class="progress-bar"  role="progressbar" aria-valuenow="{{ project.get_percent_pledged }}" aria-valuemin="0" aria-valuemax="100" style="width: {{ project.get_percent_pledged }}%">
 	    <span class="sr-only">{{ project.get_percent_pledged }}% Complete</span>
