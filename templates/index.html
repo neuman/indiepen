@@ -1,50 +1,29 @@
-{% load mustache %}
-{% load straight_include %}
-
 <!doctype html>
-<html lang="en">
-  <head>
-    <title>Django + Backbone.js</title>
+<html lang="en" ng-app="phonecatApp">
+<head>
+  <meta charset="utf-8">
+  <title ng-bind-template="Google Phone Gallery: {{query}}">Google Phone Gallery</title>
+  <link rel="stylesheet" href="{{ STATIC_URL }}css/app.css">
+  <link rel="stylesheet" href="{{ STATIC_URL }}css/bootstrap.css">
+  <link rel="stylesheet" href="{{ STATIC_URL }}css/animations.css">
 
-    <link rel="stylesheet" 
-          href="http://yui.yahooapis.com/3.2.0/build/cssreset/reset-min.css">
-    <link rel="stylesheet" href="{{ STATIC_URL }}css/style.css">
+  <script src="{{ STATIC_URL }}lib/jquery/jquery-1.10.2.js"></script>
+  <script src="{{ STATIC_URL }}lib/angular/angular.js"></script>
+  <script src="{{ STATIC_URL }}lib/angular/angular-animate.js"></script>
+  <script src="{{ STATIC_URL }}lib/angular/angular-resource.js"></script>
+  <script src="{{ STATIC_URL }}lib/angular/angular-route.js"></script>
 
-    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.6.4/jquery.min.js"></script>
-    <script src="{{ STATIC_URL }}js/underscore-min.js"></script>
-    <script src="{{ STATIC_URL }}js/backbone-min.js"></script>
-    <script src="{{ STATIC_URL }}js/backbone-tastypie.js"></script>
-    <script src="{{ STATIC_URL }}js/ICanHaz.min.js"></script>
-    <script>
-      PROJECT_API = "{% url "api_dispatch_list" api_name="v1" resource_name="project" %}";
-      {% if data %}
-      app = {loaded: true};
-      {% endif %}
-    </script>
-    <script src="{{ STATIC_URL }}js/app.js"></script>
+  <script src="{{ STATIC_URL }}js/app.js"></script>
+  <script src="{{ STATIC_URL }}js/animations.js"></script>
+  <script src="{{ STATIC_URL }}js/controllers.js"></script>
+  <script src="{{ STATIC_URL }}js/filters.js"></script>
+  <script src="{{ STATIC_URL }}js/services.js"></script>
+</head>
+<body>
 
-    <script type="text/html" id="projectTemplate">
-      {% straight_include "projectTemplate.mustache" %}
-    </script>
+  <div class="view-container">
+    <div ng-view class="view-frame"></div>
+  </div>
 
-    <script type="text/html" id="editProjectTemplate">
-      {% straight_include "editProjectTemplate.mustache" %}
-    </script>
-
-    <script type="text/html" id="listApp">
-      {% straight_include "listApp.mustache" %}
-    </script>
-
-    <script type="text/html" id="detailApp">
-      {% straight_include "detailApp.mustache" %}
-    </script>
-  </head>
-
-  <body>
-    <div id="app">
-      {% if data %}
-      {% mustache "detailApp" data %}
-      {% endif %}
-    </div>
-  </body>
+</body>
 </html>

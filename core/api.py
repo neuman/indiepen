@@ -24,6 +24,7 @@ class ProjectResource(ModelResource):
         authorization = Authorization()
         list_allowed_methods = ['get', 'post', 'put']
         detail_allowed_methods = ['get']
+        always_return_data = True
 
 from tastypie.api import Api
 v1_api = Api(api_name='v1')
