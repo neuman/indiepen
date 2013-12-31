@@ -29,11 +29,12 @@
     <![endif]-->
   </head>
 
-  <body>
-
-    <!-- Fixed navbar -->
-    <div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+   <body>
+    <div class="navbar-wrapper">
       <div class="container">
+
+        <div class="navbar navbar-default navbar-static-top" role="navigation">
+          <div class="container">
         <div class="navbar-header">
           <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
             <span class="sr-only">Toggle navigation</span>
@@ -65,11 +66,42 @@
           </ul>
         </div><!--/.nav-collapse -->
       </div>
+          </div>
+        </div>
+
+      </div>
     </div>
+
+    <!-- Carousel
+    ================================================== -->
+    <div id="myCarousel" class="carousel slide" data-ride="carousel">
+      <!-- Indicators -->
+      <div class="carousel-inner">
+        
+        <div class="item active">
+          <img src="http://lorempixel.com/1000/400" alt="First slide">
+          <div class="container">
+            
+          </div>
+        </div>
+      </div>
+    </div><!-- /.carousel -->
+
 
     <div class="container theme-showcase paper">
       {% block showcase %}{% endblock %}
     </div> <!-- /container -->
+
+      <!-- /END THE FEATURETTES -->
+
+
+      <!-- FOOTER -->
+      <footer>
+        <p class="pull-right"><a href="#">Back to top</a></p>
+        <p>&copy; 2013 Company, Inc. &middot; <a href="#">Privacy</a> &middot; <a href="#">Terms</a></p>
+      </footer>
+
+    </div><!-- /.container -->
 
 
     <!-- Bootstrap core JavaScript
@@ -90,3 +122,4 @@
     </script>
   </body>
 </html>
+
