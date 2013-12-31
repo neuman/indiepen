@@ -74,6 +74,7 @@
 
     <!-- Carousel
     ================================================== -->
+  <div class="paper">
     <div id="myCarousel" class="carousel slide" data-ride="carousel">
       <!-- Indicators -->
       <div class="carousel-inner">
@@ -88,10 +89,10 @@
     </div><!-- /.carousel -->
 
 
-    <div class="container theme-showcase paper">
+    <div class="container theme-showcase">
       {% block showcase %}{% endblock %}
     </div> <!-- /container -->
-
+  </div>
       <!-- /END THE FEATURETTES -->
 
 
@@ -112,13 +113,13 @@
     <script src="{{ STATIC_URL }}js/holder.js"></script>
     <script src="{{ STATIC_URL }}js/oridomi.js"></script>
     <script type="text/javascript">
-      /*
+      
       var $folded = $('.paper').oriDomi({/* options object */});
       // when using jQuery, iterate OriDomi methods over multiple elements like this:
-      $folded.oriDomi('accordion', 20);
+      $folded.oriDomi('accordion', 50);
       // to access the OriDomi instance at the top of the jQuery selection directly:
       var folded = $folded.oriDomi(true);
-      */
+      
     </script>
   </body>
 </html>
