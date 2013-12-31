@@ -96,3 +96,15 @@ class PledgeCreate(CreateView):
         form.instance.person = cm.Person.objects.get(user=self.request.user)
         form.instance.project = cm.Project.objects.get(id=self.kwargs['instance_id'])
         return super(PledgeCreate, self).form_valid(form)
+
+class ProjectCreate(CreateView):
+    model = cm.Project
+    template_name = 'form.html'
+    fields = '__all__'
+    success_url = '/'
+
+    def get_form(self, form_class):
+        # Initialize the form with initial values and the subscriber object
+        # to be used in EmailPreferenceForm for populating fields
+        return cf.ProjectForm(self.request.POST or None, self.request.FILES or None, initial=self.get_initial())
+
