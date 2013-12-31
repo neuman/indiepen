@@ -4,7 +4,7 @@
 
 {% block showcase %}
   <div class="jumbotron">
-  	<img class="img-thumbnail" src='http://static2.wikia.nocookie.net/__cb20121210005646/memoryalpha/en/images/6/6c/William_T._Riker,_2365.jpg'></img>
+  	<img class="img-thumbnail" src='http://lorempixel.com/600/600'></img>
     <h1>{{ project.title }}</h1>
     <p>{{ project.brief }}</p>
     <p>Raised: {{ project.get_total_pledged }}</p>
@@ -24,17 +24,16 @@
   </div>
 	<div class="row">
 	{% for pledge in project.get_pledges %}
-            <div class="col-6 col-sm-6 col-lg-4">
+            <div class="col-6 col-sm-6 col-lg-4 well">
 				<div class="media">
 				  <a class="pull-left" href="#">
 				    <img data-src="holder.js/50x50" class="media-object" alt="A generic square placeholder image with a white border around it, making it resemble a photograph taken with an old instant camera">
 				  </a>
 				  <div class="media-body">
 				    <h4 class="media-heading">{{ pledge.person.user.first_name }} {{ pledge.person.user.last_name }}</h4>
-				    ...
+				    {{ pledge.ammount }}
 				  </div>
 				</div>
-              <p><a class="btn btn-default" href="#" role="button">View details &raquo;</a></p>
             </div><!--/span-->
     {% endfor %}
     </div><!--/row-->
