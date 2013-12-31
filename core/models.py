@@ -59,14 +59,19 @@ class Project(models.Model):
     def get_create_pledge_url(self):
         return reverse(viewname='pledge_create', args=[self.id], current_app='core')
 
+    def get_pledges(self):
+        return Pledge.objects.filter(project=self)
+
     def get_total_pledged(self):
         sums = Pledge.objects.filter(project=self).aggregate(Sum('ammount'))
         if sums['ammount__sum'] == None:
             total = 0
+        else:
+            total = sums['ammount__sum']
         return total
 
     def get_percent_pledged(self):
-        return (self.ask/self.get_total_pledged())*100
+        return (float(self.get_total_pledged())/float(self.ask))*100
 
 class Post(models.Model):
     title = models.CharField(max_length=60)
@@ -102,6 +107,6 @@ class Contribution(models.Model):
     ammount = MoneyField(max_digits=10, decimal_places=2, default_currency='USD')
 
 class Payout(models.Model):
-    person = models.ManyToManyField(Person)
-    project = models.ManyToManyField(Project)
+    person = models.ForeignKey(Person)
+    project = models.ForeignKey(Project)
     ammount = MoneyField(max_digits=10, decimal_places=2, default_currency='USD')

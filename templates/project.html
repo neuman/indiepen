@@ -14,6 +14,7 @@
 	    <span class="sr-only">{{ project.get_percent_pledged }}% Complete</span>
 	  </div>
 	</div>
+	<p><a class="btn btn-success" href="{{ project.get_create_pledge_url }}" role="button">Pledge &raquo;</a></p>
 	<ul class="list-group">
 	  <li class="list-group-item">Ask: {{ project.ask }}</li>
 	  <li class="list-group-item">Duration: {{ project.duration }}</li>
@@ -22,10 +23,17 @@
 	</ul>
   </div>
 	<div class="row">
-	{% for backer in backers %}
+	{% for pledge in project.get_pledges %}
             <div class="col-6 col-sm-6 col-lg-4">
-              <h2>{{ project.title }}</h2>
-              <p>{{ project.brief }}</p>
+				<div class="media">
+				  <a class="pull-left" href="#">
+				    <img data-src="holder.js/50x50" class="media-object" alt="A generic square placeholder image with a white border around it, making it resemble a photograph taken with an old instant camera">
+				  </a>
+				  <div class="media-body">
+				    <h4 class="media-heading">{{ pledge.person.user.first_name }} {{ pledge.person.user.last_name }}</h4>
+				    ...
+				  </div>
+				</div>
               <p><a class="btn btn-default" href="#" role="button">View details &raquo;</a></p>
             </div><!--/span-->
     {% endfor %}

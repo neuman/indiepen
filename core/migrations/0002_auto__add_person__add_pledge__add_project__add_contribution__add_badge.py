@@ -27,36 +27,22 @@ class Migration(SchemaMigration):
         # Adding model 'Pledge'
         db.create_table(u'core_pledge', (
             (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
+            ('person', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['core.Person'])),
+            ('project', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['core.Project'])),
             ('ammount_currency', self.gf('djmoney.models.fields.CurrencyField')(default='USD')),
             ('ammount', self.gf('djmoney.models.fields.MoneyField')(max_digits=10, decimal_places=2, default_currency='USD')),
-            ('title', self.gf('django.db.models.fields.CharField')(max_length=300)),
+            ('token', self.gf('django.db.models.fields.CharField')(max_length=300)),
         ))
         db.send_create_signal(u'core', ['Pledge'])
-
-        # Adding M2M table for field person on 'Pledge'
-        m2m_table_name = db.shorten_name(u'core_pledge_person')
-        db.create_table(m2m_table_name, (
-            ('id', models.AutoField(verbose_name='ID', primary_key=True, auto_created=True)),
-            ('pledge', models.ForeignKey(orm[u'core.pledge'], null=False)),
-            ('person', models.ForeignKey(orm[u'core.person'], null=False))
-        ))
-        db.create_unique(m2m_table_name, ['pledge_id', 'person_id'])
-
-        # Adding M2M table for field project on 'Pledge'
-        m2m_table_name = db.shorten_name(u'core_pledge_project')
-        db.create_table(m2m_table_name, (
-            ('id', models.AutoField(verbose_name='ID', primary_key=True, auto_created=True)),
-            ('pledge', models.ForeignKey(orm[u'core.pledge'], null=False)),
-            ('project', models.ForeignKey(orm[u'core.project'], null=False))
-        ))
-        db.create_unique(m2m_table_name, ['pledge_id', 'project_id'])
 
         # Adding model 'Project'
         db.create_table(u'core_project', (
             (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
             ('title', self.gf('django.db.models.fields.CharField')(max_length=300)),
+            ('brief', self.gf('django.db.models.fields.TextField')(default='')),
             ('medium', self.gf('django.db.models.fields.CharField')(default='TXT', max_length=3)),
-            ('duration', self.gf('django.db.models.fields.CharField')(default='WEE', max_length=3)),
+            ('duration', self.gf('django.db.models.fields.CharField')(default='1', max_length=3)),
+            ('frequency', self.gf('django.db.models.fields.CharField')(default='WEE', max_length=3)),
             ('ask_currency', self.gf('djmoney.models.fields.CurrencyField')(default='USD')),
             ('ask', self.gf('djmoney.models.fields.MoneyField')(max_digits=10, decimal_places=2, default_currency='USD')),
         ))
@@ -177,8 +163,8 @@ class Migration(SchemaMigration):
         db.create_table(u'core_media', (
             (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
             ('original_file', self.gf('django.db.models.fields.files.FileField')(max_length=100)),
-            ('internal_file', self.gf('django.db.models.fields.files.FileField')(max_length=100)),
-            ('medium', self.gf('django.db.models.fields.CharField')(default='TXT', max_length=3)),
+            ('internal_file', self.gf('django.db.models.fields.files.FileField')(max_length=100, null=True, blank=True)),
+            ('medium', self.gf('django.db.models.fields.CharField')(default='TXT', max_length=3, null=True, blank=True)),
         ))
         db.send_create_signal(u'core', ['Media'])
 
@@ -192,12 +178,6 @@ class Migration(SchemaMigration):
 
         # Deleting model 'Pledge'
         db.delete_table(u'core_pledge')
-
-        # Removing M2M table for field person on 'Pledge'
-        db.delete_table(db.shorten_name(u'core_pledge_person'))
-
-        # Removing M2M table for field project on 'Pledge'
-        db.delete_table(db.shorten_name(u'core_pledge_project'))
 
         # Deleting model 'Project'
         db.delete_table(u'core_project')
@@ -299,8 +279,8 @@ class Migration(SchemaMigration):
         u'core.media': {
             'Meta': {'object_name': 'Media'},
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'internal_file': ('django.db.models.fields.files.FileField', [], {'max_length': '100'}),
-            'medium': ('django.db.models.fields.CharField', [], {'default': "'TXT'", 'max_length': '3'}),
+            'internal_file': ('django.db.models.fields.files.FileField', [], {'max_length': '100', 'null': 'True', 'blank': 'True'}),
+            'medium': ('django.db.models.fields.CharField', [], {'default': "'TXT'", 'max_length': '3', 'null': 'True', 'blank': 'True'}),
             'original_file': ('django.db.models.fields.files.FileField', [], {'max_length': '100'})
         },
         u'core.membership': {
@@ -320,7 +300,7 @@ class Migration(SchemaMigration):
         },
         u'core.person': {
             'Meta': {'object_name': 'Person'},
-            'badges': ('django.db.models.fields.related.ManyToManyField', [], {'to': u"orm['core.Badge']", 'symmetrical': 'False'}),
+            'badges': ('django.db.models.fields.related.ManyToManyField', [], {'symmetrical': 'False', 'to': u"orm['core.Badge']", 'null': 'True', 'blank': 'True'}),
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'user': ('django.db.models.fields.related.OneToOneField', [], {'to': u"orm['auth.User']", 'unique': 'True'})
         },
@@ -329,9 +309,9 @@ class Migration(SchemaMigration):
             'ammount': ('djmoney.models.fields.MoneyField', [], {'max_digits': '10', 'decimal_places': '2', 'default_currency': "'USD'"}),
             'ammount_currency': ('djmoney.models.fields.CurrencyField', [], {'default': "'USD'"}),
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'person': ('django.db.models.fields.related.ManyToManyField', [], {'to': u"orm['core.Person']", 'symmetrical': 'False'}),
-            'project': ('django.db.models.fields.related.ManyToManyField', [], {'to': u"orm['core.Project']", 'symmetrical': 'False'}),
-            'title': ('django.db.models.fields.CharField', [], {'max_length': '300'})
+            'person': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['core.Person']"}),
+            'project': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['core.Project']"}),
+            'token': ('django.db.models.fields.CharField', [], {'max_length': '300'})
         },
         u'core.post': {
             'Meta': {'object_name': 'Post'},
@@ -343,7 +323,9 @@ class Migration(SchemaMigration):
             'Meta': {'object_name': 'Project'},
             'ask': ('djmoney.models.fields.MoneyField', [], {'max_digits': '10', 'decimal_places': '2', 'default_currency': "'USD'"}),
             'ask_currency': ('djmoney.models.fields.CurrencyField', [], {'default': "'USD'"}),
-            'duration': ('django.db.models.fields.CharField', [], {'default': "'WEE'", 'max_length': '3'}),
+            'brief': ('django.db.models.fields.TextField', [], {'default': "''"}),
+            'duration': ('django.db.models.fields.CharField', [], {'default': "'1'", 'max_length': '3'}),
+            'frequency': ('django.db.models.fields.CharField', [], {'default': "'WEE'", 'max_length': '3'}),
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'medium': ('django.db.models.fields.CharField', [], {'default': "'TXT'", 'max_length': '3'}),
             'members': ('django.db.models.fields.related.ManyToManyField', [], {'to': u"orm['core.Person']", 'symmetrical': 'False'}),
