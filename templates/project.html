@@ -37,3 +37,22 @@
     {% endfor %}
     </div><!--/row-->
 {% endblock %}
+
+{% block right_menu %}
+	<div class="row">
+	<h1>Pledges</h1>
+	{% for pledge in project.get_pledges %}
+            <div >
+				<div class="media">
+				  <a class="pull-left" href="#">
+				    <img src="http://lorempixel.com/50/50" class="media-object">
+				  </a>
+				  <div class="media-body">
+				    <h4 class="media-heading">{{ pledge.person.user.first_name }} {{ pledge.person.user.last_name }}</h4>
+				    {{ pledge.ammount }}
+				  </div>
+				</div>
+            </div><!--/span-->
+    {% endfor %}
+    </div><!--/row-->
+{% endblock %}

@@ -18,6 +18,7 @@
 
     <!-- Custom styles for this template -->
     <link href="{{ STATIC_URL }}css/theme.css" rel="stylesheet">
+    <link href="{{ STATIC_URL }}css/jquery.sidr.light.css" rel="stylesheet">
 
     <!-- Just for debugging purposes. Don't actually copy this line! -->
     <!--[if lt IE 9]><script src="../../docs-assets/js/ie8-responsive-file-warning.js"></script><![endif]-->
@@ -46,7 +47,7 @@
         </div>
         <div class="navbar-collapse collapse">
           <ul class="nav navbar-nav">
-            <li><a href="#"><span class="glyphicon glyphicon-align-left"></span> Eric Neuman</a></li>
+            <li id="left-menu"><a href="#"><span class="glyphicon glyphicon-align-left"></span> Eric Neuman</a></li>
             <li><a href="#about">About</a></li>
             <li><a href="#contact">Contact</a></li>
             <li class="dropdown">
@@ -62,7 +63,7 @@
 
               </ul>
             </li>
-            <li><a href="#">Audit <span class="glyphicon glyphicon-align-right"></span></a></li>
+            <li id="right-menu"><a href="#">Audit <span class="glyphicon glyphicon-align-right"></span></a></li>
           </ul>
         </div><!--/.nav-collapse -->
       </div>
@@ -103,6 +104,16 @@
       </footer>
 
     </div><!-- /.container -->
+ 
+<div id="sidr-left">
+  {% block left_menu %}{% endblock %}
+</div>
+
+<div id="sidr-right">
+  <!-- Your content -->
+  {% block right_menu %}{% endblock %}
+</div>
+ 
 
 
     <!-- Bootstrap core JavaScript
@@ -112,15 +123,54 @@
     <script src="{{ STATIC_URL }}js/bootstrap.min.js"></script>
     <script src="{{ STATIC_URL }}js/holder.js"></script>
     <script src="{{ STATIC_URL }}js/oridomi.js"></script>
-    <script type="text/javascript">
-      
-      var $folded = $('.paper').oriDomi({/* options object */});
-      // when using jQuery, iterate OriDomi methods over multiple elements like this:
-      $folded.oriDomi('accordion', 50);
-      // to access the OriDomi instance at the top of the jQuery selection directly:
-      var folded = $folded.oriDomi(true);
-      
-    </script>
+    <script src="{{ STATIC_URL }}js/jquery.sidr.min.js"></script>/
+
+
+<script>
+$(document).ready(function() {
+
+    var $folded = $('.paper').oriDomi({
+      touchEnabled: false,
+      vPanels: 5
+    });
+    var is_folded = false;
+    $folded.oriDomi('accordion', 0);
+    // when using jQuery, iterate OriDomi methods over multiple elements like this:
+    
+    // to access the OriDomi instance at the top of the jQuery selection directly:
+    //var folded = $folded.oriDomi(true);
+
+    $('#left-menu').sidr({
+      name: 'sidr-left',
+      side: 'left', // By default
+      displace: false,
+      onOpen: function(){
+        $folded.oriDomi('accordion', 20, 'right');
+        is_folded = true;
+      },
+      onClose: function(){
+        $folded.oriDomi('accordion', 0);
+        is_folded = false
+      }
+    });
+
+    $('#right-menu').sidr({
+      name: 'sidr-right',
+      side: 'right',
+      displace: false,
+      onOpen: function(){
+        $folded.oriDomi('accordion', 20, 'left');
+        is_folded = true;
+      },
+      onClose: function(){
+        $folded.oriDomi('accordion', 0);
+        is_folded = false
+      }
+    });
+});
+</script>
   </body>
 </html>
+
+
 
