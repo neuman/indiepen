@@ -73,6 +73,9 @@ class Project(models.Model):
     def get_percent_pledged(self):
         return (float(self.get_total_pledged())/float(self.ask))*100
 
+    def get_members(self):
+        return self.members.all()
+
 class Post(models.Model):
     title = models.CharField(max_length=60)
     members = models.ManyToManyField(Person, through='Membership')

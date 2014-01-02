@@ -18,7 +18,7 @@
 
     <!-- Custom styles for this template -->
     <link href="{{ STATIC_URL }}css/theme.css" rel="stylesheet">
-    <link href="{{ STATIC_URL }}css/jquery.sidr.light.css" rel="stylesheet">
+    <link href="{{ STATIC_URL }}css/jquery.sidr.dark.css" rel="stylesheet">
 
     <!-- Just for debugging purposes. Don't actually copy this line! -->
     <!--[if lt IE 9]><script src="../../docs-assets/js/ie8-responsive-file-warning.js"></script><![endif]-->
@@ -128,10 +128,11 @@
 
 <script>
 $(document).ready(function() {
-
+    var fold = false;
+    var displace = true;
     var $folded = $('.paper').oriDomi({
       touchEnabled: false,
-      vPanels: 5
+      vPanels: 7
     });
     var is_folded = false;
     $folded.oriDomi('accordion', 0);
@@ -143,28 +144,34 @@ $(document).ready(function() {
     $('#left-menu').sidr({
       name: 'sidr-left',
       side: 'left', // By default
-      displace: false,
+      displace: displace,
       onOpen: function(){
-        $folded.oriDomi('accordion', 20, 'right');
-        is_folded = true;
+        if(fold){
+          $folded.oriDomi('accordion', 20, 'right');
+        }
+
       },
       onClose: function(){
-        $folded.oriDomi('accordion', 0);
-        is_folded = false
+        if(fold){
+          $folded.oriDomi('accordion', 0);
+        }
+
       }
     });
 
     $('#right-menu').sidr({
       name: 'sidr-right',
       side: 'right',
-      displace: false,
+      displace: displace,
       onOpen: function(){
-        $folded.oriDomi('accordion', 20, 'left');
-        is_folded = true;
+        if(fold){
+          $folded.oriDomi('accordion', 40, 'left');
+        }
       },
       onClose: function(){
-        $folded.oriDomi('accordion', 0);
-        is_folded = false
+        if(fold){
+          $folded.oriDomi('accordion', 0);
+        }
       }
     });
 });
