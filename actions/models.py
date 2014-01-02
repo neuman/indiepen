@@ -7,8 +7,8 @@ class Action(object):
     url = "Unspecified"
     display_name = "Unspecified"
 
-    def __init__(self, target):
-        self.target = target
+    def __init__(self, instance=None):
+        self.target = instance
 
     def get_url(self):
         return self.url
@@ -28,7 +28,7 @@ class Action(object):
 
 class Actionable(object):
     '''
-    Mixin intended to operate with Action, most likely in a django Model.
+    Mixin intended to operate with Action, most likely in a django Model or View.
     '''
     def get_actions(self):
         return []

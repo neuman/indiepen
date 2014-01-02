@@ -106,7 +106,13 @@
     </div><!-- /.container -->
  
 <div id="sidr-left">
-  {% block left_menu %}{% endblock %}
+  {% block left_menu %}
+      <ul>
+      {% for action in available_actions %}
+        <li><a href="{{ action.url }}">{{ action.display_name }}</a></li>
+      {% endfor %}
+    </ul>
+  {% endblock %}
 </div>
 
 <div id="sidr-right">
@@ -128,8 +134,8 @@
 
 <script>
 $(document).ready(function() {
-    var fold = true;
-    var displace = false;
+    var fold = false;
+    var displace = true;
     var $folded = $('.paper').oriDomi({
       touchEnabled: false,
       vPanels: 7

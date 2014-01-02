@@ -7,7 +7,6 @@ from django.core.urlresolvers import reverse
 from actions.models import Action, Actionable
 
 
-
 MEDIUM_CHOICES = (
     ('TXT', 'Text'),
     ('VID', 'Video'),
@@ -47,13 +46,19 @@ class Person(models.Model):
 class ProjectPledgeAction(Action):
     display_name = "Pledge"
     def is_available(self, person):
-        if self.target.members.filter(id=person.id).count() > 0:
+        if self.instance.members.filter(id=person.id).count() > 0:
             return True
         else:
             return False
 
     def get_url(self):
-        return reverse(viewname='pledge_create', args=[self.target.id], current_app='core')
+        return reverse(viewname='pledge_create', args=[self.instance.id], current_app='core')
+
+class ProjectCreateAction(Action):
+    display_name = "Start New Project"
+
+    def get_url(self):
+        return reverse(viewname='project_create', current_app='core')
 
 
 class Project(models.Model, Actionable):

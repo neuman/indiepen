@@ -3,6 +3,8 @@ from django.http import Http404
 from django.shortcuts import render_to_response
 from django.views.generic import DetailView
 
+from actions.models import Actionable
+
 from api import v1_api
 import core.models as cm
 import core.forms as cf
@@ -54,20 +56,24 @@ class ProjectView(TemplateView):
         context = super(ProjectView, self).get_context_data(**kwargs)
         project = cm.Project.objects.get(id=self.kwargs['instance_id'])
         context['project'] = project
-        context['available_actions'] = project.get_available_actions(person)
+        context['available_actions'] = project.get_available_actions()
         context['total_pledged'] = project.get_total_pledged()
         return context
 
 
-
-class ProjectsView(TemplateView):
+class ProjectsView(TemplateView, Actionable):
     template_name = 'list.html'
 
+    def get_actions(self):
+        return [
+            cm.ProjectCreateAction()
+            ]
+
     def get_context_data(self, **kwargs):
-        # Call the base implementation first to get a context
+        person = cm.Person.objects.get(user=self.request.user)
         context = super(ProjectsView, self).get_context_data(**kwargs)
-        # Add in a QuerySet of all the books
         context['projects'] = cm.Project.objects.all()
+        context['available_actions'] = self.get_available_actions(person)
         return context
 
 from django.views.generic.edit import FormView
