@@ -56,7 +56,7 @@ class ProjectView(TemplateView):
         context = super(ProjectView, self).get_context_data(**kwargs)
         project = cm.Project.objects.get(id=self.kwargs['instance_id'])
         context['project'] = project
-        context['available_actions'] = project.get_available_actions()
+        context['available_actions'] = project.get_available_actions(person)
         context['total_pledged'] = project.get_total_pledged()
         return context
 
@@ -97,6 +97,12 @@ class PledgeCreate(CreateView):
     template_name = 'form.html'
     fields = ['ammount']
     success_url = '/'
+
+
+    def get_form(self, form_class):
+        # Initialize the form with initial values and the subscriber object
+        # to be used in EmailPreferenceForm for populating fields
+        return cf.PledgeForm(self.request.POST or None, self.request.FILES or None, initial=self.get_initial())
 
     def form_valid(self, form):
         form.instance.created_by = self.request.user

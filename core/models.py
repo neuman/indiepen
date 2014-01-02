@@ -43,6 +43,7 @@ class Person(models.Model):
     def __unicode__(self):
         return self.user.email
 
+
 class ProjectPledgeAction(Action):
     display_name = "Pledge"
     def is_available(self, person):
@@ -59,7 +60,6 @@ class ProjectCreateAction(Action):
 
     def get_url(self):
         return reverse(viewname='project_create', current_app='core')
-
 
 class Project(models.Model, Actionable):
     title = models.CharField(max_length=300)
@@ -95,7 +95,7 @@ class Project(models.Model, Actionable):
 
     def get_actions(self):
         actions = [
-            ProjectPledgeAction(self)
+            ProjectPledgeAction(instance=self)
         ]
         return actions
 

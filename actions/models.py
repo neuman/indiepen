@@ -8,7 +8,7 @@ class Action(object):
     display_name = "Unspecified"
 
     def __init__(self, instance=None):
-        self.target = instance
+        self.instance = instance
 
     def get_url(self):
         return self.url
@@ -36,6 +36,6 @@ class Actionable(object):
     def get_available_actions(self, user):
         output = []
         for a in self.get_actions():
-            if a.is_available(person=self):
+            if a.is_available(person=user):
                 output.append(a.get_serialized())
         return output
