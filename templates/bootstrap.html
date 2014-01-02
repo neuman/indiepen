@@ -3,187 +3,341 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="">
-    <meta name="author" content="">
-    <link rel="shortcut icon" href="../../docs-assets/ico/favicon.png">
+    <meta name="author" content="Mosaddek">
+    <meta name="keyword" content="FlatLab, Dashboard, Bootstrap, Admin, Template, Theme, Responsive, Fluid, Retina">
+    <link rel="shortcut icon" href="{{ STATIC_URL }}img/favicon.html">
 
-    <title>{% block pagetitle %}Indiepen{% endblock %}</title>
+    <title>Indiepen</title>
 
     <!-- Bootstrap core CSS -->
-    <link href="{{ STATIC_URL }}css/bootstrap.css" rel="stylesheet">
-    <!-- Bootstrap theme -->
-    <link href="{{ STATIC_URL }}css/bootstrap-theme.min.css" rel="stylesheet">
-
+    <link href="{{ STATIC_URL }}css/bootstrap.min.css" rel="stylesheet">
+    <link href="{{ STATIC_URL }}css/bootstrap-reset.css" rel="stylesheet">
+    <!--external css-->
+    <link href="{{ STATIC_URL }}assets/font-awesome/css/font-awesome.css" rel="stylesheet" />
+    <link href="{{ STATIC_URL }}assets/jquery-easy-pie-chart/jquery.easy-pie-chart.css" rel="stylesheet" type="text/css" media="screen"/>
+    <link rel="stylesheet" href="{{ STATIC_URL }}css/owl.carousel.css" type="text/css">
     <!-- Custom styles for this template -->
-    <link href="{{ STATIC_URL }}css/theme.css" rel="stylesheet">
-    <link href="{{ STATIC_URL }}css/jquery.sidr.dark.css" rel="stylesheet">
+    <link href="{{ STATIC_URL }}css/style.css" rel="stylesheet">
+    <link href="{{ STATIC_URL }}css/style-responsive.css" rel="stylesheet" />
 
-    <!-- Just for debugging purposes. Don't actually copy this line! -->
-    <!--[if lt IE 9]><script src="../../docs-assets/js/ie8-responsive-file-warning.js"></script><![endif]-->
-
-    <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- HTML5 shim and Respond.js IE8 support of HTML5 tooltipss and media queries -->
     <!--[if lt IE 9]>
-      <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
-      <script src="https://oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js"></script>
+      <script src="js/html5shiv.js"></script>
+      <script src="js/respond.min.js"></script>
     <![endif]-->
   </head>
 
-   <body>
-    <div class="navbar-wrapper">
-      <div class="container">
+  <body>
 
-        <div class="navbar navbar-default navbar-static-top" role="navigation">
-          <div class="container">
-        <div class="navbar-header">
-          <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
-            <span class="sr-only">Toggle navigation</span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-          </button>
-          <a class="navbar-brand" href="/projects">Indiepen</a>
-        </div>
-        <div class="navbar-collapse collapse">
-          <ul class="nav navbar-nav">
-            <li id="left-menu"><a href="#"><span class="glyphicon glyphicon-align-left"></span> Eric Neuman</a></li>
-            <li><a href="#about">About</a></li>
-            <li><a href="#contact">Contact</a></li>
-            <li class="dropdown">
-              <a href="#" class="dropdown-toggle" data-toggle="dropdown">Dropdown <b class="caret"></b></a>
-              <ul class="dropdown-menu">
-                <li><a href="#">Actions</a></li>
-                <li><a href="#">Create Project</a></li>
-                <li><a href="#">Something else here</a></li>
-                <li class="divider"></li>
-                <li class="dropdown-header">Nav header</li>
-                <li><a href="#">Separated link</a></li>
-                <li><a href="#">One more separated link</a></li>
+  <section id="container" class="">
+      <!--header start-->
+      <header class="header white-bg">
+            <div class="sidebar-toggle-box">
+                <div data-original-title="Toggle Navigation" data-placement="right" class="icon-reorder tooltips"></div>
+            </div>
+            <!--logo start-->
+            <a href="#" class="logo">Indie<span>pen</span></a>
+            <!--logo end-->
+            <div class="nav notify-row" id="top_menu">
+                <!--  notification start -->
+                <ul class="nav top-menu">
+                    <!-- settings start -->
+                    <li class="dropdown">
+                        <a data-toggle="dropdown" class="dropdown-toggle" href="#">
+                            <i class="icon-tasks"></i>
+                            <span class="badge bg-success">6</span>
+                        </a>
+                        <ul class="dropdown-menu extended tasks-bar">
+                            <div class="notify-arrow notify-arrow-green"></div>
+                            <li>
+                                <p class="green">You have 6 pending tasks</p>
+                            </li>
+                            <li>
+                                <a href="#">
+                                    <div class="task-info">
+                                        <div class="desc">Dashboard v1.3</div>
+                                        <div class="percent">40%</div>
+                                    </div>
+                                    <div class="progress progress-striped">
+                                        <div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="40" aria-valuemin="0" aria-valuemax="100" style="width: 40%">
+                                            <span class="sr-only">40% Complete (success)</span>
+                                        </div>
+                                    </div>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="#">
+                                    <div class="task-info">
+                                        <div class="desc">Database Update</div>
+                                        <div class="percent">60%</div>
+                                    </div>
+                                    <div class="progress progress-striped">
+                                        <div class="progress-bar progress-bar-warning" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100" style="width: 60%">
+                                            <span class="sr-only">60% Complete (warning)</span>
+                                        </div>
+                                    </div>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="#">
+                                    <div class="task-info">
+                                        <div class="desc">Iphone Development</div>
+                                        <div class="percent">87%</div>
+                                    </div>
+                                    <div class="progress progress-striped">
+                                        <div class="progress-bar progress-bar-info" role="progressbar" aria-valuenow="20" aria-valuemin="0" aria-valuemax="100" style="width: 87%">
+                                            <span class="sr-only">87% Complete</span>
+                                        </div>
+                                    </div>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="#">
+                                    <div class="task-info">
+                                        <div class="desc">Mobile App</div>
+                                        <div class="percent">33%</div>
+                                    </div>
+                                    <div class="progress progress-striped">
+                                        <div class="progress-bar progress-bar-danger" role="progressbar" aria-valuenow="80" aria-valuemin="0" aria-valuemax="100" style="width: 33%">
+                                            <span class="sr-only">33% Complete (danger)</span>
+                                        </div>
+                                    </div>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="#">
+                                    <div class="task-info">
+                                        <div class="desc">Dashboard v1.3</div>
+                                        <div class="percent">45%</div>
+                                    </div>
+                                    <div class="progress progress-striped active">
+                                        <div class="progress-bar"  role="progressbar" aria-valuenow="45" aria-valuemin="0" aria-valuemax="100" style="width: 45%">
+                                            <span class="sr-only">45% Complete</span>
+                                        </div>
+                                    </div>
 
+                                </a>
+                            </li>
+                            <li class="external">
+                                <a href="#">See All Tasks</a>
+                            </li>
+                        </ul>
+                    </li>
+                    <!-- settings end -->
+                    <!-- inbox dropdown start-->
+                    <li id="header_inbox_bar" class="dropdown">
+                        <a data-toggle="dropdown" class="dropdown-toggle" href="#">
+                            <i class="icon-envelope-alt"></i>
+                            <span class="badge bg-important">5</span>
+                        </a>
+                        <ul class="dropdown-menu extended inbox">
+                            <div class="notify-arrow notify-arrow-red"></div>
+                            <li>
+                                <p class="red">You have 5 new messages</p>
+                            </li>
+                            <li>
+                                <a href="#">
+                                    <span class="photo"><img alt="avatar" src="{{ STATIC_URL }}img/avatar-mini.jpg"></span>
+                                    <span class="subject">
+                                    <span class="from">Jonathan Smith</span>
+                                    <span class="time">Just now</span>
+                                    </span>
+                                    <span class="message">
+                                        Hello, this is an example msg.
+                                    </span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="#">
+                                    <span class="photo"><img alt="avatar" src="{{ STATIC_URL }}img/avatar-mini2.jpg"></span>
+                                    <span class="subject">
+                                    <span class="from">Jhon Doe</span>
+                                    <span class="time">10 mins</span>
+                                    </span>
+                                    <span class="message">
+                                     Hi, Jhon Doe Bhai how are you ?
+                                    </span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="#">
+                                    <span class="photo"><img alt="avatar" src="{{ STATIC_URL }}img/avatar-mini3.jpg"></span>
+                                    <span class="subject">
+                                    <span class="from">Jason Stathum</span>
+                                    <span class="time">3 hrs</span>
+                                    </span>
+                                    <span class="message">
+                                        This is awesome dashboard.
+                                    </span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="#">
+                                    <span class="photo"><img alt="avatar" src="{{ STATIC_URL }}img/avatar-mini4.jpg"></span>
+                                    <span class="subject">
+                                    <span class="from">Jondi Rose</span>
+                                    <span class="time">Just now</span>
+                                    </span>
+                                    <span class="message">
+                                        Hello, this is metrolab
+                                    </span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="#">See all messages</a>
+                            </li>
+                        </ul>
+                    </li>
+                    <!-- inbox dropdown end -->
+                    <!-- notification dropdown start-->
+                    <li id="header_notification_bar" class="dropdown">
+                        <a data-toggle="dropdown" class="dropdown-toggle" href="#">
+
+                            <i class="icon-bell-alt"></i>
+                            <span class="badge bg-warning">7</span>
+                        </a>
+                        <ul class="dropdown-menu extended notification">
+                            <div class="notify-arrow notify-arrow-yellow"></div>
+                            <li>
+                                <p class="yellow">You have 7 new notifications</p>
+                            </li>
+                            <li>
+                                <a href="#">
+                                    <span class="label label-danger"><i class="icon-bolt"></i></span>
+                                    Server #3 overloaded.
+                                    <span class="small italic">34 mins</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="#">
+                                    <span class="label label-warning"><i class="icon-bell"></i></span>
+                                    Server #10 not respoding.
+                                    <span class="small italic">1 Hours</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="#">
+                                    <span class="label label-danger"><i class="icon-bolt"></i></span>
+                                    Database overloaded 24%.
+                                    <span class="small italic">4 hrs</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="#">
+                                    <span class="label label-success"><i class="icon-plus"></i></span>
+                                    New user registered.
+                                    <span class="small italic">Just now</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="#">
+                                    <span class="label label-info"><i class="icon-bullhorn"></i></span>
+                                    Application error.
+                                    <span class="small italic">10 mins</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="#">See all notifications</a>
+                            </li>
+                        </ul>
+                    </li>
+                    <!-- notification dropdown end -->
+                </ul>
+                <!--  notification end -->
+            </div>
+            <div class="top-nav ">
+                <!--search & user info start-->
+                <ul class="nav pull-right top-menu">
+                    <li>
+                        <input type="text" class="form-control search" placeholder="Search">
+                    </li>
+                    <!-- user login dropdown start-->
+                    <li class="dropdown">
+                        <a data-toggle="dropdown" class="dropdown-toggle" href="#">
+                            <img alt="" src="{{ STATIC_URL }}img/avatar1_small.jpg">
+                            <span class="username">Jhon Doue</span>
+                            <b class="caret"></b>
+                        </a>
+                        <ul class="dropdown-menu extended logout">
+                            <div class="log-arrow-up"></div>
+                            <li><a href="#"><i class=" icon-suitcase"></i>Profile</a></li>
+                            <li><a href="#"><i class="icon-cog"></i> Settings</a></li>
+                            <li><a href="#"><i class="icon-bell-alt"></i> Notification</a></li>
+                            <li><a href="login.html"><i class="icon-key"></i> Log Out</a></li>
+                        </ul>
+                    </li>
+                    <!-- user login dropdown end -->
+                </ul>
+                <!--search & user info end-->
+            </div>
+        </header>
+      <!--header end-->
+      <!--sidebar start-->
+      <aside>
+          <div id="sidebar"  class="nav-collapse ">
+              <!-- sidebar menu start-->
+              <ul class="sidebar-menu">
+                {% block left_menu %}
+                  {% for action in available_actions %}
+                  <li><a href="{{ action.url }}">{{ action.display_name }}</a></li>
+                  {% endfor %}
+                {% endblock %}
               </ul>
-            </li>
-            <li id="right-menu"><a href="#">Audit <span class="glyphicon glyphicon-align-right"></span></a></li>
-          </ul>
-        </div><!--/.nav-collapse -->
-      </div>
+              <!-- sidebar menu end-->
           </div>
-        </div>
+      </aside>
+      <!--sidebar end-->
+      <!--main content start-->
+      <section id="main-content">
 
-      </div>
-    </div>
+          <section class="wrapper">
+            {% block showcase %}{% endblock %}
+              <!--state overview start-->
+              
+      <!--main content end-->
+  </section>
 
-    <!-- Carousel
-    ================================================== -->
-  <div class="paper">
-    <div id="myCarousel" class="carousel slide" data-ride="carousel">
-      <!-- Indicators -->
-      <div class="carousel-inner">
-        
-        <div class="item active">
-          <img src="http://lorempixel.com/1000/400" alt="First slide">
-          <div class="container">
-            
-          </div>
-        </div>
-      </div>
-    </div><!-- /.carousel -->
-
-
-    <div class="container theme-showcase">
-      {% block showcase %}{% endblock %}
-    </div> <!-- /container -->
-  </div>
-      <!-- /END THE FEATURETTES -->
-
-
-      <!-- FOOTER -->
-      <footer>
-        <p class="pull-right"><a href="#">Back to top</a></p>
-        <p>&copy; 2013 Company, Inc. &middot; <a href="#">Privacy</a> &middot; <a href="#">Terms</a></p>
-      </footer>
-
-    </div><!-- /.container -->
- 
-<div id="sidr-left">
-  {% block left_menu %}
-      <ul>
-      {% for action in available_actions %}
-        <li><a href="{{ action.url }}">{{ action.display_name }}</a></li>
-      {% endfor %}
-    </ul>
-  {% endblock %}
-</div>
-
-<div id="sidr-right">
-  <!-- Your content -->
-  {% block right_menu %}{% endblock %}
-</div>
- 
-
-
-    <!-- Bootstrap core JavaScript
-    ================================================== -->
-    <!-- Placed at the end of the document so the pages load faster -->
-    <script src="https://code.jquery.com/jquery-1.10.2.min.js"></script>
+    <!-- js placed at the end of the document so the pages load faster -->
+    <script src="{{ STATIC_URL }}js/jquery.js"></script>
+    <script src="{{ STATIC_URL }}js/jquery-1.8.3.min.js"></script>
     <script src="{{ STATIC_URL }}js/bootstrap.min.js"></script>
-    <script src="{{ STATIC_URL }}js/holder.js"></script>
-    <script src="{{ STATIC_URL }}js/oridomi.js"></script>
-    <script src="{{ STATIC_URL }}js/jquery.sidr.min.js"></script>/
+    <script src="{{ STATIC_URL }}js/jquery.scrollTo.min.js"></script>
+    <script src="{{ STATIC_URL }}js/jquery.nicescroll.js" type="text/javascript"></script>
+    <script src="{{ STATIC_URL }}js/jquery.sparkline.js" type="text/javascript"></script>
+    <script src="{{ STATIC_URL }}assets/jquery-easy-pie-chart/jquery.easy-pie-chart.js"></script>
+    <script src="{{ STATIC_URL }}js/owl.carousel.js" ></script>
+    <script src="{{ STATIC_URL }}js/jquery.customSelect.min.js" ></script>
 
+    <!--common script for all pages-->
+    <script src="{{ STATIC_URL }}js/common-scripts.js"></script>
 
-<script>
-$(document).ready(function() {
-    var fold = false;
-    var displace = true;
-    var $folded = $('.paper').oriDomi({
-      touchEnabled: false,
-      vPanels: 7
-    });
-    var is_folded = false;
-    $folded.oriDomi('accordion', 0);
-    // when using jQuery, iterate OriDomi methods over multiple elements like this:
-    
-    // to access the OriDomi instance at the top of the jQuery selection directly:
-    //var folded = $folded.oriDomi(true);
+    <!--script for this page-->
+    <script src="{{ STATIC_URL }}js/sparkline-chart.js"></script>
+    <script src="{{ STATIC_URL }}js/easy-pie-chart.js"></script>
 
-    $('#left-menu').sidr({
-      name: 'sidr-left',
-      side: 'left', // By default
-      displace: displace,
-      onOpen: function(){
-        if(fold){
-          $folded.oriDomi('accordion', 20, 'right');
-        }
+  <script>
 
-      },
-      onClose: function(){
-        if(fold){
-          $folded.oriDomi('accordion', 0);
-        }
+      //owl carousel
 
-      }
-    });
+      $(document).ready(function() {
+          $("#owl-demo").owlCarousel({
+              navigation : true,
+              slideSpeed : 300,
+              paginationSpeed : 400,
+              singleItem : true
 
-    $('#right-menu').sidr({
-      name: 'sidr-right',
-      side: 'right',
-      displace: displace,
-      onOpen: function(){
-        if(fold){
-          $folded.oriDomi('accordion', 40, 'left');
-        }
-      },
-      onClose: function(){
-        if(fold){
-          $folded.oriDomi('accordion', 0);
-        }
-      }
-    });
-});
-</script>
+          });
+      });
+
+      //custom select box
+
+      $(function(){
+          $('select.styled').customSelect();
+      });
+
+  </script>
+
   </body>
 </html>
-
-
-
