@@ -5,6 +5,46 @@ from django.contrib.auth.models import User
 from django.db.models import Sum
 from django.core.urlresolvers import reverse
 
+class Action(object):
+    '''
+    Object to hold and serialize the in-memory relationship between urls and objects and users.
+    '''
+    url = "Unspecified"
+    display_name = "Unspecified"
+
+    def __init__(self, target):
+        self.target = target
+
+    def get_url(self):
+        return self.url
+
+    def get_display_name(self):
+        return self.display_name
+
+    def is_available(self, person):
+        "takes a user and always returns True or False"
+        return True
+
+    def get_serialized(self):
+        return {
+            "url":self.get_url(),
+            "display_name":self.get_display_name()
+        }
+
+class Actionable(object):
+    '''
+    Mixin intended to operate with Action, most likely in a django Model.
+    '''
+    def get_actions(self):
+        return []
+
+    def get_available_actions(self, user):
+        output = []
+        for a in self.get_actions():
+            if a.is_available(person=self):
+                output.append(a.get_serialized())
+        return output
+
 MEDIUM_CHOICES = (
     ('TXT', 'Text'),
     ('VID', 'Video'),
@@ -41,7 +81,19 @@ class Person(models.Model):
     def __unicode__(self):
         return self.user.email
 
-class Project(models.Model):
+class ProjectPledgeAction(Action):
+    display_name = "Pledge"
+    def is_available(self, person):
+        if self.target.members.filter(id=person.id).count() > 0:
+            return True
+        else:
+            return False
+
+    def get_url(self):
+        return reverse(viewname='pledge_create', args=[self.target.id], current_app='core')
+
+
+class Project(models.Model, Actionable):
     title = models.CharField(max_length=300)
     brief = models.TextField(default='')
     members = models.ManyToManyField(Person)
@@ -55,9 +107,6 @@ class Project(models.Model):
 
     def get_absolute_url(self):
         return reverse(viewname='project', args=[self.id], current_app='core')
-
-    def get_create_pledge_url(self):
-        return reverse(viewname='pledge_create', args=[self.id], current_app='core')
 
     def get_pledges(self):
         return Pledge.objects.filter(project=self)
@@ -75,6 +124,12 @@ class Project(models.Model):
 
     def get_members(self):
         return self.members.all()
+
+    def get_actions(self):
+        actions = [
+            ProjectPledgeAction(self)
+        ]
+        return actions
 
 class Post(models.Model):
     title = models.CharField(max_length=60)

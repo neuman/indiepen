@@ -26,6 +26,14 @@
     </div><!--/row-->
 {% endblock %}
 
+{% block left_menu %}
+  <ul>
+  	{% for action in available_actions %}
+    	<li><a href="{{ action.url }}">{{ action.display_name }}</a></li>
+    {% endfor %}
+  </ul>
+{% endblock %}
+
 {% block right_menu %}
 	<h1>Project Team</h1>
 	<div class="row">
