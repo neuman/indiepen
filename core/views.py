@@ -100,8 +100,6 @@ class PledgeCreate(CreateView):
 
 
     def get_form(self, form_class):
-        # Initialize the form with initial values and the subscriber object
-        # to be used in EmailPreferenceForm for populating fields
         return cf.PledgeForm(self.request.POST or None, self.request.FILES or None, initial=self.get_initial())
 
     def form_valid(self, form):
@@ -117,7 +115,14 @@ class ProjectCreate(CreateView):
     success_url = '/'
 
     def get_form(self, form_class):
-        # Initialize the form with initial values and the subscriber object
-        # to be used in EmailPreferenceForm for populating fields
         return cf.ProjectForm(self.request.POST or None, self.request.FILES or None, initial=self.get_initial())
+
+class MediaCreate(CreateView):
+    model = cm.Media
+    template_name = 'form.html'
+    fields = '__all__'
+    success_url = '/'
+
+    def get_form(self, form_class):
+        return cf.MediaForm(self.request.POST or None, self.request.FILES or None, initial=self.get_initial())
 

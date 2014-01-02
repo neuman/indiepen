@@ -21,3 +21,8 @@ class PledgeForm(BootstrapForm):
         model = cm.Pledge
         fields = ['ammount']
 
+class MediaForm(BootstrapForm):
+    class Meta:
+        model = cm.Media
+        fields = '__all__'
+

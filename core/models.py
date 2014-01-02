@@ -43,6 +43,11 @@ class Person(models.Model):
     def __unicode__(self):
         return self.user.email
 
+class ProjectCreateAction(Action):
+    display_name = "Start New Project"
+
+    def get_url(self):
+        return reverse(viewname='project_create', current_app='core')
 
 class ProjectPledgeAction(Action):
     display_name = "Pledge"
@@ -55,11 +60,16 @@ class ProjectPledgeAction(Action):
     def get_url(self):
         return reverse(viewname='pledge_create', args=[self.instance.id], current_app='core')
 
-class ProjectCreateAction(Action):
-    display_name = "Start New Project"
+class ProjectUploadAction(Action):
+    display_name = "Pledge"
+    def is_available(self, person):
+        if self.instance.members.filter(id=person.id).count() > 0:
+            return True
+        else:
+            return False
 
     def get_url(self):
-        return reverse(viewname='project_create', current_app='core')
+        return reverse(viewname='pledge_create', args=[self.instance.id], current_app='core')
 
 class Project(models.Model, Actionable):
     title = models.CharField(max_length=300)
@@ -99,20 +109,22 @@ class Project(models.Model, Actionable):
         ]
         return actions
 
-class Post(models.Model):
-    title = models.CharField(max_length=60)
-    members = models.ManyToManyField(Person, through='Membership')
-
-class Membership(models.Model):
-    person = models.ForeignKey(Person)
-    post = models.ForeignKey(Post)
-    role = models.CharField(max_length=100)
 
 class Media(models.Model):
     original_file = models.FileField(upload_to='/')
     internal_file = models.FileField(upload_to='/', null=True, blank=True)
     medium = models.CharField(max_length=3, choices=MEDIUM_CHOICES, default='TXT', null=True, blank=True)
 
+class Post(models.Model):
+    project = models.ForeignKey(Project)
+    title = models.CharField(max_length=60)
+    members = models.ManyToManyField(Person, through='Membership')
+    media = models.ManyToManyField(Media)
+
+class Membership(models.Model):
+    person = models.ForeignKey(Person)
+    post = models.ForeignKey(Post)
+    role = models.CharField(max_length=100)
 
 class Service(models.Model):
     title = models.CharField(max_length=300)
@@ -133,6 +145,6 @@ class Contribution(models.Model):
     ammount = MoneyField(max_digits=10, decimal_places=2, default_currency='USD')
 
 class Payout(models.Model):
-    person = models.ForeignKey(Person)
-    project = models.ForeignKey(Project)
+    person = models.ForeignKey(Person, null=True, blank=True)
+    project = models.ForeignKey(Project, null=True, blank=True)
     ammount = MoneyField(max_digits=10, decimal_places=2, default_currency='USD')
