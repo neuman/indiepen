@@ -133,3 +133,50 @@ class MediaCreate(CreateView):
         p.media.add(form.instance)
         return super(PledgeCreate, self).form_valid(form)
 
+
+#Post STARTS
+class PostCreateView(CreateView):
+    model = cm.Post
+    template_name = 'form.html'
+    fields = '__all__'
+    success_url = '/'
+
+    def get_form(self, form_class):
+        return cf.PostForm(self.request.POST or None, self.request.FILES or None, initial=self.get_initial())
+
+    def form_valid(self, form):
+        form.instance.created_by = self.request.user
+        form.instance.person = cm.Person.objects.get(user=self.request.user)
+        form.instance.project = cm.Project.objects.get(id=self.kwargs['instance_id'])
+        return super(PostCreateView, self).form_valid(form)
+
+class PostDetailView(TemplateView):
+    template_name = 'post.html'
+
+    def get_context_data(self, **kwargs):
+        person = cm.Person.objects.get(user=self.request.user)
+        # Call the base implementation first to get a context
+        context = super(PostDetailView, self).get_context_data(**kwargs)
+        project = cm.Post.objects.get(id=self.kwargs['instance_id'])
+        context['project'] = project
+        context['available_actions'] = project.get_available_actions(person)
+        context['total_pledged'] = project.get_total_pledged()
+        return context
+
+class PostListView(TemplateView, Actionable):
+    template_name = 'list.html'
+
+    def get_actions(self):
+        return [
+            cm.ProjectCreateAction()
+            ]
+
+    def get_context_data(self, **kwargs):
+        person = cm.Person.objects.get(user=self.request.user)
+        context = super(PostListView, self).get_context_data(**kwargs)
+        context['projects'] = cm.Project.objects.all()
+        context['available_actions'] = self.get_available_actions(person)
+        return context
+
+#Post ENDS
+

@@ -7,12 +7,15 @@ from api import v1_api
 urlpatterns = patterns('',
     url(r'^$', cv.IndexView.as_view(), name='index'),
     url(r'bootstrap/$', cv.BootstrapView.as_view(), name='bootstrap'),
-    url(r'projects/$', cv.ProjectsView.as_view(), name='projects'),
-    url(r'projects/(?P<instance_id>\d+)/$', cv.ProjectView.as_view(), name='project'),
+
+    url(r'projects/$', cv.ProjectsView.as_view(), name='project_list'),
+    url(r'projects/(?P<instance_id>\d+)/$', cv.ProjectView.as_view(), name='project_detail'),
     url(r'projects/(?P<instance_id>\d+)/form/$', cv.PledgeFormView.as_view(), name='project_form'),
     url(r'projects/(?P<instance_id>\d+)/pledge/$', cv.PledgeCreate.as_view(), name='pledge_create'),
     url(r'projects/(?P<instance_id>\d+)/upload/$', cv.MediaCreate.as_view(), name='media_create'),
-    url(r'projects/create/$', cv.ProjectCreate.as_view(), name='project_create'),   
+    url(r'projects/(?P<instance_id>\d+)/post/$', cv.PostCreateView.as_view(), name='post_create'),
+    url(r'projects/(?P<instance_id>\d+)/posts/$', cv.PostListView.as_view(), name='post_list'),
+
     url(r'^(?P<pk>\d+)/$',cv.DetailView.as_view(), name="detail"),
     url(r'^api/', include(v1_api.urls)),
     url(r'^remoteform/$', my_ajax_view, name='remoteform'),

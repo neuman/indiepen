@@ -30,6 +30,11 @@ DURATION_CHOICES = (
     ('6', '6 Months'),
 )
 
+class Historical(models.Model):
+    created_at = models.DateTimeField(auto_now=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    updated_by = models.ForeignKey(Person)
+
 class Badge(models.Model):
     title = models.CharField(max_length=300)
 
@@ -65,6 +70,14 @@ class ProjectUploadAction(Action):
     def get_url(self):
         return reverse(viewname='media_create', args=[self.instance.id], current_app='core')
 
+class ProjectPostAction(Action):
+    display_name = "Post"
+    def is_available(self, person):
+        return self.instance.members.filter(id=person.id).count() > 0
+
+    def get_url(self):
+        return reverse(viewname='post_create', args=[self.instance.id], current_app='core')
+
 class ProjectAction(Action):
     display_name = "Upload Media"
     def is_available(self, person):
@@ -86,7 +99,7 @@ class Project(models.Model, Actionable):
         return self.title
 
     def get_absolute_url(self):
-        return reverse(viewname='project', args=[self.id], current_app='core')
+        return reverse(viewname='project_detail', args=[self.id], current_app='core')
 
     def get_pledges(self):
         return Pledge.objects.filter(project=self)
@@ -108,7 +121,8 @@ class Project(models.Model, Actionable):
     def get_actions(self):
         actions = [
             ProjectPledgeAction(instance=self),
-            ProjectUploadAction(instance=self)
+            ProjectUploadAction(instance=self),
+            ProjectPostAction(instance=self)
         ]
         return actions
 
@@ -122,11 +136,12 @@ class Media(models.Model):
     medium = models.CharField(max_length=3, choices=MEDIUM_CHOICES, default='TXT', null=True, blank=True)
     brief = models.TextField(default='')
     tags = TaggableManager()
+    uploader = models.ManyToManyField(Person)
 
 class Post(models.Model):
     project = models.ForeignKey(Project)
     title = models.CharField(max_length=60)
-    members = models.ManyToManyField(Person, through='Membership')
+    #members = models.ManyToManyField(Person)
     media = models.ManyToManyField(Media, null=True, blank=True)
 
 class Membership(models.Model):

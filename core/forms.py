@@ -16,6 +16,11 @@ class ProjectForm(BootstrapForm):
         model = cm.Project
         fields = '__all__'
 
+class PostForm(BootstrapForm):
+    class Meta:
+        model = cm.Post
+        fields = '__all__'
+
 class PledgeForm(BootstrapForm):
     class Meta:
         model = cm.Pledge
