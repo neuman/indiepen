@@ -5,6 +5,7 @@ from django.contrib.auth.models import User
 from django.db.models import Sum
 from django.core.urlresolvers import reverse
 from actions.models import Action, Actionable
+from simple_history.models import HistoricalRecords
 
 
 MEDIUM_CHOICES = (
@@ -30,18 +31,54 @@ DURATION_CHOICES = (
     ('6', '6 Months'),
 )
 
-class Historical(models.Model):
-    created_at = models.DateTimeField(auto_now=True)
+class Auditable(models.Model):
+    created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-    updated_by = models.ForeignKey(Person)
+    changed_by = models.ForeignKey('Person', null=True, blank=True, related_name="%(app_label)s_%(class)s_related")
 
-class Badge(models.Model):
+    '''
+    @property
+    def _history_user(self):
+        return self.changed_by
+
+    @_history_user.setter
+    def _history_user_setter(self, value):
+        self.changed_by = value
+    '''
+
+    class Meta:
+        abstract = True
+
+MEDIUM_CHOICES = (
+    ('TXT', 'Text'),
+    ('VID', 'Video'),
+    ('AUD', 'Audio'),
+    ('IMA', 'Image'),
+    ('MUL', 'Multimedia'),
+)
+
+FREQUENCY_CHOICES = (
+    ('DAI', 'Daily'),
+    ('WEE', 'Weekly'),
+    ('MON', 'Monthly'),
+)
+
+DURATION_CHOICES = (
+    ('1', '1 Month'),
+    ('2', '2 Months'),
+    ('3', '3 Months'),
+    ('4', '4 Months'),
+    ('5', '5 Months'),
+    ('6', '6 Months'),
+)
+
+class Badge(Auditable):
     title = models.CharField(max_length=300)
 
     def __unicode__(self):
         return self.title
 
-class Person(models.Model):
+class Person(Auditable):
     user = models.OneToOneField(User)
     badges = models.ManyToManyField(Badge, null=True, blank=True)
 
@@ -86,7 +123,7 @@ class ProjectAction(Action):
     def get_url(self):
         return reverse(viewname='media_create', args=[self.instance.id], current_app='core')
 
-class Project(models.Model, Actionable):
+class Project(Auditable, Actionable):
     title = models.CharField(max_length=300)
     brief = models.TextField(default='')
     members = models.ManyToManyField(Person)
@@ -130,44 +167,44 @@ class Project(models.Model, Actionable):
 from taggit.managers import TaggableManager
 
 
-class Media(models.Model):
+class Media(Auditable):
     original_file = models.FileField(upload_to='/')
     internal_file = models.FileField(upload_to='/', null=True, blank=True)
     medium = models.CharField(max_length=3, choices=MEDIUM_CHOICES, default='TXT', null=True, blank=True)
     brief = models.TextField(default='')
     tags = TaggableManager()
-    uploader = models.ManyToManyField(Person)
 
-class Post(models.Model):
+class Post(Auditable):
     project = models.ForeignKey(Project)
     title = models.CharField(max_length=60)
     #members = models.ManyToManyField(Person)
     media = models.ManyToManyField(Media, null=True, blank=True)
+    history = HistoricalRecords()
 
-class Membership(models.Model):
+class Membership(Auditable):
     person = models.ForeignKey(Person)
     post = models.ForeignKey(Post)
     role = models.CharField(max_length=100)
 
-class Service(models.Model):
+class Service(Auditable):
     title = models.CharField(max_length=300)
     cost_per_hour = MoneyField(max_digits=10, decimal_places=2, default_currency='USD')
     prividing_Person = models.ManyToManyField(Person)
 
 
-class Pledge(models.Model):
+class Pledge(Auditable):
     person = models.ForeignKey(Person)
     project = models.ForeignKey(Project)
     ammount = MoneyField(max_digits=10, decimal_places=2, default_currency='USD')
     token = models.CharField(max_length=300)
 
-class Contribution(models.Model):
+class Contribution(Auditable):
     person = models.ManyToManyField(Person)
     pledge = models.ManyToManyField(Pledge)
     project = models.ManyToManyField(Project)
     ammount = MoneyField(max_digits=10, decimal_places=2, default_currency='USD')
 
-class Payout(models.Model):
+class Payout(Auditable):
     person = models.ForeignKey(Person, null=True, blank=True)
     project = models.ForeignKey(Project, null=True, blank=True)
     ammount = MoneyField(max_digits=10, decimal_places=2, default_currency='USD')

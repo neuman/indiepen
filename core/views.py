@@ -47,13 +47,13 @@ class DetailView(TemplateView):
 class BootstrapView(TemplateView):
     template_name = 'bootstrap.html'
 
-class ProjectView(TemplateView):
+class ProjectDetailView(TemplateView):
     template_name = 'project.html'
 
     def get_context_data(self, **kwargs):
         person = cm.Person.objects.get(user=self.request.user)
         # Call the base implementation first to get a context
-        context = super(ProjectView, self).get_context_data(**kwargs)
+        context = super(ProjectDetailView, self).get_context_data(**kwargs)
         project = cm.Project.objects.get(id=self.kwargs['instance_id'])
         context['project'] = project
         context['available_actions'] = project.get_available_actions(person)
@@ -61,7 +61,7 @@ class ProjectView(TemplateView):
         return context
 
 
-class ProjectsView(TemplateView, Actionable):
+class ProjectListView(TemplateView, Actionable):
     template_name = 'list.html'
 
     def get_actions(self):
@@ -71,7 +71,7 @@ class ProjectsView(TemplateView, Actionable):
 
     def get_context_data(self, **kwargs):
         person = cm.Person.objects.get(user=self.request.user)
-        context = super(ProjectsView, self).get_context_data(**kwargs)
+        context = super(ProjectListView, self).get_context_data(**kwargs)
         context['projects'] = cm.Project.objects.all()
         context['available_actions'] = self.get_available_actions(person)
         return context
@@ -92,7 +92,7 @@ class PledgeFormView(FormView):
 
 from django.views.generic.edit import CreateView
 
-class PledgeCreate(CreateView):
+class PledgeCreateView(CreateView):
     model = cm.Pledge
     template_name = 'form.html'
     fields = ['ammount']
@@ -108,7 +108,7 @@ class PledgeCreate(CreateView):
         form.instance.project = cm.Project.objects.get(id=self.kwargs['instance_id'])
         return super(PledgeCreate, self).form_valid(form)
 
-class ProjectCreate(CreateView):
+class ProjectCreateView(CreateView):
     model = cm.Project
     template_name = 'form.html'
     fields = '__all__'
@@ -117,7 +117,7 @@ class ProjectCreate(CreateView):
     def get_form(self, form_class):
         return cf.ProjectForm(self.request.POST or None, self.request.FILES or None, initial=self.get_initial())
 
-class MediaCreate(CreateView):
+class MediaCreateView(CreateView):
     model = cm.Media
     template_name = 'form.html'
     fields = '__all__'
