@@ -52,24 +52,26 @@ class ProjectCreateAction(Action):
 class ProjectPledgeAction(Action):
     display_name = "Pledge"
     def is_available(self, person):
-        if self.instance.members.filter(id=person.id).count() > 0:
-            return True
-        else:
-            return False
-
+        return self.instance.members.filter(id=person.id).count() > 0
+        
     def get_url(self):
         return reverse(viewname='pledge_create', args=[self.instance.id], current_app='core')
 
 class ProjectUploadAction(Action):
-    display_name = "Pledge"
+    display_name = "Upload Media"
     def is_available(self, person):
-        if self.instance.members.filter(id=person.id).count() > 0:
-            return True
-        else:
-            return False
+        return self.instance.members.filter(id=person.id).count()
 
     def get_url(self):
-        return reverse(viewname='pledge_create', args=[self.instance.id], current_app='core')
+        return reverse(viewname='media_create', args=[self.instance.id], current_app='core')
+
+class ProjectAction(Action):
+    display_name = "Upload Media"
+    def is_available(self, person):
+        return self.instance.members.filter(id=person.id).count()
+
+    def get_url(self):
+        return reverse(viewname='media_create', args=[self.instance.id], current_app='core')
 
 class Project(models.Model, Actionable):
     title = models.CharField(max_length=300)
@@ -105,7 +107,8 @@ class Project(models.Model, Actionable):
 
     def get_actions(self):
         actions = [
-            ProjectPledgeAction(instance=self)
+            ProjectPledgeAction(instance=self),
+            ProjectUploadAction(instance=self)
         ]
         return actions
 

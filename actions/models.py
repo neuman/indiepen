@@ -36,6 +36,6 @@ class Actionable(object):
     def get_available_actions(self, user):
         output = []
         for a in self.get_actions():
-            if a.is_available(person=user):
+            if a.is_available(user):
                 output.append(a.get_serialized())
         return output
