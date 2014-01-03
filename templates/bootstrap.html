@@ -315,7 +315,28 @@
       <section id="main-content">
 
           <section class="wrapper">
-            {% block showcase %}{% endblock %}
+            <section class="panel">
+                          <header class="panel-heading tab-bg-dark-navy-blue ">
+                              <ul class="nav nav-tabs">
+                                  <li class="active">
+                                      <a data-toggle="tab" href="#home">Content</a>
+                                  </li>
+                                  <li class="">
+                                      <a data-toggle="tab" href="#audit">About</a>
+                                  </li>
+                          </header>
+                          <div class="panel-body">
+                              <div class="tab-content">
+                                  <div id="home" class="tab-pane active">
+                                      {% block showcase %}{% endblock %}
+                                  </div>
+                                  <div id="audit" class="tab-pane">
+                                    {% block audit %}{% endblock %}
+                                  </div>
+                              </div>
+                          </div>
+                      </section>
+            
               <!--state overview start-->
               
       <!--main content end-->

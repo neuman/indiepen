@@ -40,6 +40,7 @@ INSTALLED_APPS = (
     'core',
     'json_field',
     'tastypie',
+    'taggit',
 )
 
 MIDDLEWARE_CLASSES = (

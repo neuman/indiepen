@@ -53,7 +53,7 @@ class ProjectPledgeAction(Action):
     display_name = "Pledge"
     def is_available(self, person):
         return self.instance.members.filter(id=person.id).count() > 0
-        
+
     def get_url(self):
         return reverse(viewname='pledge_create', args=[self.instance.id], current_app='core')
 
@@ -113,16 +113,21 @@ class Project(models.Model, Actionable):
         return actions
 
 
+from taggit.managers import TaggableManager
+
+
 class Media(models.Model):
     original_file = models.FileField(upload_to='/')
     internal_file = models.FileField(upload_to='/', null=True, blank=True)
     medium = models.CharField(max_length=3, choices=MEDIUM_CHOICES, default='TXT', null=True, blank=True)
+    brief = models.TextField(default='')
+    tags = TaggableManager()
 
 class Post(models.Model):
     project = models.ForeignKey(Project)
     title = models.CharField(max_length=60)
     members = models.ManyToManyField(Person, through='Membership')
-    media = models.ManyToManyField(Media)
+    media = models.ManyToManyField(Media, null=True, blank=True)
 
 class Membership(models.Model):
     person = models.ForeignKey(Person)

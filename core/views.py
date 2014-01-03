@@ -126,3 +126,10 @@ class MediaCreate(CreateView):
     def get_form(self, form_class):
         return cf.MediaForm(self.request.POST or None, self.request.FILES or None, initial=self.get_initial())
 
+    def form_valid(self, form):
+        form.instance.created_by = self.request.user
+        form.instance.person = cm.Person.objects.get(user=self.request.user)
+        p = cm.Project.objects.get(id=self.kwargs['instance_id'])
+        p.media.add(form.instance)
+        return super(PledgeCreate, self).form_valid(form)
+
