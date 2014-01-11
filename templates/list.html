@@ -3,14 +3,15 @@
 {% block title %}Indiepen{% endblock %}
 
 {{{% block showcase %}
+
 	<div class="row">
 	{% for project in projects %}
             <div class="col-6 col-sm-6 col-lg-4">
-              <img class="img-thumbnail" src='http://lorempixel.com/600/600'></img>
+              {% if project.get_thumb_url %}<img class="img-thumbnail" src='{{ project.get_thumb_url }}'></img>{% endif %}
               <h2>{{ project.title }}</h2>
               <p>{{ project.brief|truncatechars:300}}</p>
               <p><a class="btn btn-default" href="{{ project.get_absolute_url }}" role="button">View details &raquo;</a></p>
-            </div><!--/span-->
+            </div>
     {% endfor %}
     </div><!--/row-->
 {% endblock %}

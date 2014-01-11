@@ -3,6 +3,7 @@ import core.models as cm
 
 
 class BootstrapForm(forms.ModelForm):
+    exclude = ['changed_by']
     def __init__(self, *args, **kwargs):
         super(BootstrapForm, self).__init__(*args, **kwargs)
         for name, field in self.fields.items():
@@ -14,12 +15,12 @@ class BootstrapForm(forms.ModelForm):
 class ProjectForm(BootstrapForm):
     class Meta:
         model = cm.Project
-        fields = '__all__'
+        exclude = ['changed_by', 'members']
 
 class PostForm(BootstrapForm):
     class Meta:
         model = cm.Post
-        fields = '__all__'
+        exclude = ['changed_by', 'project', 'media']
 
 class PledgeForm(BootstrapForm):
     class Meta:
@@ -30,4 +31,9 @@ class MediaForm(BootstrapForm):
     class Meta:
         model = cm.Media
         fields = '__all__'
+
+class MediaCreateForm(BootstrapForm):
+    class Meta:
+        model = cm.Media
+        fields = ['original_file']
 

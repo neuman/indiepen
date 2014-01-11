@@ -1,0 +1,115 @@
+{% extends "bootstrap.html" %}
+{% load markdown_deux_tags %}
+
+{% block title %}Indiepen{% endblock %}
+
+{% block showcase %}
+
+<div class="row">
+  <div class="col-lg-8">
+      <div class="row">
+          <div class="col-md-6">
+              <section class="panel">
+                  
+	{% for media in post.media.all %}
+	{% if media.medium == "IMA" %}
+	<img class="img-thumbnail" src='{{media.get_file_url }}'></img>
+	<p><span>{{ media.get_file_name }}</span> | {{ media.brief }}</p>
+	{% endif %}
+	{% endfor %}
+
+
+              </section>
+          </div>
+          <div class="col-md-6">
+              <section class="panel">
+
+	{% for media in post.media.all %}
+	{% if media.medium == "TXT" %}
+	<h2>{{ media.get_file_name }}</h2>
+	{{ media.get_content|markdown }}
+	<div class="panel-body bio-graph-info">
+	<h1>Bio Graph</h1>
+	<div class="row">
+	<p>{{ media.brief }}</p>
+	</div>
+	</div>
+	{% endif %}
+	{% endfor %}
+
+              </section>
+          </div>
+      </div>
+  </div>
+  <div class="col-lg-4">
+      <section class="panel">
+          <div class="panel-body">col-lg-4</div>
+      </section>
+  </div>
+</div>
+{% endblock %}
+
+{% block audit %}
+<div class="col-lg-6">
+  <section class="panel">
+      <header class="panel-heading">
+          Pledges
+      </header>
+      <div class="panel-body">
+          <div class="timeline-messages">
+				{% for pledge in project.get_pledges %}
+              <!-- Comment -->
+              <div class="msg-time-chat">
+                  <a href="#" class="message-img"><img class="avatar" src="http://lorempixel.com/50/50" alt=""></a>
+                  <div class="message-body msg-out">
+                      <span class="arrow"></span>
+                      <div class="text">
+                          <p class="attribution"><a href="#">{{ pledge.person.user.first_name }} {{ pledge.person.user.last_name }}</a> at 2:05pm, 13th April 2013</p>
+                          <p>{{ pledge.ammount }}</p>
+                      </div>
+                  </div>
+              </div>
+              <!-- /comment -->
+              {% endfor %}
+          </div>
+          
+      </div>
+  </section>
+</div>
+<div class="col-lg-6">
+  <section class="panel">
+      <header class="panel-heading">
+          Team
+      </header>
+      <div class="panel-body">
+		{% for person in project.get_members %}
+		<div class="row">
+		          <section class="panel">
+		              <div class="user-heading round">
+		                  <a href="#">
+		                      <img src="http://lorempixel.com/100/100" alt="">
+		                  </a>
+		                  <h1>{{ person.user.first_name }} {{ person.user.last_name }}</h1>
+		                  <p>jsmith@flatlab.com</p>
+		              </div>
+
+		              <ul class="nav nav-pills nav-stacked">
+		                  <li class="active"><a href="profile.html"> <i class="icon-user"></i> Profile</a></li>
+		                  <li><a href="profile-activity.html"> <i class="icon-calendar"></i> Recent Activity <span class="label label-danger pull-right r-activity">9</span></a></li>
+		                  <li><a href="profile-edit.html"> <i class="icon-edit"></i> Edit profile</a></li>
+		              </ul>
+
+		          </section>
+		          </div>
+        {% endfor %}
+          
+      </div>
+  </section>
+</div>
+
+	
+
+
+
+
+{% endblock %}

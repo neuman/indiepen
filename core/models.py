@@ -31,6 +31,14 @@ DURATION_CHOICES = (
     ('6', '6 Months'),
 )
 
+EXTENSIONS = {
+    "TXT":['txt','md'],
+    "VID":['avi', 'm4v', 'mov', 'mp4', 'mpeg', 'mpg', 'vob', 'wmv'],
+    "AUD":['aac', 'aiff', 'm4a', 'mp3', 'wav', 'wma'],
+    "IMA":['gif', 'jpeg', 'jpg', 'png'],
+    "MUL":['csv','json'],
+}
+
 class Auditable(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -155,6 +163,9 @@ class Project(Auditable, Actionable):
     def get_members(self):
         return self.members.all()
 
+    def get_posts(self):
+        return Post.objects.filter(project=self)
+
     def get_actions(self):
         actions = [
             ProjectPledgeAction(instance=self),
@@ -163,6 +174,13 @@ class Project(Auditable, Actionable):
         ]
         return actions
 
+    def get_thumb_url(self):
+        q = Post.objects.filter(project=self)
+        if q.count() > 0:
+            return q[0].get_thumb_url()
+        else:
+            return None
+
 
 from taggit.managers import TaggableManager
 
@@ -170,16 +188,75 @@ from taggit.managers import TaggableManager
 class Media(Auditable):
     original_file = models.FileField(upload_to='/')
     internal_file = models.FileField(upload_to='/', null=True, blank=True)
-    medium = models.CharField(max_length=3, choices=MEDIUM_CHOICES, default='TXT', null=True, blank=True)
+    medium = models.CharField(max_length=3, choices=MEDIUM_CHOICES, null=True, blank=True)
     brief = models.TextField(default='')
     tags = TaggableManager()
 
-class Post(Auditable):
+    def __unicode__(self):
+        return self.get_file_name()
+
+    def get_file_url(self):
+        return self.original_file.url
+
+    def get_content(self):
+        return self.original_file._get_file().read()
+
+    def get_file_name(self):
+                return self.original_file.name
+
+    def is_file_nonzero(self):
+        if self.file.size > 0:
+                    return True
+        return False
+
+class PostCreateMediaAction(Action):
+    display_name = "Upload Post Files"
+
+    def is_available(self, person):
+        return self.instance.project.members.filter(id=person.id).count()
+
+    def get_url(self):
+        return reverse(viewname='post_media_create', args=[self.instance.id], current_app='core')
+
+class PostDetailAction(Action):
+    display_name = "View Post"
+
+    def get_url(self):
+        return reverse(viewname='post_detail', args=[self.instance.id], current_app='core')
+
+class Post(Auditable, Actionable):
     project = models.ForeignKey(Project)
     title = models.CharField(max_length=60)
     #members = models.ManyToManyField(Person)
     media = models.ManyToManyField(Media, null=True, blank=True)
     history = HistoricalRecords()
+
+    def get_absolute_url(self):
+        return reverse(viewname='post_detail', args=[self.id], current_app='core')
+
+    def get_actions(self):
+        actions = [
+            PostCreateMediaAction(instance=self)
+        ]
+        return actions
+
+    def get_media(self):
+        return self.media.all()
+
+    def get_thumb(self):
+        q = self.get_media().filter(medium='IMA')
+        if q.count() > 0:
+            return q[0]
+        else:
+            return None
+
+    def get_thumb_url(self):
+        t = self.get_thumb()
+        if t != None:
+            return t.get_file_url()
+        else:
+            return None
+
 
 class Membership(Auditable):
     person = models.ForeignKey(Person)
