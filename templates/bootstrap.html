@@ -21,6 +21,7 @@
     <!-- Custom styles for this template -->
     <link href="{{ STATIC_URL }}css/style.css" rel="stylesheet">
     <link href="{{ STATIC_URL }}css/style-responsive.css" rel="stylesheet" />
+    <link href="{{ STATIC_URL }}css/dropzone.css" rel="stylesheet" />
 
     <!-- HTML5 shim and Respond.js IE8 support of HTML5 tooltipss and media queries -->
     <!--[if lt IE 9]>
@@ -359,6 +360,7 @@
     <!--script for this page-->
     <script src="{{ STATIC_URL }}js/sparkline-chart.js"></script>
     <script src="{{ STATIC_URL }}js/easy-pie-chart.js"></script>
+    <script src="{{ STATIC_URL }}js/dropzone.js"></script>
 
   <script>
 
@@ -372,6 +374,11 @@
               singleItem : true
 
           });
+
+          $(".dropzone").dropzone({ 
+            url: "{{ upload_url }}",
+            paramName: "original_file"
+        });
       });
 
       //custom select box

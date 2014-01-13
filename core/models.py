@@ -216,7 +216,7 @@ class PostCreateMediaAction(Action):
         return self.instance.project.members.filter(id=person.id).count()
 
     def get_url(self):
-        return reverse(viewname='post_media_create', args=[self.instance.id], current_app='core')
+        return reverse(viewname='post_media_uploads', args=[self.instance.id], current_app='core')
 
 class PostDetailAction(Action):
     display_name = "View Post"

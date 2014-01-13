@@ -17,6 +17,7 @@ urlpatterns = patterns('',
     url(r'projects/(?P<instance_id>\d+)/posts/$', cv.PostListView.as_view(), name='post_list'),
     url(r'posts/(?P<instance_id>\d+)/$', cv.PostDetailView.as_view(), name='post_detail'),
     url(r'posts/(?P<instance_id>\d+)/upload/$', cv.PostMediaCreateView.as_view(), name='post_media_create'),
+    url(r'posts/(?P<instance_id>\d+)/uploads/$', cv.PostUploadsView.as_view(), name='post_media_uploads'),
 
     url(r'^(?P<pk>\d+)/$',cv.DetailView.as_view(), name="detail"),
     url(r'^api/', include(v1_api.urls)),

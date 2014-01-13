@@ -12,6 +12,15 @@ class BootstrapForm(forms.ModelForm):
             else:
                 field.widget.attrs.update({'class':'form-control'})
 
+class DropzoneForm(BootstrapForm):
+    def __init__(self, *args, **kwargs):
+        super(DropzoneForm, self).__init__(*args, **kwargs)
+        for name, field in self.fields.items():
+            if field.widget.attrs.has_key('class'):
+                field.widget.attrs['class'] += ' form-control dropzone'
+            else:
+                field.widget.attrs.update({'class':'form-control dropzone'})
+
 class ProjectForm(BootstrapForm):
     class Meta:
         model = cm.Project

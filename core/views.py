@@ -241,5 +241,21 @@ class PostMediaCreateView(CreateView, Actionable):
         context['available_actions'] = self.get_available_actions(person)
         return context
 
+class PostUploadsView(TemplateView, Actionable):
+    template_name = 'uploads.html'
+
+    def get_actions(self):
+        return [
+            cm.PostDetailAction(cm.Post.objects.get(id=self.kwargs['instance_id']))
+            ]
+
+    def get_context_data(self, **kwargs):
+        person = cm.Person.objects.get(user=self.request.user)
+        # Call the base implementation first to get a context
+        context = super(PostUploadsView, self).get_context_data(**kwargs)
+        context['upload_url'] = reverse(viewname='post_media_create', args=(self.kwargs['instance_id'],), current_app='core')
+        context['available_actions'] = self.get_available_actions(person)
+        return context
+
 #Post ENDS
 
