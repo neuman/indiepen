@@ -99,5 +99,4 @@ TEMPLATE_DIRS = (
 )
 
 DEFAULT_FILE_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
-AWS_ACCESS_KEY_ID = 'AKIAJ4OCKUS6CVMDSIHQ'
 from local_settings import *

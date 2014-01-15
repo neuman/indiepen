@@ -43,8 +43,9 @@ class Auditable(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     changed_by = models.ForeignKey('Person', null=True, blank=True, related_name="%(app_label)s_%(class)s_related")
+    history = HistoricalRecords()
 
-    '''
+
     @property
     def _history_user(self):
         return self.changed_by
@@ -52,7 +53,20 @@ class Auditable(models.Model):
     @_history_user.setter
     def _history_user_setter(self, value):
         self.changed_by = value
-    '''
+        
+
+    def get_touch(self):
+        t = Touch()
+        t['title'] = self.__unicode__()
+        t['updated_at'] = self.updated_at
+        t['url'] = self.get_absolute_url()
+        t['action'] = "Updated"
+        return t
+
+    def get_touches(self):
+        touches = []
+        for a in self.history.all():
+            touches.append(a.get_touch())
 
     class Meta:
         abstract = True
@@ -224,12 +238,15 @@ class PostDetailAction(Action):
     def get_url(self):
         return reverse(viewname='post_detail', args=[self.instance.id], current_app='core')
 
-class Post(Auditable, Actionable):
+class Post(Auditable):
     project = models.ForeignKey(Project)
     title = models.CharField(max_length=60)
     #members = models.ManyToManyField(Person)
     media = models.ManyToManyField(Media, null=True, blank=True)
-    history = HistoricalRecords()
+    #history = HistoricalRecords()
+
+    def __unicode__(self):
+        return self.title
 
     def get_absolute_url(self):
         return reverse(viewname='post_detail', args=[self.id], current_app='core')
@@ -268,12 +285,18 @@ class Service(Auditable):
     cost_per_hour = MoneyField(max_digits=10, decimal_places=2, default_currency='USD')
     prividing_Person = models.ManyToManyField(Person)
 
+    def __unicode__(self):
+        return self.title
+
 
 class Pledge(Auditable):
     person = models.ForeignKey(Person)
     project = models.ForeignKey(Project)
     ammount = MoneyField(max_digits=10, decimal_places=2, default_currency='USD')
     token = models.CharField(max_length=300)
+
+    def __unicode__(self):
+        return self.person.__unicode__()+" + "+self.project.__unicode__()
 
 class Contribution(Auditable):
     person = models.ManyToManyField(Person)
@@ -285,3 +308,15 @@ class Payout(Auditable):
     person = models.ForeignKey(Person, null=True, blank=True)
     project = models.ForeignKey(Project, null=True, blank=True)
     ammount = MoneyField(max_digits=10, decimal_places=2, default_currency='USD')
+
+class Touch(dict):
+
+    _keys = ['title','brief','url','updated_at','person','action']
+
+    def __init__(self):
+        for key in self._keys:
+            self[key] = None
+
+    def populateDict(self):
+        self['B'] = 10
+        self['A'] = 12

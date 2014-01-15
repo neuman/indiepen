@@ -47,7 +47,7 @@ class DetailView(TemplateView):
         return base
 
 class BootstrapView(TemplateView):
-    template_name = 'bootstrap.html'
+    template_name = 'grid.html'
 
 class ProjectDetailView(TemplateView):
     template_name = 'project.html'
