@@ -104,7 +104,7 @@ class PledgeCreateView(CreateView):
         return cf.PledgeForm(self.request.POST or None, self.request.FILES or None, initial=self.get_initial())
 
     def form_valid(self, form):
-        form.instance.created_by = self.request.user
+        form.instance.changed_by = self.request.user
         form.instance.person = cm.Person.objects.get(user=self.request.user)
         form.instance.project = cm.Project.objects.get(id=self.kwargs['instance_id'])
         return super(PledgeCreate, self).form_valid(form)
@@ -135,6 +135,7 @@ class MediaCreateView(CreateView):
     def form_valid(self, form):
         form.instance.created_by = self.request.user
         form.instance.person = cm.Person.objects.get(user=self.request.user)
+        form.instance.changed_by = self.request.user
         return super(MediaCreateView, self).form_valid(form)
 
 
@@ -149,9 +150,9 @@ class PostCreateView(CreateView):
         return cf.PostForm(self.request.POST or None, self.request.FILES or None, initial=self.get_initial())
 
     def form_valid(self, form):
-        form.instance.created_by = self.request.user
         form.instance.person = cm.Person.objects.get(user=self.request.user)
         form.instance.project = cm.Project.objects.get(id=self.kwargs['instance_id'])
+        form.instance.changed_by = self.request.user
         self.instance = form.instance
         return super(PostCreateView, self).form_valid(form)
 
@@ -171,6 +172,7 @@ class PostUpdateView(UpdateView):
         form.instance.created_by = self.request.user
         form.instance.person = cm.Person.objects.get(user=self.request.user)
         form.instance.project = cm.Project.objects.get(id=self.kwargs['instance_id'])
+        form.instance.changed_by = self.request.user
         return super(PostCreateView, self).form_valid(form)
 
 class PostDetailView(TemplateView):
@@ -221,6 +223,7 @@ class PostMediaCreateView(CreateView, Actionable):
                         return medium
 
         form.instance.medium = get_medium(get_file_extension(form.instance.original_file.name))
+        form.instance.changed_by = self.request.user
 
         self.new_instance = form.instance
         return super(PostMediaCreateView, self).form_valid(form)
@@ -258,4 +261,3 @@ class PostUploadsView(TemplateView, Actionable):
         return context
 
 #Post ENDS
-

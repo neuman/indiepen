@@ -42,7 +42,7 @@ EXTENSIONS = {
 class Auditable(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-    changed_by = models.ForeignKey('Person', null=True, blank=True, related_name="%(app_label)s_%(class)s_related")
+    changed_by = models.ForeignKey(User, null=True, blank=True, related_name="%(app_label)s_%(class)s_related")
 
 
     @property
@@ -57,11 +57,12 @@ class Auditable(models.Model):
         touches = []
         for a in self.history.all():
             t = Touch()
-            t['title'] = a.__unicode__()
+            t['title'] = self.__unicode__()
             t['updated_at'] = a.updated_at
             #t['url'] = a.get_absolute_url()
             t['action'] = "Updated"
-            return t
+            if a.changed_by_id != None:
+                t['person'] = User.objects.get(id=a.changed_by_id)
             touches.append(t)
 
         return touches
@@ -239,7 +240,7 @@ class PostDetailAction(Action):
     def get_url(self):
         return reverse(viewname='post_detail', args=[self.instance.id], current_app='core')
 
-class Post(Auditable):
+class Post(Auditable, Actionable):
     project = models.ForeignKey(Project)
     title = models.CharField(max_length=60)
     #members = models.ManyToManyField(Person)
@@ -274,6 +275,14 @@ class Post(Auditable):
             return t.get_file_url()
         else:
             return None
+
+    def get_audit(self):
+        touches = self.get_touches()
+        for m in self.media.all():
+            touches+=m.get_touches()
+
+        touches = sorted(touches, key = lambda t: t['updated_at'], reverse=True)
+        return touches
 
 
 class Membership(Auditable):
