@@ -53,26 +53,17 @@ class Auditable(models.Model):
     def _history_user_setter(self, value):
         self.changed_by = value
 
-
-    def get_touch(self):
-        t = Touch()
-        t['title'] = self.__unicode__()
-        t['updated_at'] = self.updated_at
-        t['url'] = self.get_absolute_url()
-        t['action'] = "Updated"
-        return t
-
     def get_touches(self):
         touches = []
         for a in self.history.all():
             t = Touch()
             t['title'] = a.__unicode__()
             t['updated_at'] = a.updated_at
-            t['url'] = a.get_absolute_url()
+            #t['url'] = a.get_absolute_url()
             t['action'] = "Updated"
             return t
             touches.append(t)
-            
+
         return touches
 
     class Meta:
