@@ -43,7 +43,6 @@ class Auditable(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     changed_by = models.ForeignKey('Person', null=True, blank=True, related_name="%(app_label)s_%(class)s_related")
-    history = HistoricalRecords()
 
 
     @property
@@ -53,7 +52,7 @@ class Auditable(models.Model):
     @_history_user.setter
     def _history_user_setter(self, value):
         self.changed_by = value
-        
+
 
     def get_touch(self):
         t = Touch()
@@ -66,7 +65,15 @@ class Auditable(models.Model):
     def get_touches(self):
         touches = []
         for a in self.history.all():
-            touches.append(a.get_touch())
+            t = Touch()
+            t['title'] = a.__unicode__()
+            t['updated_at'] = a.updated_at
+            t['url'] = a.get_absolute_url()
+            t['action'] = "Updated"
+            return t
+            touches.append(t)
+            
+        return touches
 
     class Meta:
         abstract = True
@@ -103,6 +110,7 @@ class Badge(Auditable):
 class Person(Auditable):
     user = models.OneToOneField(User)
     badges = models.ManyToManyField(Badge, null=True, blank=True)
+    history = HistoricalRecords()
 
     def __unicode__(self):
         return self.user.email
@@ -153,6 +161,7 @@ class Project(Auditable, Actionable):
     duration = models.CharField(max_length=3, choices=DURATION_CHOICES, default='1')
     frequency = models.CharField(max_length=3, choices=FREQUENCY_CHOICES, default='WEE')
     ask = MoneyField(max_digits=10, decimal_places=2, default_currency='USD')
+    history = HistoricalRecords()
 
     def __unicode__(self):
         return self.title
@@ -205,6 +214,7 @@ class Media(Auditable):
     medium = models.CharField(max_length=3, choices=MEDIUM_CHOICES, null=True, blank=True)
     brief = models.TextField(default='')
     tags = TaggableManager()
+    history = HistoricalRecords()
 
     def __unicode__(self):
         return self.get_file_name()
@@ -243,7 +253,7 @@ class Post(Auditable):
     title = models.CharField(max_length=60)
     #members = models.ManyToManyField(Person)
     media = models.ManyToManyField(Media, null=True, blank=True)
-    #history = HistoricalRecords()
+    history = HistoricalRecords()
 
     def __unicode__(self):
         return self.title
@@ -280,10 +290,12 @@ class Membership(Auditable):
     post = models.ForeignKey(Post)
     role = models.CharField(max_length=100)
 
+
 class Service(Auditable):
     title = models.CharField(max_length=300)
     cost_per_hour = MoneyField(max_digits=10, decimal_places=2, default_currency='USD')
     prividing_Person = models.ManyToManyField(Person)
+    history = HistoricalRecords()
 
     def __unicode__(self):
         return self.title
@@ -303,11 +315,13 @@ class Contribution(Auditable):
     pledge = models.ManyToManyField(Pledge)
     project = models.ManyToManyField(Project)
     ammount = MoneyField(max_digits=10, decimal_places=2, default_currency='USD')
+    history = HistoricalRecords()
 
 class Payout(Auditable):
     person = models.ForeignKey(Person, null=True, blank=True)
     project = models.ForeignKey(Project, null=True, blank=True)
     ammount = MoneyField(max_digits=10, decimal_places=2, default_currency='USD')
+    history = HistoricalRecords()
 
 class Touch(dict):
 
