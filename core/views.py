@@ -58,7 +58,7 @@ class ProjectDetailView(TemplateView):
         context = super(ProjectDetailView, self).get_context_data(**kwargs)
         project = cm.Project.objects.get(id=self.kwargs['instance_id'])
         context['project'] = project
-        context['available_actions'] = self.get_available_actions(self.request.user)
+        context['available_actions'] = project.get_available_actions(self.request.user)
         context['total_pledged'] = project.get_total_pledged()
         return context
 
@@ -157,7 +157,7 @@ class PostCreateView(CreateView):
         return super(PostCreateView, self).form_valid(form)
 
     def get_success_url(self):
-        return reverse(viewname='post_media_create', args=(self.object.id,), current_app='core')
+        return reverse(viewname='post_media_uploads', args=(self.object.id,), current_app='core')
 
 
 class PostUpdateView(UpdateView):
