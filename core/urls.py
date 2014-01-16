@@ -7,17 +7,21 @@ from api import v1_api
 urlpatterns = patterns('',
     url(r'^$', cv.IndexView.as_view(), name='index'),
     url(r'bootstrap/$', cv.BootstrapView.as_view(), name='bootstrap'),
+    ('^activity/', include('actstream.urls')),
 
     url(r'projects/$', cv.ProjectListView.as_view(), name='project_list'),
     url(r'projects/create/$', cv.ProjectCreateView.as_view(), name='project_create'),
     url(r'projects/(?P<instance_id>\d+)/$', cv.ProjectDetailView.as_view(), name='project_detail'),
     url(r'projects/(?P<instance_id>\d+)/pledge/$', cv.PledgeCreateView.as_view(), name='pledge_create'),
     url(r'projects/(?P<instance_id>\d+)/upload/$', cv.MediaCreateView.as_view(), name='media_create'),
+
     url(r'projects/(?P<instance_id>\d+)/post/$', cv.PostCreateView.as_view(), name='post_create'),
     url(r'projects/(?P<instance_id>\d+)/posts/$', cv.PostListView.as_view(), name='post_list'),
     url(r'posts/(?P<instance_id>\d+)/$', cv.PostDetailView.as_view(), name='post_detail'),
     url(r'posts/(?P<instance_id>\d+)/upload/$', cv.PostMediaCreateView.as_view(), name='post_media_create'),
     url(r'posts/(?P<instance_id>\d+)/uploads/$', cv.PostUploadsView.as_view(), name='post_media_uploads'),
+
+    url(r'users/(?P<instance_id>\d+)/$', cv.UserDetailView.as_view(), name='user_detail'),
 
     url(r'^(?P<pk>\d+)/$',cv.DetailView.as_view(), name="detail"),
     url(r'^api/', include(v1_api.urls)),

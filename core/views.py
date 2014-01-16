@@ -4,12 +4,20 @@ from django.http import Http404
 from django.shortcuts import render_to_response
 from django.views.generic import DetailView
 from django.core.urlresolvers import reverse
+from django.contrib.contenttypes.models import ContentType
 
 from actions.models import Actionable
 
 from api import v1_api
 import core.models as cm
 import core.forms as cf
+
+
+from django.db.models.signals import post_save
+from actstream import action
+from actstream.models import user_stream
+
+
 
 class IndexView(TemplateView):
     template_name = 'bootstrap.html'
@@ -80,6 +88,7 @@ class ProjectListView(TemplateView, Actionable):
 
 from django.views.generic.edit import FormView
 
+#Pledge STARTS
 class PledgeFormView(FormView):
     template_name = 'form.html'
     form_class = cf.PledgeForm
@@ -96,8 +105,7 @@ class PledgeFormView(FormView):
 class PledgeCreateView(CreateView):
     model = cm.Pledge
     template_name = 'form.html'
-    fields = ['ammount']
-    success_url = '/'
+    fields = ['value']
 
 
     def get_form(self, form_class):
@@ -108,6 +116,14 @@ class PledgeCreateView(CreateView):
         form.instance.pledger = self.request.user
         form.instance.project = cm.Project.objects.get(id=self.kwargs['instance_id'])
         return super(PledgeCreateView, self).form_valid(form)
+
+    def get_success_url(self):
+        #new_options = cm.Options.objects.create(user=self.request.user)
+        #new_options.save()
+        raise Exception(self.object.__class__)
+        action.send(self.request.user, verb='Pledged', target=self.object)
+        return '/'
+#Pledge ENDS
 
 class ProjectCreateView(CreateView):
     model = cm.Project
@@ -121,6 +137,7 @@ class ProjectCreateView(CreateView):
     def get_success_url(self):
 
         self.object.members.add(self.request.user)
+        action.send(self.request.user, verb='created', target=self.object)
         return reverse(viewname='project_detail', args=(self.object.id,), current_app='core')
 
 class MediaCreateView(CreateView):
@@ -133,9 +150,9 @@ class MediaCreateView(CreateView):
         return cf.MediaForm(self.request.POST or None, self.request.FILES or None, initial=self.get_initial())
 
     def form_valid(self, form):
-
         form.instance.user = self.request.user
         form.instance.changed_by = self.request.user
+        action.send(self.request.user, verb='created', target=self.object)
         return super(MediaCreateView, self).form_valid(form)
 
 
@@ -157,8 +174,8 @@ class PostCreateView(CreateView):
         return super(PostCreateView, self).form_valid(form)
 
     def get_success_url(self):
+        action.send(self.request.user, verb='created', target=self.object)
         return reverse(viewname='post_media_uploads', args=(self.object.id,), current_app='core')
-
 
 class PostUpdateView(UpdateView):
     model = cm.Post
@@ -230,6 +247,7 @@ class PostMediaCreateView(CreateView, Actionable):
     def get_success_url(self):
         p = cm.Post.objects.get(id=self.kwargs['instance_id'])
         p.media.add(self.new_instance)
+        action.send(self.request.user, verb='uploaded', target=self.new_instance)
         return reverse(viewname='post_media_create', args=(self.kwargs['instance_id'],), current_app='core')
 
     def get_actions(self):
@@ -260,3 +278,23 @@ class PostUploadsView(TemplateView, Actionable):
         return context
 
 #Post ENDS
+
+#User STARTS 
+
+class UserDetailView(TemplateView, Actionable):
+    template_name = 'user.html'
+
+    def get_actions(self):
+        return [
+            #cm.PostDetailAction(cm.Post.objects.get(id=self.kwargs['instance_id']))
+            ]
+
+    def get_context_data(self, **kwargs):
+
+        # Call the base implementation first to get a context
+        context = super(UserDetailView, self).get_context_data(**kwargs)
+        context['user'] = self.request.user
+        context['available_actions'] = None
+        context['stream'] = user_stream(self.request.user)
+        return context
+#User ENDS

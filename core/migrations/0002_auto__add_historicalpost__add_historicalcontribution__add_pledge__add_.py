@@ -29,8 +29,8 @@ class Migration(SchemaMigration):
             ('created_at', self.gf('django.db.models.fields.DateTimeField')(blank=True)),
             ('updated_at', self.gf('django.db.models.fields.DateTimeField')(blank=True)),
             (u'changed_by_id', self.gf('django.db.models.fields.IntegerField')(db_index=True, null=True, blank=True)),
-            ('ammount_currency', self.gf('djmoney.models.fields.CurrencyField')(default='USD')),
-            ('ammount', self.gf('djmoney.models.fields.MoneyField')(max_digits=10, decimal_places=2, default_currency='USD')),
+            ('value_currency', self.gf('djmoney.models.fields.CurrencyField')(default='USD')),
+            ('value', self.gf('djmoney.models.fields.MoneyField')(max_digits=10, decimal_places=2, default_currency='USD')),
             (u'history_id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
             (u'history_date', self.gf('django.db.models.fields.DateTimeField')(auto_now_add=True, blank=True)),
             (u'history_user', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['auth.User'], null=True)),
@@ -46,11 +46,32 @@ class Migration(SchemaMigration):
             ('changed_by', self.gf('django.db.models.fields.related.ForeignKey')(blank=True, related_name=u'core_pledge_related', null=True, to=orm['auth.User'])),
             ('pledger', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['auth.User'])),
             ('project', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['core.Project'])),
-            ('ammount_currency', self.gf('djmoney.models.fields.CurrencyField')(default='USD')),
-            ('ammount', self.gf('djmoney.models.fields.MoneyField')(max_digits=10, decimal_places=2, default_currency='USD')),
+            ('value_currency', self.gf('djmoney.models.fields.CurrencyField')(default='USD')),
+            ('value', self.gf('djmoney.models.fields.MoneyField')(max_digits=10, decimal_places=2, default_currency='USD')),
             ('token', self.gf('django.db.models.fields.CharField')(max_length=300)),
         ))
         db.send_create_signal(u'core', ['Pledge'])
+
+        # Adding model 'Service'
+        db.create_table(u'core_service', (
+            (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
+            ('created_at', self.gf('django.db.models.fields.DateTimeField')(auto_now_add=True, blank=True)),
+            ('updated_at', self.gf('django.db.models.fields.DateTimeField')(auto_now=True, blank=True)),
+            ('changed_by', self.gf('django.db.models.fields.related.ForeignKey')(blank=True, related_name=u'core_service_related', null=True, to=orm['auth.User'])),
+            ('title', self.gf('django.db.models.fields.CharField')(max_length=300)),
+            ('cost_per_hour_currency', self.gf('djmoney.models.fields.CurrencyField')(default='USD')),
+            ('cost_per_hour', self.gf('djmoney.models.fields.MoneyField')(max_digits=10, decimal_places=2, default_currency='USD')),
+        ))
+        db.send_create_signal(u'core', ['Service'])
+
+        # Adding M2M table for field provider on 'Service'
+        m2m_table_name = db.shorten_name(u'core_service_provider')
+        db.create_table(m2m_table_name, (
+            ('id', models.AutoField(verbose_name='ID', primary_key=True, auto_created=True)),
+            ('service', models.ForeignKey(orm[u'core.service'], null=False)),
+            ('user', models.ForeignKey(orm[u'auth.user'], null=False))
+        ))
+        db.create_unique(m2m_table_name, ['service_id', 'user_id'])
 
         # Adding model 'Payout'
         db.create_table(u'core_payout', (
@@ -60,8 +81,8 @@ class Migration(SchemaMigration):
             ('changed_by', self.gf('django.db.models.fields.related.ForeignKey')(blank=True, related_name=u'core_payout_related', null=True, to=orm['auth.User'])),
             ('payee', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['auth.User'], null=True, blank=True)),
             ('project', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['core.Project'], null=True, blank=True)),
-            ('ammount_currency', self.gf('djmoney.models.fields.CurrencyField')(default='USD')),
-            ('ammount', self.gf('djmoney.models.fields.MoneyField')(max_digits=10, decimal_places=2, default_currency='USD')),
+            ('value_currency', self.gf('djmoney.models.fields.CurrencyField')(default='USD')),
+            ('value', self.gf('djmoney.models.fields.MoneyField')(max_digits=10, decimal_places=2, default_currency='USD')),
         ))
         db.send_create_signal(u'core', ['Payout'])
 
@@ -71,8 +92,8 @@ class Migration(SchemaMigration):
             ('created_at', self.gf('django.db.models.fields.DateTimeField')(auto_now_add=True, blank=True)),
             ('updated_at', self.gf('django.db.models.fields.DateTimeField')(auto_now=True, blank=True)),
             ('changed_by', self.gf('django.db.models.fields.related.ForeignKey')(blank=True, related_name=u'core_contribution_related', null=True, to=orm['auth.User'])),
-            ('ammount_currency', self.gf('djmoney.models.fields.CurrencyField')(default='USD')),
-            ('ammount', self.gf('djmoney.models.fields.MoneyField')(max_digits=10, decimal_places=2, default_currency='USD')),
+            ('value_currency', self.gf('djmoney.models.fields.CurrencyField')(default='USD')),
+            ('value', self.gf('djmoney.models.fields.MoneyField')(max_digits=10, decimal_places=2, default_currency='USD')),
         ))
         db.send_create_signal(u'core', ['Contribution'])
 
@@ -113,26 +134,32 @@ class Migration(SchemaMigration):
         ))
         db.send_create_signal(u'core', ['Badge'])
 
-        # Adding model 'Service'
-        db.create_table(u'core_service', (
+        # Adding model 'Post'
+        db.create_table(u'core_post', (
             (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
             ('created_at', self.gf('django.db.models.fields.DateTimeField')(auto_now_add=True, blank=True)),
             ('updated_at', self.gf('django.db.models.fields.DateTimeField')(auto_now=True, blank=True)),
-            ('changed_by', self.gf('django.db.models.fields.related.ForeignKey')(blank=True, related_name=u'core_service_related', null=True, to=orm['auth.User'])),
-            ('title', self.gf('django.db.models.fields.CharField')(max_length=300)),
-            ('cost_per_hour_currency', self.gf('djmoney.models.fields.CurrencyField')(default='USD')),
-            ('cost_per_hour', self.gf('djmoney.models.fields.MoneyField')(max_digits=10, decimal_places=2, default_currency='USD')),
+            ('changed_by', self.gf('django.db.models.fields.related.ForeignKey')(blank=True, related_name=u'core_post_related', null=True, to=orm['auth.User'])),
+            ('project', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['core.Project'])),
+            ('title', self.gf('django.db.models.fields.CharField')(max_length=60)),
         ))
-        db.send_create_signal(u'core', ['Service'])
+        db.send_create_signal(u'core', ['Post'])
 
-        # Adding M2M table for field provider on 'Service'
-        m2m_table_name = db.shorten_name(u'core_service_provider')
+        # Adding M2M table for field media on 'Post'
+        m2m_table_name = db.shorten_name(u'core_post_media')
         db.create_table(m2m_table_name, (
             ('id', models.AutoField(verbose_name='ID', primary_key=True, auto_created=True)),
-            ('service', models.ForeignKey(orm[u'core.service'], null=False)),
-            ('user', models.ForeignKey(orm[u'auth.user'], null=False))
+            ('post', models.ForeignKey(orm[u'core.post'], null=False)),
+            ('media', models.ForeignKey(orm[u'core.media'], null=False))
         ))
-        db.create_unique(m2m_table_name, ['service_id', 'user_id'])
+        db.create_unique(m2m_table_name, ['post_id', 'media_id'])
+
+        # Adding model 'Options'
+        db.create_table(u'core_options', (
+            (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
+            ('user', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['auth.User'], unique=True)),
+        ))
+        db.send_create_signal(u'core', ['Options'])
 
         # Adding model 'HistoricalPayout'
         db.create_table(u'core_historicalpayout', (
@@ -142,8 +169,8 @@ class Migration(SchemaMigration):
             (u'changed_by_id', self.gf('django.db.models.fields.IntegerField')(db_index=True, null=True, blank=True)),
             (u'payee_id', self.gf('django.db.models.fields.IntegerField')(db_index=True, null=True, blank=True)),
             (u'project_id', self.gf('django.db.models.fields.IntegerField')(db_index=True, null=True, blank=True)),
-            ('ammount_currency', self.gf('djmoney.models.fields.CurrencyField')(default='USD')),
-            ('ammount', self.gf('djmoney.models.fields.MoneyField')(max_digits=10, decimal_places=2, default_currency='USD')),
+            ('value_currency', self.gf('djmoney.models.fields.CurrencyField')(default='USD')),
+            ('value', self.gf('djmoney.models.fields.MoneyField')(max_digits=10, decimal_places=2, default_currency='USD')),
             (u'history_id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
             (u'history_date', self.gf('django.db.models.fields.DateTimeField')(auto_now_add=True, blank=True)),
             (u'history_user', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['auth.User'], null=True)),
@@ -195,26 +222,6 @@ class Migration(SchemaMigration):
             (u'history_type', self.gf('django.db.models.fields.CharField')(max_length=1)),
         ))
         db.send_create_signal(u'core', ['HistoricalService'])
-
-        # Adding model 'Post'
-        db.create_table(u'core_post', (
-            (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('created_at', self.gf('django.db.models.fields.DateTimeField')(auto_now_add=True, blank=True)),
-            ('updated_at', self.gf('django.db.models.fields.DateTimeField')(auto_now=True, blank=True)),
-            ('changed_by', self.gf('django.db.models.fields.related.ForeignKey')(blank=True, related_name=u'core_post_related', null=True, to=orm['auth.User'])),
-            ('project', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['core.Project'])),
-            ('title', self.gf('django.db.models.fields.CharField')(max_length=60)),
-        ))
-        db.send_create_signal(u'core', ['Post'])
-
-        # Adding M2M table for field media on 'Post'
-        m2m_table_name = db.shorten_name(u'core_post_media')
-        db.create_table(m2m_table_name, (
-            ('id', models.AutoField(verbose_name='ID', primary_key=True, auto_created=True)),
-            ('post', models.ForeignKey(orm[u'core.post'], null=False)),
-            ('media', models.ForeignKey(orm[u'core.media'], null=False))
-        ))
-        db.create_unique(m2m_table_name, ['post_id', 'media_id'])
 
         # Adding model 'HistoricalProject'
         db.create_table(u'core_historicalproject', (
@@ -285,6 +292,12 @@ class Migration(SchemaMigration):
         # Deleting model 'Pledge'
         db.delete_table(u'core_pledge')
 
+        # Deleting model 'Service'
+        db.delete_table(u'core_service')
+
+        # Removing M2M table for field provider on 'Service'
+        db.delete_table(db.shorten_name(u'core_service_provider'))
+
         # Deleting model 'Payout'
         db.delete_table(u'core_payout')
 
@@ -303,11 +316,14 @@ class Migration(SchemaMigration):
         # Deleting model 'Badge'
         db.delete_table(u'core_badge')
 
-        # Deleting model 'Service'
-        db.delete_table(u'core_service')
+        # Deleting model 'Post'
+        db.delete_table(u'core_post')
 
-        # Removing M2M table for field provider on 'Service'
-        db.delete_table(db.shorten_name(u'core_service_provider'))
+        # Removing M2M table for field media on 'Post'
+        db.delete_table(db.shorten_name(u'core_post_media'))
+
+        # Deleting model 'Options'
+        db.delete_table(u'core_options')
 
         # Deleting model 'HistoricalPayout'
         db.delete_table(u'core_historicalpayout')
@@ -320,12 +336,6 @@ class Migration(SchemaMigration):
 
         # Deleting model 'HistoricalService'
         db.delete_table(u'core_historicalservice')
-
-        # Deleting model 'Post'
-        db.delete_table(u'core_post')
-
-        # Removing M2M table for field media on 'Post'
-        db.delete_table(db.shorten_name(u'core_post_media'))
 
         # Deleting model 'HistoricalProject'
         db.delete_table(u'core_historicalproject')
@@ -387,20 +397,18 @@ class Migration(SchemaMigration):
         },
         u'core.contribution': {
             'Meta': {'object_name': 'Contribution'},
-            'ammount': ('djmoney.models.fields.MoneyField', [], {'max_digits': '10', 'decimal_places': '2', 'default_currency': "'USD'"}),
-            'ammount_currency': ('djmoney.models.fields.CurrencyField', [], {'default': "'USD'"}),
             'changed_by': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "u'core_contribution_related'", 'null': 'True', 'to': u"orm['auth.User']"}),
             'contributer': ('django.db.models.fields.related.ManyToManyField', [], {'to': u"orm['auth.User']", 'symmetrical': 'False'}),
             'created_at': ('django.db.models.fields.DateTimeField', [], {'auto_now_add': 'True', 'blank': 'True'}),
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'pledge': ('django.db.models.fields.related.ManyToManyField', [], {'to': u"orm['core.Pledge']", 'symmetrical': 'False'}),
             'project': ('django.db.models.fields.related.ManyToManyField', [], {'to': u"orm['core.Project']", 'symmetrical': 'False'}),
-            'updated_at': ('django.db.models.fields.DateTimeField', [], {'auto_now': 'True', 'blank': 'True'})
+            'updated_at': ('django.db.models.fields.DateTimeField', [], {'auto_now': 'True', 'blank': 'True'}),
+            'value': ('djmoney.models.fields.MoneyField', [], {'max_digits': '10', 'decimal_places': '2', 'default_currency': "'USD'"}),
+            'value_currency': ('djmoney.models.fields.CurrencyField', [], {'default': "'USD'"})
         },
         u'core.historicalcontribution': {
             'Meta': {'ordering': "(u'-history_date', u'-history_id')", 'object_name': 'HistoricalContribution'},
-            'ammount': ('djmoney.models.fields.MoneyField', [], {'max_digits': '10', 'decimal_places': '2', 'default_currency': "'USD'"}),
-            'ammount_currency': ('djmoney.models.fields.CurrencyField', [], {'default': "'USD'"}),
             u'changed_by_id': ('django.db.models.fields.IntegerField', [], {'db_index': 'True', 'null': 'True', 'blank': 'True'}),
             'created_at': ('django.db.models.fields.DateTimeField', [], {'blank': 'True'}),
             u'history_date': ('django.db.models.fields.DateTimeField', [], {'auto_now_add': 'True', 'blank': 'True'}),
@@ -408,7 +416,9 @@ class Migration(SchemaMigration):
             u'history_type': ('django.db.models.fields.CharField', [], {'max_length': '1'}),
             u'history_user': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['auth.User']", 'null': 'True'}),
             u'id': ('django.db.models.fields.IntegerField', [], {'db_index': 'True', 'blank': 'True'}),
-            'updated_at': ('django.db.models.fields.DateTimeField', [], {'blank': 'True'})
+            'updated_at': ('django.db.models.fields.DateTimeField', [], {'blank': 'True'}),
+            'value': ('djmoney.models.fields.MoneyField', [], {'max_digits': '10', 'decimal_places': '2', 'default_currency': "'USD'"}),
+            'value_currency': ('djmoney.models.fields.CurrencyField', [], {'default': "'USD'"})
         },
         u'core.historicalmedia': {
             'Meta': {'ordering': "(u'-history_date', u'-history_id')", 'object_name': 'HistoricalMedia'},
@@ -427,8 +437,6 @@ class Migration(SchemaMigration):
         },
         u'core.historicalpayout': {
             'Meta': {'ordering': "(u'-history_date', u'-history_id')", 'object_name': 'HistoricalPayout'},
-            'ammount': ('djmoney.models.fields.MoneyField', [], {'max_digits': '10', 'decimal_places': '2', 'default_currency': "'USD'"}),
-            'ammount_currency': ('djmoney.models.fields.CurrencyField', [], {'default': "'USD'"}),
             u'changed_by_id': ('django.db.models.fields.IntegerField', [], {'db_index': 'True', 'null': 'True', 'blank': 'True'}),
             'created_at': ('django.db.models.fields.DateTimeField', [], {'blank': 'True'}),
             u'history_date': ('django.db.models.fields.DateTimeField', [], {'auto_now_add': 'True', 'blank': 'True'}),
@@ -438,7 +446,9 @@ class Migration(SchemaMigration):
             u'id': ('django.db.models.fields.IntegerField', [], {'db_index': 'True', 'blank': 'True'}),
             u'payee_id': ('django.db.models.fields.IntegerField', [], {'db_index': 'True', 'null': 'True', 'blank': 'True'}),
             u'project_id': ('django.db.models.fields.IntegerField', [], {'db_index': 'True', 'null': 'True', 'blank': 'True'}),
-            'updated_at': ('django.db.models.fields.DateTimeField', [], {'blank': 'True'})
+            'updated_at': ('django.db.models.fields.DateTimeField', [], {'blank': 'True'}),
+            'value': ('djmoney.models.fields.MoneyField', [], {'max_digits': '10', 'decimal_places': '2', 'default_currency': "'USD'"}),
+            'value_currency': ('djmoney.models.fields.CurrencyField', [], {'default': "'USD'"})
         },
         u'core.historicalpost': {
             'Meta': {'ordering': "(u'-history_date', u'-history_id')", 'object_name': 'HistoricalPost'},
@@ -506,28 +516,33 @@ class Migration(SchemaMigration):
             'updated_at': ('django.db.models.fields.DateTimeField', [], {'auto_now': 'True', 'blank': 'True'}),
             'user': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['auth.User']"})
         },
+        u'core.options': {
+            'Meta': {'object_name': 'Options'},
+            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'user': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['auth.User']", 'unique': 'True'})
+        },
         u'core.payout': {
             'Meta': {'object_name': 'Payout'},
-            'ammount': ('djmoney.models.fields.MoneyField', [], {'max_digits': '10', 'decimal_places': '2', 'default_currency': "'USD'"}),
-            'ammount_currency': ('djmoney.models.fields.CurrencyField', [], {'default': "'USD'"}),
             'changed_by': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "u'core_payout_related'", 'null': 'True', 'to': u"orm['auth.User']"}),
             'created_at': ('django.db.models.fields.DateTimeField', [], {'auto_now_add': 'True', 'blank': 'True'}),
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'payee': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['auth.User']", 'null': 'True', 'blank': 'True'}),
             'project': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['core.Project']", 'null': 'True', 'blank': 'True'}),
-            'updated_at': ('django.db.models.fields.DateTimeField', [], {'auto_now': 'True', 'blank': 'True'})
+            'updated_at': ('django.db.models.fields.DateTimeField', [], {'auto_now': 'True', 'blank': 'True'}),
+            'value': ('djmoney.models.fields.MoneyField', [], {'max_digits': '10', 'decimal_places': '2', 'default_currency': "'USD'"}),
+            'value_currency': ('djmoney.models.fields.CurrencyField', [], {'default': "'USD'"})
         },
         u'core.pledge': {
             'Meta': {'object_name': 'Pledge'},
-            'ammount': ('djmoney.models.fields.MoneyField', [], {'max_digits': '10', 'decimal_places': '2', 'default_currency': "'USD'"}),
-            'ammount_currency': ('djmoney.models.fields.CurrencyField', [], {'default': "'USD'"}),
             'changed_by': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "u'core_pledge_related'", 'null': 'True', 'to': u"orm['auth.User']"}),
             'created_at': ('django.db.models.fields.DateTimeField', [], {'auto_now_add': 'True', 'blank': 'True'}),
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'pledger': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['auth.User']"}),
             'project': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['core.Project']"}),
             'token': ('django.db.models.fields.CharField', [], {'max_length': '300'}),
-            'updated_at': ('django.db.models.fields.DateTimeField', [], {'auto_now': 'True', 'blank': 'True'})
+            'updated_at': ('django.db.models.fields.DateTimeField', [], {'auto_now': 'True', 'blank': 'True'}),
+            'value': ('djmoney.models.fields.MoneyField', [], {'max_digits': '10', 'decimal_places': '2', 'default_currency': "'USD'"}),
+            'value_currency': ('djmoney.models.fields.CurrencyField', [], {'default': "'USD'"})
         },
         u'core.post': {
             'Meta': {'object_name': 'Post'},

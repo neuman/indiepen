@@ -34,7 +34,7 @@ class PostForm(BootstrapForm):
 class PledgeForm(BootstrapForm):
     class Meta:
         model = cm.Pledge
-        fields = ['ammount']
+        fields = ['value']
 
 class MediaForm(BootstrapForm):
     class Meta:

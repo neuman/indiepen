@@ -26,6 +26,7 @@ class Action(object):
             "display_name":self.get_display_name()
         }
 
+
 class Actionable(object):
     '''
     Mixin intended to operate with Action, most likely in a django Model or View.
@@ -39,3 +40,6 @@ class Actionable(object):
             if a.is_available(user):
                 output.append(a.get_serialized())
         return output
+
+    class Meta:
+        abstract = True

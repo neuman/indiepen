@@ -42,6 +42,7 @@ INSTALLED_APPS = (
     'json_field',
     'tastypie',
     'taggit',
+    'actstream',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -97,6 +98,10 @@ PROJECT_ROOT = os.path.dirname(__file__)
 TEMPLATE_DIRS = (
   os.path.join(BASE_DIR, "templates"),
 )
+
+ACTSTREAM_SETTINGS = {
+    'MODELS': ('core.project', 'core.post', 'core.pledge', 'core.media', 'core.options', 'auth.user', 'auth.group'),
+}
 
 DEFAULT_FILE_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
 from local_settings import *

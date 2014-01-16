@@ -6,6 +6,9 @@ from django.db.models import Sum
 from django.core.urlresolvers import reverse
 from actions.models import Action, Actionable
 from simple_history.models import HistoricalRecords
+from django.utils.encoding import python_2_unicode_compatible
+from django.utils.translation import ugettext_lazy as _
+
 
 
 MEDIUM_CHOICES = (
@@ -39,11 +42,14 @@ EXTENSIONS = {
     "MUL":['csv','json'],
 }
 
+@python_2_unicode_compatible
 class Auditable(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     changed_by = models.ForeignKey(User, null=True, blank=True, related_name="%(app_label)s_%(class)s_related")
 
+    def __str__(self):
+        return "auditable string goes here"
 
     @property
     def _history_user(self):
@@ -162,11 +168,11 @@ class Project(Auditable, Actionable):
         return Pledge.objects.filter(project=self)
 
     def get_total_pledged(self):
-        sums = Pledge.objects.filter(project=self).aggregate(Sum('ammount'))
-        if sums['ammount__sum'] == None:
+        sums = Pledge.objects.filter(project=self).aggregate(Sum('value'))
+        if sums['value__sum'] == None:
             total = 0
         else:
-            total = sums['ammount__sum']
+            total = sums['value__sum']
         return total
 
     def get_percent_pledged(self):
@@ -197,7 +203,7 @@ class Project(Auditable, Actionable):
 from taggit.managers import TaggableManager
 
 
-class Media(Auditable):
+class Media(Auditable, Actionable):
     original_file = models.FileField(upload_to='/')
     internal_file = models.FileField(upload_to='/', null=True, blank=True)
     medium = models.CharField(max_length=3, choices=MEDIUM_CHOICES, null=True, blank=True)
@@ -288,7 +294,7 @@ class Membership(Auditable):
     role = models.CharField(max_length=100)
 
 
-class Service(Auditable):
+class Service(Auditable, Actionable):
     title = models.CharField(max_length=300)
     cost_per_hour = MoneyField(max_digits=10, decimal_places=2, default_currency='USD')
     provider = models.ManyToManyField(User)
@@ -298,26 +304,33 @@ class Service(Auditable):
         return self.title
 
 
-class Pledge(Auditable):
+class Pledge(Auditable, Actionable):
     pledger = models.ForeignKey(User)
     project = models.ForeignKey(Project)
-    ammount = MoneyField(max_digits=10, decimal_places=2, default_currency='USD')
+    value = MoneyField(max_digits=10, decimal_places=2, default_currency='USD')
     token = models.CharField(max_length=300)
 
     def __unicode__(self):
-        return self.user.__unicode__()+" + "+self.project.__unicode__()
+        return self.pledger.__unicode__()+" + "+self.project.__unicode__()
+'''
+    class Meta(Auditable.Meta):
+        __name__ = "ROOSTER"
+        verbose_name = _('pledge')
+        verbose_name_plural = _('pledges')
+        swappable = 'CORE_PLEDGE_MODEL'
+'''
 
 class Contribution(Auditable):
     contributer = models.ManyToManyField(User)
     pledge = models.ManyToManyField(Pledge)
     project = models.ManyToManyField(Project)
-    ammount = MoneyField(max_digits=10, decimal_places=2, default_currency='USD')
+    value = MoneyField(max_digits=10, decimal_places=2, default_currency='USD')
     history = HistoricalRecords()
 
 class Payout(Auditable):
     payee = models.ForeignKey(User, null=True, blank=True)
     project = models.ForeignKey(Project, null=True, blank=True)
-    ammount = MoneyField(max_digits=10, decimal_places=2, default_currency='USD')
+    value = MoneyField(max_digits=10, decimal_places=2, default_currency='USD')
     history = HistoricalRecords()
 
 class Touch(dict):
@@ -331,3 +344,23 @@ class Touch(dict):
     def populateDict(self):
         self['B'] = 10
         self['A'] = 12
+
+
+class Options(models.Model):
+    user = models.ForeignKey(User, unique=True)
+
+    def get_touches(self):
+        touches = []
+        touchables = [pledge.objects.filter(pledger=self.user), self.user.project_set.all()]
+
+    def get_audit(self):
+        touches = self.get_touches()
+        for m in self.media.all():
+            touches+=m.get_touches()
+            print m
+        touches = sort_touches(touches)
+        return touches
+
+
+def sort_touches(touches):
+    return sorted(touches, key = lambda t: t['updated_at'], reverse=True)
