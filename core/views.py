@@ -105,9 +105,9 @@ class PledgeCreateView(CreateView):
 
     def form_valid(self, form):
         form.instance.changed_by = self.request.user
-        form.instance.user = self.request.user
+        form.instance.pledger = self.request.user
         form.instance.project = cm.Project.objects.get(id=self.kwargs['instance_id'])
-        return super(PledgeCreate, self).form_valid(form)
+        return super(PledgeCreateView, self).form_valid(form)
 
 class ProjectCreateView(CreateView):
     model = cm.Project

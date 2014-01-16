@@ -93,6 +93,11 @@ DURATION_CHOICES = (
     ('6', '6 Months'),
 )
 
+MEDIUM_CHOICES = (
+    ('USD', 'US Dollar'),
+)
+
+
 class Badge(Auditable):
     title = models.CharField(max_length=300)
 
