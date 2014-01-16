@@ -280,7 +280,7 @@ class Post(Auditable, Actionable):
         touches = self.get_touches()
         for m in self.media.all():
             touches+=m.get_touches()
-
+            print m
         touches = sorted(touches, key = lambda t: t['updated_at'], reverse=True)
         return touches
 
