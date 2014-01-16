@@ -69,7 +69,7 @@
                                   <span class="timeline-icon purple"></span>
                                   <span class="timeline-date">{{ touch.updated_at|date:"g:i a" }}</span>
                                   <h1 class="purple">{{ touch.created_at }}</h1>
-                                  <a href="{{ touch.title }}">{{ touch.title }}</a><span> {{ touch.action }} by {{ touch.person.first_name }} {{ touch.person.last_name }}</span>
+                                  <a href="{{ touch.title }}">{{ touch.title }}</a><span> {{ touch.action }} by {{ touch.user.first_name }} {{ touch.user.last_name }}</span>
                                   <p>{{ touch.brief }}</p>
                               </div>
                           </div>
