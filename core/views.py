@@ -53,12 +53,12 @@ class ProjectDetailView(TemplateView):
     template_name = 'project.html'
 
     def get_context_data(self, **kwargs):
-        person = cm.Person.objects.get(user=self.request.user)
+
         # Call the base implementation first to get a context
         context = super(ProjectDetailView, self).get_context_data(**kwargs)
         project = cm.Project.objects.get(id=self.kwargs['instance_id'])
         context['project'] = project
-        context['available_actions'] = project.get_available_actions(person)
+        context['available_actions'] = self.get_available_actions(self.request.user)
         context['total_pledged'] = project.get_total_pledged()
         return context
 
@@ -72,10 +72,10 @@ class ProjectListView(TemplateView, Actionable):
             ]
 
     def get_context_data(self, **kwargs):
-        person = cm.Person.objects.get(user=self.request.user)
+
         context = super(ProjectListView, self).get_context_data(**kwargs)
         context['projects'] = cm.Project.objects.all()
-        context['available_actions'] = self.get_available_actions(person)
+        context['available_actions'] = self.get_available_actions(self.request.user)
         return context
 
 from django.views.generic.edit import FormView
@@ -105,7 +105,7 @@ class PledgeCreateView(CreateView):
 
     def form_valid(self, form):
         form.instance.changed_by = self.request.user
-        form.instance.person = cm.Person.objects.get(user=self.request.user)
+        form.instance.user = self.request.user
         form.instance.project = cm.Project.objects.get(id=self.kwargs['instance_id'])
         return super(PledgeCreate, self).form_valid(form)
 
@@ -119,8 +119,8 @@ class ProjectCreateView(CreateView):
         return cf.ProjectForm(self.request.POST or None, self.request.FILES or None, initial=self.get_initial())
 
     def get_success_url(self):
-        person = cm.Person.objects.get(user=self.request.user)
-        self.object.members.add(person)
+
+        self.object.members.add(self.request.user)
         return reverse(viewname='project_detail', args=(self.object.id,), current_app='core')
 
 class MediaCreateView(CreateView):
@@ -133,8 +133,8 @@ class MediaCreateView(CreateView):
         return cf.MediaForm(self.request.POST or None, self.request.FILES or None, initial=self.get_initial())
 
     def form_valid(self, form):
-        form.instance.created_by = self.request.user
-        form.instance.person = cm.Person.objects.get(user=self.request.user)
+
+        form.instance.user = self.request.user
         form.instance.changed_by = self.request.user
         return super(MediaCreateView, self).form_valid(form)
 
@@ -150,7 +150,7 @@ class PostCreateView(CreateView):
         return cf.PostForm(self.request.POST or None, self.request.FILES or None, initial=self.get_initial())
 
     def form_valid(self, form):
-        form.instance.person = cm.Person.objects.get(user=self.request.user)
+        form.instance.user = self.request.user
         form.instance.project = cm.Project.objects.get(id=self.kwargs['instance_id'])
         form.instance.changed_by = self.request.user
         self.instance = form.instance
@@ -169,8 +169,7 @@ class PostUpdateView(UpdateView):
         return cf.PostForm(self.request.POST or None, self.request.FILES or None, initial=self.get_initial())
 
     def form_valid(self, form):
-        form.instance.created_by = self.request.user
-        form.instance.person = cm.Person.objects.get(user=self.request.user)
+        form.instance.user = self.request.user
         form.instance.project = cm.Project.objects.get(id=self.kwargs['instance_id'])
         form.instance.changed_by = self.request.user
         return super(PostCreateView, self).form_valid(form)
@@ -179,7 +178,7 @@ class PostDetailView(TemplateView):
     template_name = 'post.html'
 
     def get_context_data(self, **kwargs):
-        person = cm.Person.objects.get(user=self.request.user)
+
         # Call the base implementation first to get a context
         context = super(PostDetailView, self).get_context_data(**kwargs)
         post = cm.Post.objects.get(id=self.kwargs['instance_id'])
@@ -191,10 +190,10 @@ class PostListView(TemplateView, Actionable):
     template_name = 'list.html'
 
     def get_context_data(self, **kwargs):
-        person = cm.Person.objects.get(user=self.request.user)
+
         context = super(PostListView, self).get_context_data(**kwargs)
         context['projects'] = cm.Project.objects.all()
-        context['available_actions'] = self.get_available_actions(person)
+        context['available_actions'] = self.get_available_actions(self.request.user)
         return context
 
 class PostMediaCreateView(CreateView, Actionable):
@@ -209,7 +208,7 @@ class PostMediaCreateView(CreateView, Actionable):
 
     def form_valid(self, form):
         #form.instance.created_by = self.request.user
-        #form.instance.person = cm.Person.objects.get(user=self.request.user)
+        #form.instance.user = self.request.user
 
         def get_file_extension(string_in):
             #return string_in.__getslice__(string_in.__len__()-3, string_in.__len__()).lower()
@@ -239,9 +238,9 @@ class PostMediaCreateView(CreateView, Actionable):
             ]
 
     def get_context_data(self, **kwargs):
-        person = cm.Person.objects.get(user=self.request.user)
+
         context = super(PostMediaCreateView, self).get_context_data(**kwargs)
-        context['available_actions'] = self.get_available_actions(person)
+        context['available_actions'] = self.get_available_actions(self.request.user)
         return context
 
 class PostUploadsView(TemplateView, Actionable):
@@ -253,11 +252,11 @@ class PostUploadsView(TemplateView, Actionable):
             ]
 
     def get_context_data(self, **kwargs):
-        person = cm.Person.objects.get(user=self.request.user)
+
         # Call the base implementation first to get a context
         context = super(PostUploadsView, self).get_context_data(**kwargs)
         context['upload_url'] = reverse(viewname='post_media_create', args=(self.kwargs['instance_id'],), current_app='core')
-        context['available_actions'] = self.get_available_actions(person)
+        context['available_actions'] = self.get_available_actions(self.request.user)
         return context
 
 #Post ENDS
