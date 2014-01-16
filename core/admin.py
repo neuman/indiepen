@@ -3,7 +3,6 @@ from django.contrib import admin
 import core.models as core
 from simple_history.admin import SimpleHistoryAdmin
 
-admin.site.register(core.Person)
 admin.site.register(core.Badge)
 admin.site.register(core.Project)
 admin.site.register(core.Post, SimpleHistoryAdmin)

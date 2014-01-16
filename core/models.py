@@ -62,7 +62,7 @@ class Auditable(models.Model):
             #t['url'] = a.get_absolute_url()
             t['action'] = "Updated"
             if a.changed_by_id != None:
-                t['person'] = User.objects.get(id=a.changed_by_id)
+                t['user'] = User.objects.get(id=a.changed_by_id)
             touches.append(t)
 
         return touches
@@ -99,14 +99,6 @@ class Badge(Auditable):
     def __unicode__(self):
         return self.title
 
-class Person(Auditable):
-    user = models.OneToOneField(User)
-    badges = models.ManyToManyField(Badge, null=True, blank=True)
-    history = HistoricalRecords()
-
-    def __unicode__(self):
-        return self.user.email
-
 class ProjectCreateAction(Action):
     display_name = "Start New Project"
 
@@ -115,32 +107,32 @@ class ProjectCreateAction(Action):
 
 class ProjectPledgeAction(Action):
     display_name = "Pledge"
-    def is_available(self, person):
-        return self.instance.members.filter(id=person.id).count() > 0
+    def is_available(self, user):
+        return self.instance.members.filter(id=user.id).count() > 0
 
     def get_url(self):
         return reverse(viewname='pledge_create', args=[self.instance.id], current_app='core')
 
 class ProjectUploadAction(Action):
     display_name = "Upload Media"
-    def is_available(self, person):
-        return self.instance.members.filter(id=person.id).count()
+    def is_available(self, user):
+        return self.instance.members.filter(id=user.id).count()
 
     def get_url(self):
         return reverse(viewname='media_create', args=[self.instance.id], current_app='core')
 
 class ProjectPostAction(Action):
     display_name = "Post"
-    def is_available(self, person):
-        return self.instance.members.filter(id=person.id).count() > 0
+    def is_available(self, user):
+        return self.instance.members.filter(id=user.id).count() > 0
 
     def get_url(self):
         return reverse(viewname='post_create', args=[self.instance.id], current_app='core')
 
 class ProjectAction(Action):
     display_name = "Upload Media"
-    def is_available(self, person):
-        return self.instance.members.filter(id=person.id).count()
+    def is_available(self, user):
+        return self.instance.members.filter(id=user.id).count()
 
     def get_url(self):
         return reverse(viewname='media_create', args=[self.instance.id], current_app='core')
@@ -148,7 +140,7 @@ class ProjectAction(Action):
 class Project(Auditable, Actionable):
     title = models.CharField(max_length=300)
     brief = models.TextField(default='')
-    members = models.ManyToManyField(Person)
+    members = models.ManyToManyField(User)
     medium = models.CharField(max_length=3, choices=MEDIUM_CHOICES, default='TXT')
     duration = models.CharField(max_length=3, choices=DURATION_CHOICES, default='1')
     frequency = models.CharField(max_length=3, choices=FREQUENCY_CHOICES, default='WEE')
@@ -228,8 +220,8 @@ class Media(Auditable):
 class PostCreateMediaAction(Action):
     display_name = "Upload Post Files"
 
-    def is_available(self, person):
-        return self.instance.project.members.filter(id=person.id).count()
+    def is_available(self, user):
+        return self.instance.project.members.filter(id=user.id).count()
 
     def get_url(self):
         return reverse(viewname='post_media_uploads', args=[self.instance.id], current_app='core')
@@ -243,7 +235,7 @@ class PostDetailAction(Action):
 class Post(Auditable, Actionable):
     project = models.ForeignKey(Project)
     title = models.CharField(max_length=60)
-    #members = models.ManyToManyField(Person)
+    #members = models.ManyToManyField(User)
     media = models.ManyToManyField(Media, null=True, blank=True)
     history = HistoricalRecords()
 
@@ -286,7 +278,7 @@ class Post(Auditable, Actionable):
 
 
 class Membership(Auditable):
-    person = models.ForeignKey(Person)
+    user = models.ForeignKey(User)
     post = models.ForeignKey(Post)
     role = models.CharField(max_length=100)
 
@@ -294,7 +286,7 @@ class Membership(Auditable):
 class Service(Auditable):
     title = models.CharField(max_length=300)
     cost_per_hour = MoneyField(max_digits=10, decimal_places=2, default_currency='USD')
-    prividing_Person = models.ManyToManyField(Person)
+    provider = models.ManyToManyField(User)
     history = HistoricalRecords()
 
     def __unicode__(self):
@@ -302,30 +294,30 @@ class Service(Auditable):
 
 
 class Pledge(Auditable):
-    person = models.ForeignKey(Person)
+    pledger = models.ForeignKey(User)
     project = models.ForeignKey(Project)
     ammount = MoneyField(max_digits=10, decimal_places=2, default_currency='USD')
     token = models.CharField(max_length=300)
 
     def __unicode__(self):
-        return self.person.__unicode__()+" + "+self.project.__unicode__()
+        return self.user.__unicode__()+" + "+self.project.__unicode__()
 
 class Contribution(Auditable):
-    person = models.ManyToManyField(Person)
+    contributer = models.ManyToManyField(User)
     pledge = models.ManyToManyField(Pledge)
     project = models.ManyToManyField(Project)
     ammount = MoneyField(max_digits=10, decimal_places=2, default_currency='USD')
     history = HistoricalRecords()
 
 class Payout(Auditable):
-    person = models.ForeignKey(Person, null=True, blank=True)
+    payee = models.ForeignKey(User, null=True, blank=True)
     project = models.ForeignKey(Project, null=True, blank=True)
     ammount = MoneyField(max_digits=10, decimal_places=2, default_currency='USD')
     history = HistoricalRecords()
 
 class Touch(dict):
 
-    _keys = ['title','brief','url','updated_at','person','action']
+    _keys = ['title','brief','url','updated_at','user','action']
 
     def __init__(self):
         for key in self._keys:
