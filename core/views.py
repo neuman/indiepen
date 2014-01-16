@@ -15,7 +15,7 @@ import core.forms as cf
 
 from django.db.models.signals import post_save
 from actstream import action
-from actstream.models import user_stream
+from actstream.models import user_stream, action_object_stream
 
 
 
@@ -201,6 +201,7 @@ class PostDetailView(TemplateView):
         post = cm.Post.objects.get(id=self.kwargs['instance_id'])
         context['post'] = post
         context['available_actions'] = post.get_available_actions(post)
+        context['stream'] = action_object_stream(post)
         return context
 
 class PostListView(TemplateView, Actionable):

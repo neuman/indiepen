@@ -50,27 +50,26 @@
 {% endblock %}
 
 {% block audit %}
-
   <!--timeline start-->
   <section class="panel">
       <div class="panel-body">
               <div class="text-center mbot30">
                   <h3 class="timeline-title">Commit History</h3>
-                  <p class="t-info">{{ post.title }} timeline</p>
+                  <p class="t-info">{{ user.email }} timeline</p>
               </div>
 
               <div class="timeline">
-                {% for touch in post.get_audit %}
+                {% for s in stream %}
                     <article class="timeline-item">
                       <div class="timeline-desk">
                           <div class="panel">
                               <div class="panel-body">
                                   <span class="arrow"></span>
                                   <span class="timeline-icon purple"></span>
-                                  <span class="timeline-date">{{ touch.updated_at|date:"g:i a" }}</span>
-                                  <h1 class="purple">{{ touch.created_at }}</h1>
-                                  <span>{{ touch.user.first_name }} {{ touch.user.last_name }} {{ touch.action }} </span><a href="{{ touch.title }}">{{ touch.title }}</a>
-                                  <p>{{ touch.brief }}</p>
+                                  <span class="timeline-date">{{ s.timestamp|date:"g:i a" }}</span>
+                                  <h1 class="purple">{{ s.timestamp }}</h1>
+                                  <span>{{ s.actor.first_name }} {{ s.actor.last_name }} {{s.verb }} {{ s.target }}</span>
+                                  <p></p>
                               </div>
                           </div>
                       </div>
@@ -84,32 +83,6 @@
   </section>
   <!--timeline end-->
 
-<div class="col-lg-6">
-  <section class="panel">
-      <header class="panel-heading">
-          Pledges
-      </header>
-      <div class="panel-body">
-          <div class="timeline-messages">
-				{% for pledge in project.get_pledges %}
-              <!-- Comment -->
-              <div class="msg-time-chat">
-                  <a href="#" class="message-img"><img class="avatar" src="http://lorempixel.com/50/50" alt=""></a>
-                  <div class="message-body msg-out">
-                      <span class="arrow"></span>
-                      <div class="text">
-                          <p class="attribution"><a href="#">{{ pledge.person.user.first_name }} {{ pledge.person.user.last_name }}</a> at 2:05pm, 13th April 2013</p>
-                          <p>{{ pledge.ammount }}</p>
-                      </div>
-                  </div>
-              </div>
-              <!-- /comment -->
-              {% endfor %}
-          </div>
-          
-      </div>
-  </section>
-</div>
 <div class="col-lg-6">
   <section class="panel">
       <header class="panel-heading">

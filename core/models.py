@@ -5,7 +5,7 @@ from django.contrib.auth.models import User
 from django.db.models import Sum
 from django.core.urlresolvers import reverse
 from actions.models import Action, Actionable
-from simple_history.models import HistoricalRecords
+#from simple_history.models import HistoricalRecords
 from django.utils.encoding import python_2_unicode_compatible
 from django.utils.translation import ugettext_lazy as _
 
@@ -80,7 +80,7 @@ MEDIUM_CHOICES = (
     ('TXT', 'Text'),
     ('VID', 'Video'),
     ('AUD', 'Audio'),
-    ('IMA', 'Image'),
+    ('IMG', 'Image'),
     ('MUL', 'Multimedia'),
 )
 
@@ -98,11 +98,6 @@ DURATION_CHOICES = (
     ('5', '5 Months'),
     ('6', '6 Months'),
 )
-
-MEDIUM_CHOICES = (
-    ('USD', 'US Dollar'),
-)
-
 
 class Badge(Auditable):
     title = models.CharField(max_length=300)
@@ -155,8 +150,9 @@ class Project(Auditable, Actionable):
     medium = models.CharField(max_length=3, choices=MEDIUM_CHOICES, default='TXT')
     duration = models.CharField(max_length=3, choices=DURATION_CHOICES, default='1')
     frequency = models.CharField(max_length=3, choices=FREQUENCY_CHOICES, default='WEE')
-    ask = MoneyField(max_digits=10, decimal_places=2, default_currency='USD')
-    history = HistoricalRecords()
+    #ask = MoneyField(max_digits=10, decimal_places=2, default_currency='USD')
+    ask = models.FloatField()
+    #history = HistoricalRecords()
 
     def __unicode__(self):
         return self.title
@@ -209,7 +205,7 @@ class Media(Auditable, Actionable):
     medium = models.CharField(max_length=3, choices=MEDIUM_CHOICES, null=True, blank=True)
     brief = models.TextField(default='')
     tags = TaggableManager()
-    history = HistoricalRecords()
+    #history = HistoricalRecords()
 
     def __unicode__(self):
         return self.get_file_name()
@@ -246,9 +242,8 @@ class PostDetailAction(Action):
 class Post(Auditable, Actionable):
     project = models.ForeignKey(Project)
     title = models.CharField(max_length=60)
-    #members = models.ManyToManyField(User)
     media = models.ManyToManyField(Media, null=True, blank=True)
-    history = HistoricalRecords()
+    #history = HistoricalRecords()
 
     def __unicode__(self):
         return self.title
@@ -266,7 +261,7 @@ class Post(Auditable, Actionable):
         return self.media.all()
 
     def get_thumb(self):
-        q = self.get_media().filter(medium='IMA')
+        q = self.get_media().filter(medium='IMG')
         if q.count() > 0:
             return q[0]
         else:
@@ -298,7 +293,7 @@ class Service(Auditable, Actionable):
     title = models.CharField(max_length=300)
     cost_per_hour = MoneyField(max_digits=10, decimal_places=2, default_currency='USD')
     provider = models.ManyToManyField(User)
-    history = HistoricalRecords()
+    #history = HistoricalRecords()
 
     def __unicode__(self):
         return self.title
@@ -307,7 +302,8 @@ class Service(Auditable, Actionable):
 class Pledge(Auditable, Actionable):
     pledger = models.ForeignKey(User)
     project = models.ForeignKey(Project)
-    value = MoneyField(max_digits=10, decimal_places=2, default_currency='USD')
+    #value = MoneyField(max_digits=10, decimal_places=2, default_currency='USD')
+    value = models.FloatField()
     token = models.CharField(max_length=300)
 
     def __unicode__(self):
@@ -325,13 +321,13 @@ class Contribution(Auditable):
     pledge = models.ManyToManyField(Pledge)
     project = models.ManyToManyField(Project)
     value = MoneyField(max_digits=10, decimal_places=2, default_currency='USD')
-    history = HistoricalRecords()
+    #history = HistoricalRecords()
 
 class Payout(Auditable):
     payee = models.ForeignKey(User, null=True, blank=True)
     project = models.ForeignKey(Project, null=True, blank=True)
     value = MoneyField(max_digits=10, decimal_places=2, default_currency='USD')
-    history = HistoricalRecords()
+    #history = HistoricalRecords()
 
 class Touch(dict):
 
