@@ -56,6 +56,21 @@ class DetailView(TemplateView):
 
 class BootstrapView(TemplateView):
     template_name = 'grid.html'
+from django.contrib.contenttypes.models import ContentType
+from django.shortcuts import get_object_or_404
+
+class StreamListView(TemplateView, Actionable):
+    template_name = 'stream.html'
+
+    def get_context_data(self, **kwargs):
+
+        context = super(StreamListView, self).get_context_data(**kwargs)
+        object_type = ContentType.objects.get(app_label="core", model=self.kwargs['instance_model']).model_class()
+        object_instance = get_object_or_404(object_type, pk=self.kwargs['instance_id'])
+        context['object_instance'] = object_instance
+        context['available_actions'] = object_instance.get_available_actions(self.request.user)
+        context['stream'] = object_instance.action_object_actions.all()
+        return context
 
 class ProjectDetailView(TemplateView):
     template_name = 'project.html'

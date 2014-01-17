@@ -9,6 +9,8 @@ urlpatterns = patterns('',
     url(r'bootstrap/$', cv.BootstrapView.as_view(), name='bootstrap'),
     ('^activity/', include('actstream.urls')),
 
+    url(r'(?P<instance_model>\w+)/(?P<instance_id>\w+)/stream/$', cv.StreamListView.as_view(), name='stream_list'),
+
     url(r'projects/$', cv.ProjectListView.as_view(), name='project_list'),
     url(r'projects/create/$', cv.ProjectCreateView.as_view(), name='project_create'),
     url(r'projects/(?P<instance_id>\d+)/$', cv.ProjectDetailView.as_view(), name='project_detail'),

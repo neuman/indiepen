@@ -99,6 +99,12 @@ DURATION_CHOICES = (
     ('6', '6 Months'),
 )
 
+class StreamListAction(Action):
+    display_name = "View Stream"
+
+    def get_url(self):
+        return reverse(viewname='stream_list', kwargs={'instance_model':self.instance._meta.model_name, 'instance_id':self.instance.id}, current_app='core')
+
 class Badge(Auditable):
     title = models.CharField(max_length=300)
 
@@ -184,7 +190,8 @@ class Project(Auditable, Actionable):
         actions = [
             ProjectPledgeAction(instance=self),
             ProjectUploadAction(instance=self),
-            ProjectPostAction(instance=self)
+            ProjectPostAction(instance=self),
+            StreamListAction(instance=self)
         ]
         return actions
 
@@ -253,7 +260,8 @@ class Post(Auditable, Actionable):
 
     def get_actions(self):
         actions = [
-            PostCreateMediaAction(instance=self)
+            PostCreateMediaAction(instance=self),
+            StreamListAction(instance=self)
         ]
         return actions
 
@@ -344,18 +352,11 @@ class Touch(dict):
 
 class Options(models.Model):
     user = models.ForeignKey(User, unique=True)
+    image = models.FileField(upload_to='/')
 
-    def get_touches(self):
-        touches = []
-        touchables = [pledge.objects.filter(pledger=self.user), self.user.project_set.all()]
+    def get_image_url(self):
+        return self.image.url
 
-    def get_audit(self):
-        touches = self.get_touches()
-        for m in self.media.all():
-            touches+=m.get_touches()
-            print m
-        touches = sort_touches(touches)
-        return touches
 
 
 def sort_touches(touches):
