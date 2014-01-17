@@ -1,0 +1,47 @@
+{% extends "bootstrap.html" %}
+{% load markdown_deux_tags %}
+
+{% block title %}Indiepen{% endblock %}
+
+{% block showcase %}
+
+<div class="col-md-9">
+    <section class="panel">
+        <header class="panel-heading">
+            {{ object_instance }} Stream
+            <span class="tools pull-right">
+              <a class="fa fa-chevron-down" href="javascript:;"></a>
+              <a class="fa fa-times" href="javascript:;"></a>
+          </span>
+        </header>
+        <div class="panel-body">
+            <div class="timeline-messages">
+              {% for s in stream %}
+                <!-- Comment -->
+                <div class="msg-time-chat">
+                    <a href="#" class="message-img"><img class="avatar" src="https://fbcdn-profile-a.akamaihd.net/hprofile-ak-prn2/t5/1086357_15502297_576294039_q.jpg" alt=""></a>
+                    <div class="message-body msg-in">
+                        <span class="arrow"></span>
+                        <div class="text">
+                            <p class="attribution">{{ s.timestamp }}</p>
+                            <a href="/users/{{ s.actor.id}}/">{{ s.actor.first_name }} {{ s.actor.last_name }}</a> {{ s.verb }} <a href="{{ s.action_object.get_absolute_url }}">{{ s.action_object }}</a>{% if s.target %} to <a href="{{ s.target.get_absolute_url }}">{{ s.target }}</a>.{% endif %}
+                        </div>
+                    </div>
+                </div>
+                <!-- /comment -->
+                {% endfor %}
+            </div>
+        </div>
+    </section>
+</div>
+
+<div class="col-md-3">
+
+</div>
+
+
+
+{% endblock %}
+
+{% block audit %}
+{% endblock %}

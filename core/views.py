@@ -135,8 +135,7 @@ class PledgeCreateView(CreateView):
     def get_success_url(self):
         #new_options = cm.Options.objects.create(user=self.request.user)
         #new_options.save()
-        raise Exception(self.object.__class__)
-        action.send(self.request.user, verb='Pledged', action_object=self.object, target=self.object.project)
+        action.send(self.request.user, verb='pledged', action_object=self.object, target=self.object.project)
         return '/'
 #Pledge ENDS
 
@@ -207,7 +206,7 @@ class PostUpdateView(UpdateView):
         return super(PostCreateView, self).form_valid(form)
 
 class PostDetailView(TemplateView):
-    template_name = 'post.html'
+    template_name = 'media.html'
 
     def get_context_data(self, **kwargs):
 
@@ -215,6 +214,7 @@ class PostDetailView(TemplateView):
         context = super(PostDetailView, self).get_context_data(**kwargs)
         post = cm.Post.objects.get(id=self.kwargs['instance_id'])
         context['post'] = post
+        context['medias'] = post.get_medias()
         context['available_actions'] = post.get_available_actions(post)
         stream = []
         for a in action_object_stream(post):
@@ -320,3 +320,32 @@ class UserDetailView(TemplateView, Actionable):
         context['stream'] = user_stream(self.request.user)
         return context
 #User ENDS
+
+#media STARTS
+class MediaDetailView(TemplateView):
+    template_name = 'media.html'
+
+    def get_context_data(self, **kwargs):
+        context = super(MediaDetailView, self).get_context_data(**kwargs)
+        media = cm.Media.objects.get(id=self.kwargs['instance_id'])
+        context['medias'] = [media]
+        context['available_actions'] = media.get_available_actions(self.request.user)
+        return context
+
+class MediaUpdateView(UpdateView):
+    model = cm.Media
+    template_name = 'form.html'
+    form_class = cf.MediaUpdateForm
+
+    def get_context_data(self, **kwargs):
+        context = super(MediaUpdateView, self).get_context_data(**kwargs)
+        context['medias'] = [self.object]
+        context['available_actions'] = self.object.get_available_actions(self.request.user)
+        return context
+
+    def get_success_url(self):
+        #aise Exception(dir(self.object))
+        post = cm.get_media_post(self.object)
+        return post.get_absolute_url()
+
+#media ENDS

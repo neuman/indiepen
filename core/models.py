@@ -34,6 +34,9 @@ DURATION_CHOICES = (
     ('6', '6 Months'),
 )
 
+IMPORTANCE_CHOICES = [(n, n) for n in xrange(1, 10, 1)]
+
+
 EXTENSIONS = {
     "TXT":['txt','md'],
     "VID":['avi', 'm4v', 'mov', 'mp4', 'mpeg', 'mpg', 'vob', 'wmv'],
@@ -206,16 +209,37 @@ class Project(Auditable, Actionable):
 from taggit.managers import TaggableManager
 
 
+class MediaUpdateAction(Action):
+    display_name = "Update Media Details"
+
+    def is_available(self, user):
+        
+        return self.instance.post_set.all()[0].project.members.filter(id=user.id).count() > 0
+
+    def get_url(self):
+        return reverse(viewname='media_update', args=[self.instance.id], current_app='core')
+
 class Media(Auditable, Actionable):
     original_file = models.FileField(upload_to='/')
     internal_file = models.FileField(upload_to='/', null=True, blank=True)
     medium = models.CharField(max_length=3, choices=MEDIUM_CHOICES, null=True, blank=True)
-    brief = models.TextField(default='')
-    tags = TaggableManager()
+    brief = models.TextField(default='', null=True, blank=True)
+    tags = TaggableManager(blank=True)
+    importance = models.IntegerField(default=5, choices=IMPORTANCE_CHOICES)
     #history = HistoricalRecords()
 
     def __unicode__(self):
         return self.get_file_name()
+
+    def get_absolute_url(self):
+        return reverse(viewname='media_detail', args=[self.id], current_app='core')
+
+    def get_actions(self):
+        actions = [
+            MediaUpdateAction(instance=self),
+            StreamListAction(instance=self)
+        ]
+        return actions
 
     def get_file_url(self):
         return self.original_file.url
@@ -230,6 +254,9 @@ class Media(Auditable, Actionable):
         if self.file.size > 0:
                     return True
         return False
+
+def get_media_post(media):
+    return media.post_set.all()[0]
 
 class PostCreateMediaAction(Action):
     display_name = "Upload Post Files"
@@ -265,11 +292,11 @@ class Post(Auditable, Actionable):
         ]
         return actions
 
-    def get_media(self):
-        return self.media.all()
+    def get_medias(self):
+        return self.media.all().order_by('-importance')
 
     def get_thumb(self):
-        q = self.get_media().filter(medium='IMG')
+        q = self.get_medias().filter(medium='IMG')
         if q.count() > 0:
             return q[0]
         else:
@@ -315,7 +342,7 @@ class Pledge(Auditable, Actionable):
     token = models.CharField(max_length=300)
 
     def __unicode__(self):
-        return self.pledger.__unicode__()+" + "+self.project.__unicode__()
+        return "$"+str(self.value)
 '''
     class Meta(Auditable.Meta):
         __name__ = "ROOSTER"
@@ -352,7 +379,7 @@ class Touch(dict):
 
 class Options(models.Model):
     user = models.ForeignKey(User, unique=True)
-    image = models.FileField(upload_to='/')
+    image = models.FileField(null=True, blank=True, upload_to='/')
 
     def get_image_url(self):
         return self.image.url

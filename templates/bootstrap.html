@@ -355,6 +355,8 @@
     <script src="{{ STATIC_URL }}assets/jquery-easy-pie-chart/jquery.easy-pie-chart.js"></script>
     <script src="{{ STATIC_URL }}js/owl.carousel.js" ></script>
     <script src="{{ STATIC_URL }}js/jquery.customSelect.min.js" ></script>
+    <script src="{{ STATIC_URL }}js/masonry.pkgd.min.js" ></script>
+    <script src="{{ STATIC_URL }}js/imagesloaded.pkgd.min.js"></script>
 
     <!--common script for all pages-->
     <script src="{{ STATIC_URL }}js/common-scripts.js"></script>
@@ -382,6 +384,14 @@
             paramName: "original_file"
         });
       });
+
+        // or with jQuery
+        var $container = $('.js-masonry');
+        // initialize Masonry after all images have loaded  
+        $container.imagesLoaded( function() {
+          console.log('images loaded')
+          $container.masonry();
+        });
 
       //custom select box
 

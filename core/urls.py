@@ -23,6 +23,9 @@ urlpatterns = patterns('',
     url(r'posts/(?P<instance_id>\d+)/upload/$', cv.PostMediaCreateView.as_view(), name='post_media_create'),
     url(r'posts/(?P<instance_id>\d+)/uploads/$', cv.PostUploadsView.as_view(), name='post_media_uploads'),
 
+    url(r'medias/(?P<instance_id>\d+)/$', cv.MediaDetailView.as_view(), name='media_detail'),
+    url(r'medias/(?P<pk>\d+)/update/$', cv.MediaUpdateView.as_view(), name='media_update'),
+
     url(r'users/(?P<instance_id>\d+)/$', cv.UserDetailView.as_view(), name='user_detail'),
 
     url(r'^(?P<pk>\d+)/$',cv.DetailView.as_view(), name="detail"),

@@ -1,0 +1,35 @@
+{% extends "bootstrap.html" %}
+{% load markdown_deux_tags %}
+
+{% block title %}Indiepen{% endblock %}
+
+{% block showcase %}
+
+<div class="js-masonry" data-masonry-options='{ "itemSelector": ".item" }'>
+
+  {% for m in medias %}
+    {% if m.medium == "IMA" %}
+    <div class="col-md-3 item">
+      <img href="{{ m.get_absolute_url }}" class="img-thumbnail" src='{{m.get_file_url }}'></img>
+      <p><a href="{{ m.get_absolute_url }}" >{{ m.get_file_name }}</a> | {{ m.brief }}</p>
+    </div>
+    {% endif %}
+
+    {% if m.medium == "TXT" %}
+    <div class="col-md-{{ m.importance }} item">
+      <h2><a href="{{ m.get_absolute_url }}">{{ m.get_file_name }}</a></h2>
+      {{ m.get_content|markdown }}
+      <div class="panel">
+        <div class="row">
+          <p>{{ m.brief }}</p>
+        </div>
+      </div>
+    </div>
+    {% endif %}
+  {% endfor %}
+</div>
+
+{% endblock %}
+
+{% block audit %}
+{% endblock %}
