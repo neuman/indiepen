@@ -1,5 +1,8 @@
 @media (min-width: 980px) {
-
+    /*-----*/
+    .custom-bar-chart {
+        margin-bottom: 40px;
+    }
 }
 
 @media (min-width: 768px) and (max-width: 979px) {
@@ -10,6 +13,10 @@
 
     .mail-box .lg-side {
         width: 70%;
+    }
+    /*-----*/
+    .custom-bar-chart {
+        margin-bottom: 40px;
     }
 
 }
@@ -102,9 +109,15 @@
 
     /*---------*/
 
+    .modal-footer .btn {
+        margin-bottom: 0px !important;
+    }
+
     .btn {
         margin-bottom: 5px;
     }
+
+
 
 
     .mail-box aside {
@@ -219,7 +232,58 @@
         margin-bottom: 0;
     }
 
+    .boxed-page .container #sidebar {
+        position:absolute;
+    }
 
+    /*--horizontal menu--*/
+    .full-width .navbar-toggle {
+        border: 1px solid #eaeaea;
+    }
+    .full-width .navbar-toggle .icon-bar {
+        background: #c7c7c7;
+    }
+
+    .full-width .navbar-toggle {
+        float: left;
+        margin-top: 12px;
+    }
+
+    .horizontal-menu {
+        float: left;
+        margin-left:0px;
+        width: 70%;
+        margin-top: 10px;
+    }
+
+    .top-nav {
+        position: absolute;
+        right: 10px;
+        top: 0px;
+    }
+
+    .horizontal-menu .navbar-nav > li > a {
+        padding-bottom: 10px;
+        padding-top: 10px;
+    }
+    /*-----*/
+    .custom-bar-chart {
+        margin-bottom: 40px;
+    }
+
+    /*menu icon plus minus*/
+    .dcjq-icon {
+        top: 10px;
+    }
+    ul.sidebar-menu li ul.sub li a {
+        padding: 0;
+    }
+
+    /*---*/
+
+    .img-responsive {
+        width: 100%;
+    }
 
 }
 
@@ -266,6 +330,49 @@
     .chart-position {
        margin-top: 0px;
      }
+    /*--horizontal menu--*/
+    .full-width .navbar-toggle {
+        border: 1px solid #eaeaea;
+    }
+    .full-width .navbar-toggle .icon-bar {
+        background: #c7c7c7;
+    }
+
+    .full-width .navbar-toggle {
+        float: left;
+        margin-top: 12px;
+    }
+
+    .horizontal-menu {
+        float: left;
+        margin-left:0px;
+        width: 100%;
+    }
+
+    .top-nav {
+        position: absolute;
+        right: 10px;
+        top: 0px;
+    }
+
+    .horizontal-menu .navbar-nav > li > a {
+        padding-bottom: 10px;
+        padding-top: 10px;
+    }
+
+    .ms-container {
+        width: 100%;
+    }
+
+    .cmt-form {
+        display: inline-block;
+        width: 84%;
+    }
+
+    .navbar-inverse .navbar-toggle:hover, .navbar-inverse .navbar-toggle:focus {
+        background-color: #ccc;
+        border-color:#ccc ;
+    }
 }
 
 @media (max-width:320px) {
@@ -314,8 +421,19 @@
         margin-top: 0px;
     }
 
-}
+    .lock-wrapper {
+        margin: 10% auto;
+        max-width: 310px;
+    }
+    .lock-input {
+        width: 82%;
+    }
 
+    .cmt-form {
+        display: inline-block;
+        width: 75%;
+    }
+}
 
 
 

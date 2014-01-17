@@ -121,7 +121,7 @@ class PledgeCreateView(CreateView):
         #new_options = cm.Options.objects.create(user=self.request.user)
         #new_options.save()
         raise Exception(self.object.__class__)
-        action.send(self.request.user, verb='Pledged', action_object=self.object)
+        action.send(self.request.user, verb='Pledged', action_object=self.object, target=self.object.project)
         return '/'
 #Pledge ENDS
 
@@ -152,7 +152,7 @@ class MediaCreateView(CreateView):
     def form_valid(self, form):
         form.instance.user = self.request.user
         form.instance.changed_by = self.request.user
-        action.send(self.request.user, verb='created', action_object=self.object)
+        action.send(self.request.user, verb='uploaded', action_object=self.object)
         return super(MediaCreateView, self).form_valid(form)
 
 
@@ -174,7 +174,7 @@ class PostCreateView(CreateView):
         return super(PostCreateView, self).form_valid(form)
 
     def get_success_url(self):
-        action.send(self.request.user, verb='created', action_object=self.object)
+        action.send(self.request.user, verb='posted', action_object=self.object, target=self.object.project)
         return reverse(viewname='post_media_uploads', args=(self.object.id,), current_app='core')
 
 class PostUpdateView(UpdateView):
@@ -254,7 +254,7 @@ class PostMediaCreateView(CreateView, Actionable):
     def get_success_url(self):
         p = cm.Post.objects.get(id=self.kwargs['instance_id'])
         p.media.add(self.new_instance)
-        action.send(self.request.user, verb='uploaded', action_object=self.new_instance)
+        action.send(self.request.user, verb='uploaded', action_object=self.new_instance, target=p)
         return reverse(viewname='post_media_create', args=(self.kwargs['instance_id'],), current_app='core')
 
     def get_actions(self):
