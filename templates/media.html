@@ -9,14 +9,22 @@
 
   {% for m in medias %}
     {% if m.medium == "IMA" %}
-    <div class="col-md-3 item">
-      <img href="{{ m.get_absolute_url }}" class="img-thumbnail" src='{{m.get_file_url }}'></img>
+    {% if focus %}
+      <div class="col-lg-12 item">
+    {% else %}
+      <div class="col-md-3 item">
+    {% endif %}
+      <a href="{{ m.get_absolute_url }}"><img class="img-thumbnail" src='{{m.get_file_url }}'></img></a>
       <p><a href="{{ m.get_absolute_url }}" >{{ m.get_file_name }}</a> | {{ m.brief }}</p>
     </div>
     {% endif %}
 
     {% if m.medium == "TXT" %}
-    <div class="col-md-{{ m.importance }} item">
+      {% if focus %}
+        <div class="col-lg-12 item">
+      {% else %}
+        <div class="col-md-{{ m.importance }} item">
+      {% endif %}
       <h2><a href="{{ m.get_absolute_url }}">{{ m.get_file_name }}</a></h2>
       {{ m.get_content|markdown }}
       <div class="panel">

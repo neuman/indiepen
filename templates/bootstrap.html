@@ -315,30 +315,19 @@
       </aside>
       <!--sidebar end-->
       <!--main content start-->
-      <section id="main-content">
-
-          <section class="wrapper">
-            <section class="panel">
-                          <header class="panel-heading tab-bg-dark-navy-blue ">
-                              <ul class="nav nav-tabs">
-                                  <li class="active">
-                                      <a data-toggle="tab" href="#home">Content</a>
-                                  </li>
-                                  <li class="">
-                                      <a data-toggle="tab" href="#audit">About</a>
-                                  </li>
-                          </header>
-                          <div class="panel-body">
-                              <div class="tab-content">
-                                  <div id="home" class="tab-pane active">
-                                      {% block showcase %}{% endblock %}
-                                  </div>
-                                  <div id="audit" class="tab-pane">
-                                    {% block audit %}{% endblock %}
-                                  </div>
-                              </div>
-                          </div>
-                      </section>
+<section id="main-content">
+    <section class="wrapper">
+        <section class="panel">
+            <div class="panel-body progress-panel">
+                  <div class="task-progress">
+                      <h1>{{ object_instance }}</h1>
+                  </div>
+              </div>
+        {% block showcase %}{% endblock %}
+        {% block audit %}{% endblock %}
+        </section>
+    </section>
+</section>
             
               <!--state overview start-->
               

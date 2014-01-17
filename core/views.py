@@ -330,6 +330,7 @@ class MediaDetailView(TemplateView):
         media = cm.Media.objects.get(id=self.kwargs['instance_id'])
         context['medias'] = [media]
         context['available_actions'] = media.get_available_actions(self.request.user)
+        context['focus'] = True
         return context
 
 class MediaUpdateView(UpdateView):
