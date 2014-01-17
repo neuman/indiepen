@@ -258,13 +258,12 @@
                     <!-- user login dropdown start-->
                     <li class="dropdown">
                         <a data-toggle="dropdown" class="dropdown-toggle" href="#">
-                            <img alt="" src="{{ STATIC_URL }}img/avatar1_small.jpg">
-                            <span class="username">Jhon Doue</span>
+                            <span class="username">{{ user.first_name }} {{ user.last_name }}</span>
                             <b class="caret"></b>
                         </a>
                         <ul class="dropdown-menu extended logout">
                             <div class="log-arrow-up"></div>
-                            <li><a href="#"><i class=" icon-suitcase"></i>Profile</a></li>
+                            <li><a href="/users/{{ user.id }}/"><i class=" icon-suitcase"></i>Profile</a></li>
                             <li><a href="#"><i class="icon-cog"></i> Settings</a></li>
                             <li><a href="#"><i class="icon-bell-alt"></i> Notification</a></li>
                             <li><a href="login.html"><i class="icon-key"></i> Log Out</a></li>

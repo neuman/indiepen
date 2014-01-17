@@ -15,7 +15,7 @@ import core.forms as cf
 
 from django.db.models.signals import post_save
 from actstream import action
-from actstream.models import user_stream, action_object_stream
+from actstream.models import user_stream, action_object_stream, model_stream
 
 
 
@@ -121,7 +121,7 @@ class PledgeCreateView(CreateView):
         #new_options = cm.Options.objects.create(user=self.request.user)
         #new_options.save()
         raise Exception(self.object.__class__)
-        action.send(self.request.user, verb='Pledged', target=self.object)
+        action.send(self.request.user, verb='Pledged', action_object=self.object)
         return '/'
 #Pledge ENDS
 
@@ -137,7 +137,7 @@ class ProjectCreateView(CreateView):
     def get_success_url(self):
 
         self.object.members.add(self.request.user)
-        action.send(self.request.user, verb='created', target=self.object)
+        action.send(self.request.user, verb='created', action_object=self.object)
         return reverse(viewname='project_detail', args=(self.object.id,), current_app='core')
 
 class MediaCreateView(CreateView):
@@ -152,7 +152,7 @@ class MediaCreateView(CreateView):
     def form_valid(self, form):
         form.instance.user = self.request.user
         form.instance.changed_by = self.request.user
-        action.send(self.request.user, verb='created', target=self.object)
+        action.send(self.request.user, verb='created', action_object=self.object)
         return super(MediaCreateView, self).form_valid(form)
 
 
@@ -174,7 +174,7 @@ class PostCreateView(CreateView):
         return super(PostCreateView, self).form_valid(form)
 
     def get_success_url(self):
-        action.send(self.request.user, verb='created', target=self.object)
+        action.send(self.request.user, verb='created', action_object=self.object)
         return reverse(viewname='post_media_uploads', args=(self.object.id,), current_app='core')
 
 class PostUpdateView(UpdateView):
@@ -201,7 +201,13 @@ class PostDetailView(TemplateView):
         post = cm.Post.objects.get(id=self.kwargs['instance_id'])
         context['post'] = post
         context['available_actions'] = post.get_available_actions(post)
-        context['stream'] = action_object_stream(post)
+        stream = []
+        for a in action_object_stream(post):
+            stream.append(a)
+        for m in post.media.all():
+            for a in action_object_stream(m):
+                stream.append(a)
+        context['stream'] = stream
         return context
 
 class PostListView(TemplateView, Actionable):
@@ -248,7 +254,7 @@ class PostMediaCreateView(CreateView, Actionable):
     def get_success_url(self):
         p = cm.Post.objects.get(id=self.kwargs['instance_id'])
         p.media.add(self.new_instance)
-        action.send(self.request.user, verb='uploaded', target=self.new_instance)
+        action.send(self.request.user, verb='uploaded', action_object=self.new_instance)
         return reverse(viewname='post_media_create', args=(self.kwargs['instance_id'],), current_app='core')
 
     def get_actions(self):
