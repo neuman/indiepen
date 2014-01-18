@@ -267,6 +267,7 @@ class PostCreateMediaAction(Action):
     def get_url(self):
         return reverse(viewname='post_media_uploads', args=[self.instance.id], current_app='core')
 
+
 class PostDetailAction(Action):
     display_name = "View Post"
 
@@ -294,6 +295,9 @@ class Post(Auditable, Actionable):
 
     def get_medias(self):
         return self.media.all().order_by('-importance')
+
+    def get_summary_medias(self):
+        return self.get_medias()[:2]
 
     def get_thumb(self):
         q = self.get_medias().filter(medium='IMG')

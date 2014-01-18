@@ -1,0 +1,37 @@
+{% extends "bootstrap.html" %}
+{% load markdown_deux_tags %}
+
+{% block title %}Indiepen{% endblock %}
+
+{% block showcase %}
+
+<div class="js-masonry" data-masonry-options='{ "itemSelector": ".item" }'>
+
+  {% for post in posts %}
+    <div class="col-md-3 item">
+      {% for media in post.get_summary_medias %}
+        {% if media.medium == "IMA" %}
+          <a href="{{ post.get_absolute_url }}"><img class="img-thumbnail" src='{{ media.get_file_url }}'></img></a>
+          <p><a href="{{ post.get_absolute_url }}" >{{ media.get_file_name }}</a> | {{ media.brief }}</p>
+        {% endif %}
+
+      {% if media.medium == "TXT" %}
+        <h2><a href="{{ post.get_absolute_url }}">{{ mmediaget_file_name }}</a></h2>
+        <span>{{ media.get_content |truncatechars:500 |markdown}}<a href="{{ post.get_absolute_url }}">continued on page {{ post.id }}</a></span>
+        <div class="panel">
+          <div class="row">
+            <p>{{ media.brief }}</p>
+          </div>
+        </div>
+      {% endif %}
+    {%endfor %}
+    <hr></hr>
+    </div>
+
+  {% endfor %}
+</div>
+
+{% endblock %}
+
+{% block audit %}
+{% endblock %}

@@ -226,12 +226,12 @@ class PostDetailView(TemplateView):
         return context
 
 class PostListView(TemplateView, Actionable):
-    template_name = 'list.html'
+    template_name = 'posts.html'
 
     def get_context_data(self, **kwargs):
 
         context = super(PostListView, self).get_context_data(**kwargs)
-        context['projects'] = cm.Project.objects.all()
+        context['posts'] = cm.Post.objects.all().order_by('-updated_at')
         context['available_actions'] = self.get_available_actions(self.request.user)
         return context
 
@@ -331,6 +331,15 @@ class MediaDetailView(TemplateView):
         context['medias'] = [media]
         context['available_actions'] = media.get_available_actions(self.request.user)
         context['focus'] = True
+        return context
+
+class MediaListView(TemplateView):
+    template_name = 'media.html'
+
+    def get_context_data(self, **kwargs):
+        context = super(MediaListView, self).get_context_data(**kwargs)
+        context['medias'] = cm.Media.objects.all()
+        #context['available_actions'] = media.get_available_actions(self.request.user)
         return context
 
 from django_remote_forms.forms import RemoteForm
