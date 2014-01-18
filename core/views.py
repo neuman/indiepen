@@ -333,6 +333,11 @@ class MediaDetailView(TemplateView):
         context['focus'] = True
         return context
 
+from django_remote_forms.forms import RemoteForm
+import json
+from django.http import HttpResponse
+
+
 class MediaUpdateView(UpdateView):
     model = cm.Media
     template_name = 'form.html'
@@ -345,8 +350,23 @@ class MediaUpdateView(UpdateView):
         return context
 
     def get_success_url(self):
-        #aise Exception(dir(self.object))
         post = cm.get_media_post(self.object)
         return post.get_absolute_url()
+
+    def get(self, request, *args, **kwargs):
+        supes = super(MediaUpdateView, self).get(request, *args, **kwargs)
+        context = self.get_context_data(**kwargs)
+        if self.request.is_ajax():
+            remote_form = RemoteForm(self.get_form(self.form_class))
+            blob = {
+                'form':remote_form.as_dict(),
+                'available_actions':self.object.get_available_actions(self.request.user),
+                'object_instance':None
+            }
+            data = json.dumps(blob)
+            out_kwargs = {'content_type':'application/json'}
+            return HttpResponse(data, **out_kwargs)
+
+        return self.render_to_response(context)
 
 #media ENDS
