@@ -34,6 +34,27 @@
       </div>
     </div>
     {% endif %}
+
+      {% if m.medium == "DAT" %}
+
+        <div class="panel terques-chart">
+            <div class="panel-body chart-texture">
+                <div class="chart">
+                    <div class="heading">
+                        <span>{{ m.get_file_name }}</span>
+                        <strong></strong>
+                    </div>
+                    <div class="sparkline" data-type="line" data-resize="true" data-height="75" data-width="90%" data-line-width="1" data-line-color="#fff" data-spot-color="#fff" data-fill-color="" data-highlight-line-color="#fff" data-spot-radius="4" data-data="[{% for value in m.get_content_data_values %}{{ value }}{% if forloop.last %}{% else %},{% endif %}{% endfor %}]" data-labels="[{% for label in m.get_content_data_labels %}{{ label }}{% if forloop.last %}{% else %},{% endif %}{% endfor %}]"><canvas style="display: inline-block; width: 363px; height: 75px; vertical-align: top;" width="363" height="75"></canvas></div>
+                </div>
+            </div>
+            <div class="chart-tittle">
+                <span class="title">Title goes here</span>
+                <span class="value">
+                    <a href="{{ m.get_absolute_url }}">{{ m.get_file_name }}</a>
+                </span>
+            </div>
+        </div>
+      {% endif %}
   {% endfor %}
 </div>
 

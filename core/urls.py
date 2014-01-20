@@ -28,6 +28,9 @@ urlpatterns = patterns('',
     url(r'medias/(?P<pk>\d+)/update/$', cv.MediaUpdateView.as_view(), name='media_update'),
 
     url(r'users/(?P<instance_id>\d+)/$', cv.UserDetailView.as_view(), name='user_detail'),
+    url(r'users/create/$', cv.UserCreateView.as_view(), name='user_ceate'),
+    url(r'users/login/$', cv.UserLoginView.as_view(), name='user_login'),
+    #(r'^users/login/$', 'django.contrib.auth.views.login',{'template_name': 'form.html'}),
 
     url(r'^(?P<pk>\d+)/$',cv.DetailView.as_view(), name="detail"),
     url(r'^api/', include(v1_api.urls)),

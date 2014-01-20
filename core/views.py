@@ -5,6 +5,8 @@ from django.shortcuts import render_to_response
 from django.views.generic import DetailView
 from django.core.urlresolvers import reverse
 from django.contrib.contenttypes.models import ContentType
+from django.contrib.auth.models import User
+from uuid import uuid4
 
 from actions.models import Actionable
 
@@ -15,7 +17,9 @@ import core.forms as cf
 
 from django.db.models.signals import post_save
 from actstream import action
-from actstream.models import user_stream, action_object_stream, model_stream
+from actstream.models import user_stream, action_object_stream, model_stream, actor_stream
+
+from django.contrib.auth import authenticate, login
 
 
 
@@ -121,10 +125,7 @@ class PledgeCreateView(CreateView):
     model = cm.Pledge
     template_name = 'form.html'
     fields = ['value']
-
-
-    def get_form(self, form_class):
-        return cf.PledgeForm(self.request.POST or None, self.request.FILES or None, initial=self.get_initial())
+    form = cf.PledgeForm
 
     def form_valid(self, form):
         form.instance.changed_by = self.request.user
@@ -144,12 +145,9 @@ class ProjectCreateView(CreateView):
     template_name = 'form.html'
     fields = '__all__'
     success_url = '/'
-
-    def get_form(self, form_class):
-        return cf.ProjectForm(self.request.POST or None, self.request.FILES or None, initial=self.get_initial())
+    form = cf.ProjectForm
 
     def get_success_url(self):
-
         self.object.members.add(self.request.user)
         action.send(self.request.user, verb='created', action_object=self.object)
         return reverse(viewname='project_detail', args=(self.object.id,), current_app='core')
@@ -315,10 +313,43 @@ class UserDetailView(TemplateView, Actionable):
 
         # Call the base implementation first to get a context
         context = super(UserDetailView, self).get_context_data(**kwargs)
-        context['user'] = self.request.user
+        user = User.objects.get(id=self.kwargs['instance_id'])
+        context['user'] = user
         context['available_actions'] = None
-        context['stream'] = user_stream(self.request.user)
+        context['stream'] = actor_stream(user)
         return context
+
+class UserCreateView(CreateView):
+    model = User
+    template_name = 'form.html'
+    form_class = cf.RegistrationForm
+
+    def form_valid(self, form):
+        user = User.objects.create_user(uuid4().hex, form.cleaned_data['email'], form.cleaned_data['password1'])
+        user.first_name = form.cleaned_data['first_name']
+        user.last_name = form.cleaned_data['first_name']
+        user.save()
+        user = authenticate(username=user.username, password=form.cleaned_data['password1'])
+        login(self.request, user)
+        form.instance = user
+        return super(UserCreateView, self).form_valid(form)
+
+    def get_success_url(self):
+        action.send(self.request.user, verb='joined', action_object=self.object)
+        return reverse(viewname='user_detail', args=(self.object.id,), current_app='core')
+
+class UserLoginView(FormView):
+    template_name = 'form.html'
+    form_class = cf.LoginForm
+
+    def form_valid(self, form):
+        user = form.user_cache
+        login(self.request, user)
+        form.instance = user
+        return super(UserLoginView, self).form_valid(form)
+
+    def get_success_url(self):
+        return reverse(viewname='user_detail', args=(self.object.id,), current_app='core')
 #User ENDS
 
 #media STARTS
@@ -376,6 +407,6 @@ class MediaUpdateView(UpdateView):
             out_kwargs = {'content_type':'application/json'}
             return HttpResponse(data, **out_kwargs)
 
-        return self.render_to_response(context)
+        return supes
 
 #media ENDS

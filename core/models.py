@@ -8,6 +8,7 @@ from actions.models import Action, Actionable
 #from simple_history.models import HistoricalRecords
 from django.utils.encoding import python_2_unicode_compatible
 from django.utils.translation import ugettext_lazy as _
+import json
 
 
 
@@ -17,6 +18,7 @@ MEDIUM_CHOICES = (
     ('AUD', 'Audio'),
     ('IMA', 'Image'),
     ('MUL', 'Multimedia'),
+    ('DAT', 'Data'),
 )
 
 FREQUENCY_CHOICES = (
@@ -42,7 +44,8 @@ EXTENSIONS = {
     "VID":['avi', 'm4v', 'mov', 'mp4', 'mpeg', 'mpg', 'vob', 'wmv'],
     "AUD":['aac', 'aiff', 'm4a', 'mp3', 'wav', 'wma'],
     "IMA":['gif', 'jpeg', 'jpg', 'png'],
-    "MUL":['csv','json'],
+    "MUL":[],
+    "DAT":['csv','json'],
 }
 
 @python_2_unicode_compatible
@@ -85,6 +88,7 @@ MEDIUM_CHOICES = (
     ('AUD', 'Audio'),
     ('IMG', 'Image'),
     ('MUL', 'Multimedia'),
+    ('DAT', 'Data'),
 )
 
 FREQUENCY_CHOICES = (
@@ -228,6 +232,8 @@ class Media(Auditable, Actionable):
     importance = models.IntegerField(default=5, choices=IMPORTANCE_CHOICES)
     #history = HistoricalRecords()
 
+    cache = {}
+
     def __unicode__(self):
         return self.get_file_name()
 
@@ -245,10 +251,45 @@ class Media(Auditable, Actionable):
         return self.original_file.url
 
     def get_content(self):
-        return self.original_file._get_file().read()
+        #avoid pulling from s3 constantly
+        if not self.cache.__contains__('content'):
+            self.cache.__setitem__('content',self.original_file._get_file().read())
+        return self.cache['content']
+
+    def get_content_data_values(self):
+        content = self.get_content()
+        content = json.loads(content)
+
+        try:
+            value_name = content['y_name']
+        except Exception as e:
+            value_name = 'value'
+        output = [point[value_name] for point in content['data']]
+        return output
+
+    def get_content_data_labels(self):
+        content = self.get_content()
+        content = json.loads(content)
+        try:
+            label_name = content['x_name']
+        except Exception as e:
+            label_name = 'label'
+        output = [point[label_name] for point in content['data']]
+        return output
 
     def get_file_name(self):
                 return self.original_file.name
+
+    def get_file_extension(self):
+        #return string_in.__getslice__(string_in.__len__()-3, string_in.__len__()).lower()
+        i = self.get_file_url().rfind(".")
+        return string_in.__getslice__(i+1, string_in.__len__()).lower()
+
+    def get_medium(self):
+        for medium in cm.EXTENSIONS:
+            for extension in cm.EXTENSIONS[medium]:
+                if extension == self.get_file_extension():
+                    return medium
 
     def is_file_nonzero(self):
         if self.file.size > 0:
