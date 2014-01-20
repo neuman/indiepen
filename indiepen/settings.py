@@ -38,6 +38,7 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
     'markdown_deux',
     'south',
+    'djangobower',
     'core',
     'json_field',
     'tastypie',
@@ -92,9 +93,37 @@ STATICFILES_DIRS = (
     os.path.join(BASE_DIR, "static"),
 )
 
-import os
+STATICFILES_FINDERS = (
+    'django.contrib.staticfiles.finders.FileSystemFinder',
+    'django.contrib.staticfiles.finders.AppDirectoriesFinder',
+    'djangobower.finders.BowerFinder',
+)
 
 PROJECT_ROOT = os.path.dirname(__file__)
+
+
+
+BOWER_COMPONENTS_ROOT = os.path.join(BASE_DIR, 'components')
+BOWER_INSTALLED_APPS = (
+    'jquery',
+    'chartjs',
+    'bootstrap',
+    'bootstrap-switch',
+    'dropzone',
+    #'holder',
+    'imagesloaded',
+    'jquery.nicescroll',
+    'jquery.scrollTo',
+    'jquery.sparkline',
+    'jquery.tagsinput',
+    #'jquery.validate',
+    'masonry',
+    'oridomi',
+    'underscore',
+    'requirejs'
+)
+
+
 TEMPLATE_DIRS = (
   os.path.join(BASE_DIR, "templates"),
 )

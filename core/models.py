@@ -232,7 +232,7 @@ class Media(Auditable, Actionable):
     importance = models.IntegerField(default=5, choices=IMPORTANCE_CHOICES)
     #history = HistoricalRecords()
 
-    cache = {}
+    noodles = {}
 
     def __unicode__(self):
         return self.get_file_name()
@@ -251,10 +251,11 @@ class Media(Auditable, Actionable):
         return self.original_file.url
 
     def get_content(self):
+        return self.original_file._get_file().read()
         #avoid pulling from s3 constantly
-        if not self.cache.__contains__('content'):
-            self.cache.__setitem__('content',self.original_file._get_file().read())
-        return self.cache['content']
+        if not self.noodles.__contains__('content'):
+            self.noodles.__setitem__('content',self.original_file._get_file().read())
+        return self.noodles['content']
 
     def get_content_data_values(self):
         content = self.get_content()
