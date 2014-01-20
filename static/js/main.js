@@ -1,9 +1,9 @@
 /*global requirejs: false*/
-
 requirejs.config({
   baseUrl: '../static/'
   // OR
   // paths: {
+  //   jquery: '../bower_components/jquery',
   //   eventie: '../bower_components/eventie',
   //   'doc-ready': '../bower_components/doc-ready',
   //   eventEmitter: '../bower_components/eventEmitter',
@@ -13,9 +13,10 @@ requirejs.config({
   //   outlayer: '../bower_components/outlayer'
   // }
 });
+console.log('requiring stuff');
 
-requirejs( [ '../static/masonry/masonry' ], function( Masonry ) {
+requirejs(['../static/jquery/jquery'], function( $) {
+    console.log($);       // undefined
 
-  new Masonry( document.querySelector('#basic') );
 
 });

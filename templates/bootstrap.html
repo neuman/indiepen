@@ -12,6 +12,8 @@
     <title>Indiepen</title>
 
     <!-- Bootstrap core CSS -->
+{% load static %}
+    <script data-main="{{ STATIC_URL }}js/main" src="{% static 'requirejs/require.js' %}"></script>
     <link href="{{ STATIC_URL }}css/bootstrap.min.css" rel="stylesheet">
     <link href="{{ STATIC_URL }}css/bootstrap-reset.css" rel="stylesheet">
     <!--external css-->
@@ -333,8 +335,7 @@
               
       <!--main content end-->
   </section>
-{% load static %}
-    <script data-main="{{ STATIC_URL }}js/main" src="{% static 'requirejs/require.js' %}"></script>
+
     <!-- js placed at the end of the document so the pages load faster 
     
     <script type="text/javascript" src='{% static 'underscore/underscore.js' %}'></script>
@@ -363,43 +364,6 @@
 
   <script>
 
-      //owl carousel
-
-      $(document).ready(function() {
-
-        //for testing ajax response
-        //$.get(window.location.pathname, function(data) {
-         //console.log("DATA ARRIVED");
-         //console.log(data);
-        //});
-
-          /*$("#owl-demo").owlCarousel({
-              navigation : true,
-              slideSpeed : 300,
-              paginationSpeed : 400,
-              singleItem : true
-
-          });*/
-
-          $(".dropzone").dropzone({ 
-            url: "{{ upload_url }}",
-            paramName: "original_file"
-        });
-      });
-
-        /*
-        var $container = $('.js-masonry');
-        // initialize Masonry after all images have loaded  
-        $container.imagesLoaded( function() {
-          console.log('images loaded')
-          $container.masonry();
-        });*/
-
-      //custom select box
-
-      $(function(){
-          $('select.styled').customSelect();
-      });
 
   </script>
 

@@ -103,7 +103,7 @@ PROJECT_ROOT = os.path.dirname(__file__)
 
 
 
-BOWER_COMPONENTS_ROOT = os.path.join(BASE_DIR, 'components')
+BOWER_COMPONENTS_ROOT = os.path.join(PROJECT_ROOT, 'components')
 BOWER_INSTALLED_APPS = (
     'jquery',
     'chartjs',
