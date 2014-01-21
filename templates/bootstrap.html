@@ -13,7 +13,7 @@
 
     <!-- Bootstrap core CSS -->
 {% load static %}
-    <script data-main="{{ STATIC_URL }}js/main" src="{% static 'requirejs/require.js' %}"></script>
+    <script data-main="{{ STATIC_URL }}js/main" src="{{ STATIC_URL }}bower_components/requirejs/require.js"></script>
     <link href="{{ STATIC_URL }}css/bootstrap.min.css" rel="stylesheet">
     <link href="{{ STATIC_URL }}css/bootstrap-reset.css" rel="stylesheet">
     <!--external css-->

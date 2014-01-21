@@ -96,14 +96,14 @@ STATICFILES_DIRS = (
 STATICFILES_FINDERS = (
     'django.contrib.staticfiles.finders.FileSystemFinder',
     'django.contrib.staticfiles.finders.AppDirectoriesFinder',
-    'djangobower.finders.BowerFinder',
+    #'djangobower.finders.BowerFinder',
 )
 
 PROJECT_ROOT = os.path.dirname(__file__)
 
 
 
-BOWER_COMPONENTS_ROOT = os.path.join(PROJECT_ROOT, 'components')
+BOWER_COMPONENTS_ROOT = os.path.join(BASE_DIR, 'static/bower_components')
 BOWER_INSTALLED_APPS = (
     'jquery',
     'chartjs',

@@ -1,0 +1,33 @@
+{
+  "name": "Indiepen",
+  "version": "0.0.3",
+  "main": "path/to/main.css",
+  "ignore": [
+    ".jshintrc",
+    "**/*.txt",
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "jquery": "~2.0.3",
+    "requirejs": "~2.1.10",
+    "masonry": "~3.1.4",
+    "imagesloaded": "~3.1.0",
+    "dropzone": "~3.8.3",
+    "jquery.sparkline": "~2.1.2",
+    "eventEmitter": "~4.2.7",
+    "eventie": "~1.0.4",
+    "get-size": "~1.1.7",
+    "outlayer": "~1.1.9",
+    "jquery-bridget": "~1.0.1"
+  },
+  "homepage": "https://github.com/neuman/indiepen",
+  "authors": [
+    "Eric Neuman <soloptimus@gmail.com>"
+  ],
+  "license": "MIT",
+  "private": true
+}
