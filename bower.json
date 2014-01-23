@@ -22,7 +22,9 @@
     "eventie": "~1.0.4",
     "get-size": "~1.1.7",
     "outlayer": "~1.1.9",
-    "jquery-bridget": "~1.0.1"
+    "jquery-bridget": "~1.0.1",
+    "jquery.nicescroll": "*",
+    "bootstrap": "~3.0.3"
   },
   "homepage": "https://github.com/neuman/indiepen",
   "authors": [

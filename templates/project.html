@@ -43,6 +43,7 @@
   {% for post in project.get_posts %}
 
     <div class="col-md-3 item well">
+      {% if not post.published %}<p><span class="label label-danger">Not Yet Published</span></p>{% endif %}
       {% for media in post.get_summary_medias %}
         {% if media.medium == "IMA" %}
           <a href="{{ post.get_absolute_url }}"><img class="img-thumbnail" src='{{ media.get_file_url }}'></img></a>

@@ -169,6 +169,7 @@ class Project(Auditable, Actionable):
     #ask = MoneyField(max_digits=10, decimal_places=2, default_currency='USD')
     ask = models.FloatField()
     upfront = models.FloatField()
+    funded = models.BooleanField(default=False)
     #history = HistoricalRecords()
 
     def __unicode__(self):
@@ -361,6 +362,7 @@ class Post(Auditable, Actionable):
     project = models.ForeignKey(Project)
     title = models.CharField(max_length=60)
     media = models.ManyToManyField(Media, null=True, blank=True)
+    published = models.BooleanField(default=False)
     #history = HistoricalRecords()
 
     def __unicode__(self):

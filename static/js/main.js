@@ -3,6 +3,7 @@ requirejs.config({
   paths: {
     jquery: "../bower_components/jquery/jquery",
     requirejs: "../bower_components/requirejs/require",
+    "jquery.bootstrap": "../bower_components/bootstrap/dist/js/bootstrap",
     dropzone: "../bower_components/dropzone/downloads/dropzone.min",
     imagesloaded: "../bower_components/imagesloaded/imagesloaded",
     masonry: "../bower_components/masonry/masonry",
@@ -14,12 +15,25 @@ requirejs.config({
     outlayer: "../bower_components/outlayer",
     "matches-selector": "../bower_components/matches-selector",
     "doc-ready": "../bower_components/doc-ready",
-    "get-style-property": "../bower_components/get-style-property"
-  }
+    "get-style-property": "../bower_components/get-style-property",
+    "jquery.commonscripts": "../js/common-scripts",
+    "jquery.nicescroll": "../bower_components/jquery.nicescroll/jquery.nicescroll"
+  },
+    shim: {
+        "jquery.bootstrap": {
+            deps: ["jquery"]
+        },
+        "jquery.commonscripts": {
+            deps: ["jquery"]
+        },
+        "jquery.nicescroll": {
+            deps: ["jquery"]
+        }
+    }
 });
 console.log('requiring stuff');
 
-requirejs(["jquery","dropzone","imagesloaded","masonry"], function($, Dropzone, imagesLoaded, Masonry) {
+requirejs(["jquery","dropzone","imagesloaded","masonry","jquery.bootstrap","jquery.commonscripts","jquery.nicescroll"], function($, Dropzone, imagesLoaded, Masonry, bootstrap, commonscripts, nicescroll) {
     console.log($);
 
       //owl carousel
@@ -63,11 +77,16 @@ requirejs(["jquery","dropzone","imagesloaded","masonry"], function($, Dropzone, 
           paramName: "original_file"
           });
         };
+
+      //bootstrapify images included in markdown
+      $('img:not([class])').addClass('img-thumbnail');
       //custom select box
 
-      $(function(){
-          $('select.styled').customSelect();
-      });
+  
+
+      //$(function(){
+      //    $('select.styled').customSelect();
+      //});
 
   });
 
