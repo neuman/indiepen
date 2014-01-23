@@ -20,12 +20,25 @@ MEDIUM_CHOICES = (
     ('MUL', 'Multimedia'),
     ('DAT', 'Data'),
 )
+EXTENSIONS = {
+    "TXT":['txt','md'],
+    "VID":['avi', 'm4v', 'mov', 'mp4', 'mpeg', 'mpg', 'vob', 'wmv'],
+    "AUD":['aac', 'aiff', 'm4a', 'mp3', 'wav', 'wma'],
+    "IMA":['gif', 'jpeg', 'jpg', 'png'],
+    "MUL":[],
+    "DAT":['csv','json'],
+}
 
 FREQUENCY_CHOICES = (
     ('DAI', 'Daily'),
     ('WEE', 'Weekly'),
     ('MON', 'Monthly'),
 )
+FREQUENCIES = {
+    "DAI":1,
+    "WEE":7,
+    "MON":30,
+}
 
 DURATION_CHOICES = (
     ('1', '1 Month'),
@@ -37,16 +50,6 @@ DURATION_CHOICES = (
 )
 
 IMPORTANCE_CHOICES = [(n, n) for n in xrange(1, 10, 1)]
-
-
-EXTENSIONS = {
-    "TXT":['txt','md'],
-    "VID":['avi', 'm4v', 'mov', 'mp4', 'mpeg', 'mpg', 'vob', 'wmv'],
-    "AUD":['aac', 'aiff', 'm4a', 'mp3', 'wav', 'wma'],
-    "IMA":['gif', 'jpeg', 'jpg', 'png'],
-    "MUL":[],
-    "DAT":['csv','json'],
-}
 
 @python_2_unicode_compatible
 class Auditable(models.Model):
@@ -165,6 +168,7 @@ class Project(Auditable, Actionable):
     frequency = models.CharField(max_length=3, choices=FREQUENCY_CHOICES, default='WEE')
     #ask = MoneyField(max_digits=10, decimal_places=2, default_currency='USD')
     ask = models.FloatField()
+    upfront = models.FloatField()
     #history = HistoricalRecords()
 
     def __unicode__(self):
@@ -176,6 +180,26 @@ class Project(Auditable, Actionable):
     def get_pledges(self):
         return Pledge.objects.filter(project=self)
 
+    def get_days(self):
+        return self.duration*FREQUENCIES['MON']
+
+    def get_occurances_per_month(self):
+        output = round(float(FREQUENCIES['MON'])/FREQUENCIES[self.frequency] )
+        print(output)
+        return int(output)
+
+    def get_number_of_posts(self):
+        output = int(self.duration)*self.get_occurances_per_month()
+        return output
+
+    def get_ask_per_post(self):
+        count = self.get_number_of_posts()
+        ask = float(self.ask-self.upfront)/count
+        return ask
+
+    def get_asks_per_post(self):
+        return [self.get_ask_per_post()]*self.get_number_of_posts()
+
     def get_total_pledged(self):
         sums = Pledge.objects.filter(project=self).aggregate(Sum('value'))
         if sums['value__sum'] == None:
@@ -184,8 +208,25 @@ class Project(Auditable, Actionable):
             total = sums['value__sum']
         return total
 
+    def get_percent(self, piece):
+        output = (float(piece)/float(self.ask))*100
+        print(output)
+        return output
+
     def get_percent_pledged(self):
-        return (float(self.get_total_pledged())/float(self.ask))*100
+        output = self.get_percent(self.get_total_pledged())
+        print(output)
+        return output
+
+    def get_percent_upfront(self):
+        output = self.get_percent(self.upfront)
+        print(output)
+        return output
+
+    def get_percent_per_post(self):
+        output = self.get_percent(round((self.ask-self.upfront)/self.get_number_of_posts()))
+        print(output)
+        return output
 
     def get_members(self):
         return self.members.all()

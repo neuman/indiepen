@@ -1,124 +1,93 @@
 {% extends "bootstrap.html" %}
+{% load markdown_deux_tags %}
 
 {% block title %}Indiepen{% endblock %}
 
 {% block showcase %}
   <div class="panel">
+    <div class="panel-body">
   	<!--<img class="img-circle" src='http://lorempixel.com/600/600'></img>-->
     <h1>{{ project.title }}</h1>
     <p class="big-first-letter">{{ project.brief }}</p>
-    <p>Raised: {{ project.get_total_pledged }}</p>
-	<div class="progress progress-striped active">
-	  <div class="progress-bar"  role="progressbar" aria-valuenow="{{ project.get_percent_pledged }}" aria-valuemin="0" aria-valuemax="100" style="width: {{ project.get_percent_pledged }}%">
-	    <span class="sr-only">{{ project.get_percent_pledged }}% Complete</span>
-	  </div>
+
+    <div class="progress progress-sm">
+        <div class="progress-bar label-default" style="width: {{ project.get_percent_upfront }}%">
+        </div>
+        {% for ask in project.get_asks_per_post %}
+          <div class="progress-bar {% if forloop.counter|divisibleby:2 %}progress-bar-primary{% else %}progress-bar-success{% endif %} " style="width: {{ project.get_percent_per_post }}%">
+          </div>
+        {% endfor %}
+    </div>
+
+    <div class="progress progress-sm">
+        <div class="progress-bar label-warning" style="width: {{ project.get_percent_pledged }}%">
+        </div>
+    </div>
+      <p>
+      <span class="label label-default">${{ project.upfront }} Up Front</span>
+      <span class="label label-primary">{{ project.get_number_of_posts }} Posts at ${{ project.get_ask_per_post }} Per Post</span>
+      <span class="label label-success">${{ project.ask }} Total</span>
+      <span class="label label-warning">${{ project.get_total_pledged }} Pledged So Far</span>
+      </p>
 	</div>
-	<p><a class="btn btn-success" href="{{ project.get_create_pledge_url }}" role="button">Pledge &raquo;</a></p>
 	<ul class="list-group">
-	  <li class="list-group-item">Ask: {{ project.ask }}</li>
 	  <li class="list-group-item">Duration: {{ project.duration }}</li>
 	  <li class="list-group-item">Frequency: {{ frequency }}</li>
 	  <li class="list-group-item">Medium: {{ project.medium }}</li>
 	</ul>
-  </div>
+</div>
+</div>
 
-                      <!--timeline start-->
-                      <section class="panel">
-                          <div class="panel-body">
-                                  <div class="text-center mbot30">
-                                      <h3 class="timeline-title">Timeline</h3>
-                                      <p class="t-info">This is a project timeline</p>
-                                  </div>
+<div class="js-masonry" data-masonry-options='{ "itemSelector": ".item" }'>
 
-                                  <div class="timeline">
-                                  	{% for post in project.get_posts %}
-                                      	<article class="{% if forloop.counter|divisibleby:2 %}timeline-item{% else %}timeline-item alt{% endif %}">
-                                          <div class="timeline-desk">
-                                              <div class="panel">
-                                                  <div class="panel-body">
-                                                      <span class="{% if forloop.counter|divisibleby:2 %}arrow{% else %}arrow-alt{% endif %}"></span>
-                                                      <span class="timeline-icon purple"></span>
-                                                      <span class="timeline-date">{{ project.created_at|date:"g:i a" }}</span>
-                                                      <h1 class="purple">{{ post.created_at }}</h1>
-                                                      <a href="{{ post.get_absolute_url }}">{{ post.title }}</a>
-                                                      <p>{{ post.brief }}</p>
-                                                  </div>
-                                              </div>
-                                          </div>
-                                      </article>
-                                     {% endfor %}
+  {% for post in project.get_posts %}
 
-                                  </div>
+    <div class="col-md-3 item well">
+      {% for media in post.get_summary_medias %}
+        {% if media.medium == "IMA" %}
+          <a href="{{ post.get_absolute_url }}"><img class="img-thumbnail" src='{{ media.get_file_url }}'></img></a>
+          <p><a href="{{ post.get_absolute_url }}" >{{ media.get_file_name }}</a> | {{ media.brief }}</p>
+        {% endif %}
 
-                                  <div class="clearfix">&nbsp;</div>
-                              </div>
-                      </section>
-                      <!--timeline end-->
+      {% if media.medium == "TXT" %}
+        <h2><a href="{{ post.get_absolute_url }}">{{ mmediaget_file_name }}</a></h2>
+        <span>{{ media.get_content |truncatechars:500 |markdown}}<a href="{{ post.get_absolute_url }}">continued on page {{ post.id }}</a></span>
+        <div class="panel">
+          <div class="row">
+            <p>{{ media.brief }}</p>
+          </div>
+        </div>
+      {% endif %}
+
+      {% if media.medium == "DAT" %}
+        <div class="panel terques-chart">
+            <div class="panel-body chart-texture">
+                <div class="chart">
+                    <div class="heading">
+                        <span>{{ mmediaget_file_name }}</span>
+                        <strong></strong>
+                    </div>
+                    <div class="sparkline" data-type="line" data-resize="true" data-height="75" data-width="90%" data-line-width="1" data-line-color="#fff" data-spot-color="#fff" data-fill-color="" data-highlight-line-color="#fff" data-spot-radius="4" data-data="[{% for value in media.get_content_data_values %}{{ value }}{% if forloop.last %}{% else %},{% endif %}{% endfor %}]"><canvas style="display: inline-block; width: 363px; height: 75px; vertical-align: top;" width="363" height="75"></canvas></div>
+                </div>
+            </div>
+            <div class="chart-tittle">
+                <span class="title">Title goes here</span>
+                <span class="value">
+                    <a href="{{ post.get_absolute_url }}">{{ media.get_file_name }}</a>
+                </span>
+            </div>
+        </div>
+      {% endif %}
+    {%endfor %}
+    <hr></hr>
+    </div>
+
+  {% endfor %}
+</div>
                 
 
 {% endblock %}
 
 {% block audit %}
-<div class="col-lg-6">
-  <section class="panel">
-      <header class="panel-heading">
-          Pledges
-      </header>
-      <div class="panel-body">
-          <div class="timeline-messages">
-				{% for pledge in project.get_pledges %}
-              <!-- Comment -->
-              <div class="msg-time-chat">
-                  <a href="#" class="message-img"><img class="avatar" src="http://lorempixel.com/50/50" alt=""></a>
-                  <div class="message-body msg-out">
-                      <span class="arrow"></span>
-                      <div class="text">
-                          <p class="attribution"><a href="#">{{ pledge.person.user.first_name }} {{ pledge.person.user.last_name }}</a> at 2:05pm, 13th April 2013</p>
-                          <p>{{ pledge.ammount }}</p>
-                      </div>
-                  </div>
-              </div>
-              <!-- /comment -->
-              {% endfor %}
-          </div>
-          
-      </div>
-  </section>
-</div>
-<div class="col-lg-6">
-  <section class="panel">
-      <header class="panel-heading">
-          Team
-      </header>
-      <div class="panel-body">
-		{% for person in project.get_members %}
-		<div class="row">
-		          <section class="panel">
-		              <div class="user-heading round">
-		                  <a href="#">
-		                      <img src="http://lorempixel.com/100/100" alt="">
-		                  </a>
-		                  <h1>{{ person.user.first_name }} {{ person.user.last_name }}</h1>
-		                  <p>jsmith@flatlab.com</p>
-		              </div>
-
-		              <ul class="nav nav-pills nav-stacked">
-		                  <li class="active"><a href="profile.html"> <i class="icon-user"></i> Profile</a></li>
-		                  <li><a href="profile-activity.html"> <i class="icon-calendar"></i> Recent Activity <span class="label label-danger pull-right r-activity">9</span></a></li>
-		                  <li><a href="profile-edit.html"> <i class="icon-edit"></i> Edit profile</a></li>
-		              </ul>
-
-		          </section>
-		          </div>
-        {% endfor %}
-          
-      </div>
-  </section>
-</div>
-
-	
-
-
-
 
 {% endblock %}

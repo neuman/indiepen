@@ -8,7 +8,8 @@
 <div class="js-masonry" data-masonry-options='{ "itemSelector": ".item" }'>
 
   {% for post in posts %}
-    <div class="col-md-3 item">
+
+    <div class="col-md-3 item well">
       {% for media in post.get_summary_medias %}
         {% if media.medium == "IMA" %}
           <a href="{{ post.get_absolute_url }}"><img class="img-thumbnail" src='{{ media.get_file_url }}'></img></a>
@@ -26,7 +27,6 @@
       {% endif %}
 
       {% if media.medium == "DAT" %}
-
         <div class="panel terques-chart">
             <div class="panel-body chart-texture">
                 <div class="chart">
