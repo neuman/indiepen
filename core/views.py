@@ -8,7 +8,7 @@ from django.contrib.contenttypes.models import ContentType
 from django.contrib.auth.models import User
 from uuid import uuid4
 
-from actions.models import Actionable
+from carteblanche.models import Noun
 
 from api import v1_api
 import core.models as cm
@@ -63,7 +63,7 @@ class BootstrapView(TemplateView):
 from django.contrib.contenttypes.models import ContentType
 from django.shortcuts import get_object_or_404
 
-class StreamListView(TemplateView, Actionable):
+class StreamListView(TemplateView, Noun):
     template_name = 'stream.html'
 
     def get_context_data(self, **kwargs):
@@ -72,7 +72,7 @@ class StreamListView(TemplateView, Actionable):
         object_type = ContentType.objects.get(app_label="core", model=self.kwargs['instance_model']).model_class()
         object_instance = get_object_or_404(object_type, pk=self.kwargs['instance_id'])
         context['object_instance'] = object_instance
-        context['available_actions'] = object_instance.get_available_actions(self.request.user)
+        context['available_verbs'] = object_instance.get_available_verbs(self.request.user)
         context['stream'] = object_instance.action_object_actions.all()
         return context
 
@@ -85,24 +85,24 @@ class ProjectDetailView(TemplateView):
         context = super(ProjectDetailView, self).get_context_data(**kwargs)
         project = cm.Project.objects.get(id=self.kwargs['instance_id'])
         context['project'] = project
-        context['available_actions'] = project.get_available_actions(self.request.user)
+        context['available_verbs'] = project.get_available_verbs(self.request.user)
         context['total_pledged'] = project.get_total_pledged()
         return context
 
 
-class ProjectListView(TemplateView, Actionable):
+class ProjectListView(TemplateView, Noun):
     template_name = 'list.html'
 
-    def get_actions(self):
+    def get_verbs(self):
         return [
-            cm.ProjectCreateAction()
+            cm.ProjectCreateVerb()
             ]
 
     def get_context_data(self, **kwargs):
 
         context = super(ProjectListView, self).get_context_data(**kwargs)
         context['projects'] = cm.Project.objects.all()
-        context['available_actions'] = self.get_available_actions(self.request.user)
+        context['available_verbs'] = self.get_available_verbs(self.request.user)
         return context
 
 from django.views.generic.edit import FormView
@@ -213,7 +213,7 @@ class PostDetailView(TemplateView):
         post = cm.Post.objects.get(id=self.kwargs['instance_id'])
         context['post'] = post
         context['medias'] = post.get_medias()
-        context['available_actions'] = post.get_available_actions(post)
+        context['available_verbs'] = post.get_available_verbs(post)
         stream = []
         for a in action_object_stream(post):
             stream.append(a)
@@ -223,17 +223,17 @@ class PostDetailView(TemplateView):
         context['stream'] = stream
         return context
 
-class PostListView(TemplateView, Actionable):
+class PostListView(TemplateView, Noun):
     template_name = 'posts.html'
 
     def get_context_data(self, **kwargs):
 
         context = super(PostListView, self).get_context_data(**kwargs)
         context['posts'] = cm.Post.objects.all().order_by('-updated_at')
-        context['available_actions'] = self.get_available_actions(self.request.user)
+        context['available_verbs'] = self.get_available_verbs(self.request.user)
         return context
 
-class PostMediaCreateView(CreateView, Actionable):
+class PostMediaCreateView(CreateView, Noun):
     model = cm.Media
     template_name = 'form.html'
     fields = '__all__'
@@ -270,23 +270,23 @@ class PostMediaCreateView(CreateView, Actionable):
         action.send(self.request.user, verb='uploaded', action_object=self.new_instance, target=p)
         return reverse(viewname='post_media_create', args=(self.kwargs['instance_id'],), current_app='core')
 
-    def get_actions(self):
+    def get_verbs(self):
         return [
-            cm.PostDetailAction(cm.Post.objects.get(id=self.kwargs['instance_id']))
+            cm.PostDetailVerb(cm.Post.objects.get(id=self.kwargs['instance_id']))
             ]
 
     def get_context_data(self, **kwargs):
 
         context = super(PostMediaCreateView, self).get_context_data(**kwargs)
-        context['available_actions'] = self.get_available_actions(self.request.user)
+        context['available_verbs'] = self.get_available_verbs(self.request.user)
         return context
 
-class PostUploadsView(TemplateView, Actionable):
+class PostUploadsView(TemplateView, Noun):
     template_name = 'uploads.html'
 
-    def get_actions(self):
+    def get_verbs(self):
         return [
-            cm.PostDetailAction(cm.Post.objects.get(id=self.kwargs['instance_id']))
+            cm.PostDetailVerb(cm.Post.objects.get(id=self.kwargs['instance_id']))
             ]
 
     def get_context_data(self, **kwargs):
@@ -294,19 +294,19 @@ class PostUploadsView(TemplateView, Actionable):
         # Call the base implementation first to get a context
         context = super(PostUploadsView, self).get_context_data(**kwargs)
         context['upload_url'] = reverse(viewname='post_media_create', args=(self.kwargs['instance_id'],), current_app='core')
-        context['available_actions'] = self.get_available_actions(self.request.user)
+        context['available_verbs'] = self.get_available_verbs(self.request.user)
         return context
 
 #Post ENDS
 
 #User STARTS 
 
-class UserDetailView(TemplateView, Actionable):
+class UserDetailView(TemplateView, Noun):
     template_name = 'user.html'
 
-    def get_actions(self):
+    def get_verbs(self):
         return [
-            #cm.PostDetailAction(cm.Post.objects.get(id=self.kwargs['instance_id']))
+            #cm.PostDetailVerb(cm.Post.objects.get(id=self.kwargs['instance_id']))
             ]
 
     def get_context_data(self, **kwargs):
@@ -315,7 +315,7 @@ class UserDetailView(TemplateView, Actionable):
         context = super(UserDetailView, self).get_context_data(**kwargs)
         user = User.objects.get(id=self.kwargs['instance_id'])
         context['user'] = user
-        context['available_actions'] = None
+        context['available_verbs'] = None
         context['stream'] = actor_stream(user)
         return context
 
@@ -360,7 +360,7 @@ class MediaDetailView(TemplateView):
         context = super(MediaDetailView, self).get_context_data(**kwargs)
         media = cm.Media.objects.get(id=self.kwargs['instance_id'])
         context['medias'] = [media]
-        context['available_actions'] = media.get_available_actions(self.request.user)
+        context['available_verbs'] = media.get_available_verbs(self.request.user)
         context['focus'] = True
         return context
 
@@ -370,7 +370,7 @@ class MediaListView(TemplateView):
     def get_context_data(self, **kwargs):
         context = super(MediaListView, self).get_context_data(**kwargs)
         context['medias'] = cm.Media.objects.all()
-        #context['available_actions'] = media.get_available_actions(self.request.user)
+        #context['available_verbs'] = media.get_available_verbs(self.request.user)
         return context
 
 from django_remote_forms.forms import RemoteForm
@@ -386,7 +386,7 @@ class MediaUpdateView(UpdateView):
     def get_context_data(self, **kwargs):
         context = super(MediaUpdateView, self).get_context_data(**kwargs)
         context['medias'] = [self.object]
-        context['available_actions'] = self.object.get_available_actions(self.request.user)
+        context['available_verbs'] = self.object.get_available_verbs(self.request.user)
         return context
 
     def get_success_url(self):
@@ -400,7 +400,7 @@ class MediaUpdateView(UpdateView):
             remote_form = RemoteForm(self.get_form(self.form_class))
             blob = {
                 'form':remote_form.as_dict(),
-                'available_actions':self.object.get_available_actions(self.request.user),
+                'available_verbs':self.object.get_available_verbs(self.request.user),
                 'object_instance':None
             }
             data = json.dumps(blob)

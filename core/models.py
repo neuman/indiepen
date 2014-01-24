@@ -4,7 +4,7 @@ from djmoney.models.fields import MoneyField
 from django.contrib.auth.models import User
 from django.db.models import Sum
 from django.core.urlresolvers import reverse
-from actions.models import Action, Actionable
+from carteblanche.models import Verb, Noun
 #from simple_history.models import HistoricalRecords
 from django.utils.encoding import python_2_unicode_compatible
 from django.utils.translation import ugettext_lazy as _
@@ -109,7 +109,7 @@ DURATION_CHOICES = (
     ('6', '6 Months'),
 )
 
-class StreamListAction(Action):
+class StreamListVerb(Verb):
     display_name = "View Stream"
 
     def get_url(self):
@@ -121,13 +121,13 @@ class Badge(Auditable):
     def __unicode__(self):
         return self.title
 
-class ProjectCreateAction(Action):
+class ProjectCreateVerb(Verb):
     display_name = "Start New Project"
 
     def get_url(self):
         return reverse(viewname='project_create', current_app='core')
 
-class ProjectPledgeAction(Action):
+class ProjectPledgeVerb(Verb):
     display_name = "Pledge"
     def is_available(self, user):
         return self.instance.members.filter(id=user.id).count() > 0
@@ -135,7 +135,7 @@ class ProjectPledgeAction(Action):
     def get_url(self):
         return reverse(viewname='pledge_create', args=[self.instance.id], current_app='core')
 
-class ProjectUploadAction(Action):
+class ProjectUploadVerb(Verb):
     display_name = "Upload Media"
     def is_available(self, user):
         return self.instance.members.filter(id=user.id).count()
@@ -143,7 +143,7 @@ class ProjectUploadAction(Action):
     def get_url(self):
         return reverse(viewname='media_create', args=[self.instance.id], current_app='core')
 
-class ProjectPostAction(Action):
+class ProjectPostVerb(Verb):
     display_name = "Post"
     def is_available(self, user):
         return self.instance.members.filter(id=user.id).count() > 0
@@ -151,7 +151,7 @@ class ProjectPostAction(Action):
     def get_url(self):
         return reverse(viewname='post_create', args=[self.instance.id], current_app='core')
 
-class ProjectAction(Action):
+class ProjectVerb(Verb):
     display_name = "Upload Media"
     def is_available(self, user):
         return self.instance.members.filter(id=user.id).count()
@@ -159,7 +159,7 @@ class ProjectAction(Action):
     def get_url(self):
         return reverse(viewname='media_create', args=[self.instance.id], current_app='core')
 
-class Project(Auditable, Actionable):
+class Project(Auditable, Noun):
     title = models.CharField(max_length=300)
     brief = models.TextField(default='')
     members = models.ManyToManyField(User)
@@ -235,14 +235,14 @@ class Project(Auditable, Actionable):
     def get_posts(self):
         return Post.objects.filter(project=self)
 
-    def get_actions(self):
-        actions = [
-            ProjectPledgeAction(instance=self),
-            ProjectUploadAction(instance=self),
-            ProjectPostAction(instance=self),
-            StreamListAction(instance=self)
+    def get_verbs(self):
+        verbs = [
+            ProjectPledgeVerb(instance=self),
+            ProjectUploadVerb(instance=self),
+            ProjectPostVerb(instance=self),
+            StreamListVerb(instance=self)
         ]
-        return actions
+        return verbs
 
     def get_thumb_url(self):
         q = Post.objects.filter(project=self)
@@ -255,7 +255,7 @@ class Project(Auditable, Actionable):
 from taggit.managers import TaggableManager
 
 
-class MediaUpdateAction(Action):
+class MediaUpdateVerb(Verb):
     display_name = "Update Media Details"
 
     def is_available(self, user):
@@ -265,7 +265,7 @@ class MediaUpdateAction(Action):
     def get_url(self):
         return reverse(viewname='media_update', args=[self.instance.id], current_app='core')
 
-class Media(Auditable, Actionable):
+class Media(Auditable, Noun):
     original_file = models.FileField(upload_to='/')
     internal_file = models.FileField(upload_to='/', null=True, blank=True)
     medium = models.CharField(max_length=3, choices=MEDIUM_CHOICES, null=True, blank=True)
@@ -282,12 +282,12 @@ class Media(Auditable, Actionable):
     def get_absolute_url(self):
         return reverse(viewname='media_detail', args=[self.id], current_app='core')
 
-    def get_actions(self):
-        actions = [
-            MediaUpdateAction(instance=self),
-            StreamListAction(instance=self)
+    def get_verbs(self):
+        verbs = [
+            MediaUpdateVerb(instance=self),
+            StreamListVerb(instance=self)
         ]
-        return actions
+        return verbs
 
     def get_file_url(self):
         return self.original_file.url
@@ -342,7 +342,7 @@ class Media(Auditable, Actionable):
 def get_media_post(media):
     return media.post_set.all()[0]
 
-class PostCreateMediaAction(Action):
+class PostCreateMediaVerb(Verb):
     display_name = "Upload Post Files"
 
     def is_available(self, user):
@@ -352,13 +352,13 @@ class PostCreateMediaAction(Action):
         return reverse(viewname='post_media_uploads', args=[self.instance.id], current_app='core')
 
 
-class PostDetailAction(Action):
+class PostDetailVerb(Verb):
     display_name = "View Post"
 
     def get_url(self):
         return reverse(viewname='post_detail', args=[self.instance.id], current_app='core')
 
-class Post(Auditable, Actionable):
+class Post(Auditable, Noun):
     project = models.ForeignKey(Project)
     title = models.CharField(max_length=60)
     media = models.ManyToManyField(Media, null=True, blank=True)
@@ -371,12 +371,12 @@ class Post(Auditable, Actionable):
     def get_absolute_url(self):
         return reverse(viewname='post_detail', args=[self.id], current_app='core')
 
-    def get_actions(self):
-        actions = [
-            PostCreateMediaAction(instance=self),
-            StreamListAction(instance=self)
+    def get_verbs(self):
+        verbs = [
+            PostCreateMediaVerb(instance=self),
+            StreamListVerb(instance=self)
         ]
-        return actions
+        return verbs
 
     def get_medias(self):
         return self.media.all().order_by('-importance')
@@ -413,7 +413,7 @@ class Membership(Auditable):
     role = models.CharField(max_length=100)
 
 
-class Service(Auditable, Actionable):
+class Service(Auditable, Noun):
     title = models.CharField(max_length=300)
     cost_per_hour = MoneyField(max_digits=10, decimal_places=2, default_currency='USD')
     provider = models.ManyToManyField(User)
@@ -423,7 +423,7 @@ class Service(Auditable, Actionable):
         return self.title
 
 
-class Pledge(Auditable, Actionable):
+class Pledge(Auditable, Noun):
     pledger = models.ForeignKey(User)
     project = models.ForeignKey(Project)
     #value = MoneyField(max_digits=10, decimal_places=2, default_currency='USD')
