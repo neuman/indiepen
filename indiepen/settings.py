@@ -26,6 +26,8 @@ TEMPLATE_DEBUG = True
 
 ALLOWED_HOSTS = []
 
+ANONYMOUS_USER_ID = 0
+
 
 # Application definition
 
@@ -44,6 +46,7 @@ INSTALLED_APPS = (
     'tastypie',
     'taggit',
     'actstream',
+    'guardian',
 )
 
 MIDDLEWARE_CLASSES = (

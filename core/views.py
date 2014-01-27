@@ -13,6 +13,7 @@ from carteblanche.models import Noun
 from api import v1_api
 import core.models as cm
 import core.forms as cf
+import core.decorators as cd
 
 
 from django.db.models.signals import post_save
@@ -120,7 +121,6 @@ class PledgeFormView(FormView):
         context['verb'] = "Pledge"
         return context 
 
-
 class PledgeCreateView(CreateView):
     model = cm.Pledge
     template_name = 'form.html'
@@ -138,6 +138,10 @@ class PledgeCreateView(CreateView):
         #new_options.save()
         action.send(self.request.user, verb='pledged', action_object=self.object, target=self.object.project)
         return '/'
+
+    @cd.availability_required(login_required)
+    def dispatch(self, *args, **kwargs):
+        return super(ViewSpaceIndex, self).dispatch(*args, **kwargs)
 #Pledge ENDS
 
 class ProjectCreateView(CreateView):
@@ -213,7 +217,7 @@ class PostDetailView(TemplateView):
         post = cm.Post.objects.get(id=self.kwargs['instance_id'])
         context['post'] = post
         context['medias'] = post.get_medias()
-        context['available_verbs'] = post.get_available_verbs(post)
+        context['available_verbs'] = post.get_available_verbs(self.request.user)
         stream = []
         for a in action_object_stream(post):
             stream.append(a)
@@ -391,6 +395,7 @@ class MediaUpdateView(UpdateView):
 
     def get_success_url(self):
         post = cm.get_media_post(self.object)
+        action.send(self.request.user, verb='updated', action_object=self.object, target=post)
         return post.get_absolute_url()
 
     def get(self, request, *args, **kwargs):

@@ -130,34 +130,27 @@ class ProjectCreateVerb(Verb):
 class ProjectPledgeVerb(Verb):
     display_name = "Pledge"
     def is_available(self, user):
-        return self.instance.members.filter(id=user.id).count() > 0
+        return Pledge.objects.filter(project=self.instance, pledger=user).count() == 0
 
     def get_url(self):
         return reverse(viewname='pledge_create', args=[self.instance.id], current_app='core')
 
-class ProjectUploadVerb(Verb):
-    display_name = "Upload Media"
-    def is_available(self, user):
-        return self.instance.members.filter(id=user.id).count()
-
-    def get_url(self):
-        return reverse(viewname='media_create', args=[self.instance.id], current_app='core')
-
-class ProjectPostVerb(Verb):
-    display_name = "Post"
+class ProjectMemberVerb(Verb):
+    availability_key = "is_member"
     def is_available(self, user):
         return self.instance.members.filter(id=user.id).count() > 0
 
-    def get_url(self):
-        return reverse(viewname='post_create', args=[self.instance.id], current_app='core')
-
-class ProjectVerb(Verb):
+class ProjectUploadVerb(ProjectMemberVerb):
     display_name = "Upload Media"
-    def is_available(self, user):
-        return self.instance.members.filter(id=user.id).count()
 
     def get_url(self):
         return reverse(viewname='media_create', args=[self.instance.id], current_app='core')
+
+class ProjectPostVerb(ProjectMemberVerb):
+    display_name = "Post"
+
+    def get_url(self):
+        return reverse(viewname='post_create', args=[self.instance.id], current_app='core')
 
 class Project(Auditable, Noun):
     title = models.CharField(max_length=300)
@@ -171,6 +164,7 @@ class Project(Auditable, Noun):
     upfront = models.FloatField()
     funded = models.BooleanField(default=False)
     #history = HistoricalRecords()
+    verb_classes = [ProjectPledgeVerb, ProjectUploadVerb, ProjectPostVerb, StreamListVerb]
 
     def __unicode__(self):
         return self.title
@@ -235,15 +229,6 @@ class Project(Auditable, Noun):
     def get_posts(self):
         return Post.objects.filter(project=self)
 
-    def get_verbs(self):
-        verbs = [
-            ProjectPledgeVerb(instance=self),
-            ProjectUploadVerb(instance=self),
-            ProjectPostVerb(instance=self),
-            StreamListVerb(instance=self)
-        ]
-        return verbs
-
     def get_thumb_url(self):
         q = Post.objects.filter(project=self)
         if q.count() > 0:
@@ -273,6 +258,7 @@ class Media(Auditable, Noun):
     tags = TaggableManager(blank=True)
     importance = models.IntegerField(default=5, choices=IMPORTANCE_CHOICES)
     #history = HistoricalRecords()
+    verb_classes = [MediaUpdateVerb, StreamListVerb]
 
     noodles = {}
 
@@ -281,13 +267,6 @@ class Media(Auditable, Noun):
 
     def get_absolute_url(self):
         return reverse(viewname='media_detail', args=[self.id], current_app='core')
-
-    def get_verbs(self):
-        verbs = [
-            MediaUpdateVerb(instance=self),
-            StreamListVerb(instance=self)
-        ]
-        return verbs
 
     def get_file_url(self):
         return self.original_file.url
@@ -346,7 +325,7 @@ class PostCreateMediaVerb(Verb):
     display_name = "Upload Post Files"
 
     def is_available(self, user):
-        return self.instance.project.members.filter(id=user.id).count()
+        return self.instance.project.members.filter(id=user.id).count() > 0
 
     def get_url(self):
         return reverse(viewname='post_media_uploads', args=[self.instance.id], current_app='core')
@@ -364,19 +343,13 @@ class Post(Auditable, Noun):
     media = models.ManyToManyField(Media, null=True, blank=True)
     published = models.BooleanField(default=False)
     #history = HistoricalRecords()
+    verb_classes = [PostCreateMediaVerb,StreamListVerb]
 
     def __unicode__(self):
         return self.title
 
     def get_absolute_url(self):
         return reverse(viewname='post_detail', args=[self.id], current_app='core')
-
-    def get_verbs(self):
-        verbs = [
-            PostCreateMediaVerb(instance=self),
-            StreamListVerb(instance=self)
-        ]
-        return verbs
 
     def get_medias(self):
         return self.media.all().order_by('-importance')
