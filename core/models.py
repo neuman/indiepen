@@ -111,9 +111,11 @@ DURATION_CHOICES = (
 
 class StreamListVerb(Verb):
     display_name = "View Stream"
+    view_name='stream_list'
+    required = False
 
     def get_url(self):
-        return reverse(viewname='stream_list', kwargs={'instance_model':self.instance._meta.model_name, 'instance_id':self.instance.id}, current_app='core')
+        return reverse(viewname=self.view_name, kwargs={'instance_model':self.instance._meta.model_name, 'instance_id':self.instance.id}, current_app='core')
 
 class Badge(Auditable):
     title = models.CharField(max_length=300)
@@ -123,34 +125,47 @@ class Badge(Auditable):
 
 class ProjectCreateVerb(Verb):
     display_name = "Start New Project"
+    view_name='project_create'
+    required = False
 
     def get_url(self):
-        return reverse(viewname='project_create', current_app='core')
+        return reverse(viewname=self.view_name, current_app='core')
 
 class ProjectPledgeVerb(Verb):
     display_name = "Pledge"
+    required = True
+    denied_message = "Sorry, you already pledged!"
+    view_name='pledge_create'
+    
     def is_available(self, user):
         return Pledge.objects.filter(project=self.instance, pledger=user).count() == 0
 
     def get_url(self):
-        return reverse(viewname='pledge_create', args=[self.instance.id], current_app='core')
+        return reverse(viewname=self.view_name, args=[self.instance.id], current_app='core')
 
 class ProjectMemberVerb(Verb):
     availability_key = "is_member"
+    required = True 
+    denied_message = "Sorry, you must be a member to do this."
+
     def is_available(self, user):
         return self.instance.members.filter(id=user.id).count() > 0
 
 class ProjectUploadVerb(ProjectMemberVerb):
     display_name = "Upload Media"
+    view_name='media_create'
+    required = False
 
     def get_url(self):
-        return reverse(viewname='media_create', args=[self.instance.id], current_app='core')
+        return reverse(viewname=self.view_name, args=[self.instance.id], current_app='core')
 
 class ProjectPostVerb(ProjectMemberVerb):
     display_name = "Post"
+    view_name='post_create'
+    required = False
 
     def get_url(self):
-        return reverse(viewname='post_create', args=[self.instance.id], current_app='core')
+        return reverse(viewname=self.view_name, args=[self.instance.id], current_app='core')
 
 class Project(Auditable, Noun):
     title = models.CharField(max_length=300)
@@ -242,13 +257,15 @@ from taggit.managers import TaggableManager
 
 class MediaUpdateVerb(Verb):
     display_name = "Update Media Details"
+    view_name='media_update'
+    required = False
 
     def is_available(self, user):
         
         return self.instance.post_set.all()[0].project.members.filter(id=user.id).count() > 0
 
     def get_url(self):
-        return reverse(viewname='media_update', args=[self.instance.id], current_app='core')
+        return reverse(viewname=self.view_name, args=[self.instance.id], current_app='core')
 
 class Media(Auditable, Noun):
     original_file = models.FileField(upload_to='/')
@@ -323,19 +340,23 @@ def get_media_post(media):
 
 class PostCreateMediaVerb(Verb):
     display_name = "Upload Post Files"
+    view_name = 'post_media_uploads'
+    required = True
 
     def is_available(self, user):
         return self.instance.project.members.filter(id=user.id).count() > 0
 
     def get_url(self):
-        return reverse(viewname='post_media_uploads', args=[self.instance.id], current_app='core')
+        return reverse(viewname=self.view_name, args=[self.instance.id], current_app='core')
 
 
 class PostDetailVerb(Verb):
     display_name = "View Post"
+    view_name = 'post_detail'
+    required = False
 
     def get_url(self):
-        return reverse(viewname='post_detail', args=[self.instance.id], current_app='core')
+        return reverse(viewname=self.view_name, args=[self.instance.id], current_app='core')
 
 class Post(Auditable, Noun):
     project = models.ForeignKey(Project)
@@ -450,3 +471,48 @@ class Options(models.Model):
 
 def sort_touches(touches):
     return sorted(touches, key = lambda t: t['updated_at'], reverse=True)
+
+
+
+#VERBS Start
+class Carte(object):
+
+    def get_verbs(self, *args):
+        print "***************************************************YUP"
+        #remove self from args
+        verb_list = []
+        for verb_class in args:
+            instance = verb_class()
+            blob = {}
+            try:
+                blob.__setitem__("noun_class_name", instance.noun_class_name)
+            except Exception as e:
+                pass
+
+            try:
+                blob.__setitem__("view_name", instance.view_name)
+            except Exception as e:
+                pass
+
+            try:
+                blob.__setitem__("required", instance.required)
+            except Exception as e:
+                pass
+
+            try:
+                blob.__setitem__("verb_class", verb_class)
+            except Exception as e:
+                pass
+            verb_list.append(blob)
+        return verb_list
+
+    def get_all_verbs(self):
+        return self.get_verbs(
+            StreamListVerb,
+            ProjectCreateVerb,
+            ProjectPledgeVerb,
+            ProjectMemberVerb,
+            ProjectUploadVerb,
+            ProjectPostVerb,
+            MediaUpdateVerb
+            )

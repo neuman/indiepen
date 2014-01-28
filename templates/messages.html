@@ -1,0 +1,8 @@
+{% extends "bootstrap.html" %}
+
+{% block title %}Indiepen{% endblock %}
+{% block showcase %}
+	{% for message in messages %}
+		<p>{{ message }}</p>
+	{% endfor %}
+{% endblock %}

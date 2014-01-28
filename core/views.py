@@ -14,6 +14,7 @@ from api import v1_api
 import core.models as cm
 import core.forms as cf
 import core.decorators as cd
+import core.verbs as cv
 
 
 from django.db.models.signals import post_save
@@ -121,7 +122,7 @@ class PledgeFormView(FormView):
         context['verb'] = "Pledge"
         return context 
 
-class PledgeCreateView(CreateView):
+class PledgeCreateView(cv.RequiredVerbsAvailable, CreateView):
     model = cm.Pledge
     template_name = 'form.html'
     fields = ['value']
@@ -139,9 +140,9 @@ class PledgeCreateView(CreateView):
         action.send(self.request.user, verb='pledged', action_object=self.object, target=self.object.project)
         return '/'
 
-    @cd.availability_required(login_required)
     def dispatch(self, *args, **kwargs):
-        return super(ViewSpaceIndex, self).dispatch(*args, **kwargs)
+        self.noun = cm.Project.objects.get(id=self.kwargs['instance_id'])
+        return super(PledgeCreateView, self).dispatch(*args, **kwargs)
 #Pledge ENDS
 
 class ProjectCreateView(CreateView):
