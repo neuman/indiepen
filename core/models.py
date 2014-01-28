@@ -112,10 +112,14 @@ DURATION_CHOICES = (
 class StreamListVerb(Verb):
     display_name = "View Stream"
     view_name='stream_list'
-    required = False
+    required = True
+    denied_message = "Sorry, you can't view that stream yet."
 
     def get_url(self):
-        return reverse(viewname=self.view_name, kwargs={'instance_model':self.instance._meta.model_name, 'instance_id':self.instance.id}, current_app='core')
+        return reverse(viewname=self.view_name, kwargs={'instance_model':self.noun._meta.model_name, 'instance_id':self.noun.id}, current_app='core')
+
+    def is_available(self, user):
+        return self.noun.is_visible_to(user)
 
 class Badge(Auditable):
     title = models.CharField(max_length=300)
@@ -138,26 +142,26 @@ class ProjectPledgeVerb(Verb):
     view_name='pledge_create'
     
     def is_available(self, user):
-        return Pledge.objects.filter(project=self.instance, pledger=user).count() == 0
+        return Pledge.objects.filter(project=self.noun, pledger=user).count() == 0
 
     def get_url(self):
-        return reverse(viewname=self.view_name, args=[self.instance.id], current_app='core')
+        return reverse(viewname=self.view_name, args=[self.noun.id], current_app='core')
 
 class ProjectMemberVerb(Verb):
     availability_key = "is_member"
     required = True 
-    denied_message = "Sorry, you must be a member to do this."
+    denied_message = "Sorry, you must be a member of the project to do this."
 
     def is_available(self, user):
-        return self.instance.members.filter(id=user.id).count() > 0
+        return self.noun.members.filter(id=user.id).count() > 0
 
 class ProjectUploadVerb(ProjectMemberVerb):
     display_name = "Upload Media"
     view_name='media_create'
-    required = False
+    required = True
 
     def get_url(self):
-        return reverse(viewname=self.view_name, args=[self.instance.id], current_app='core')
+        return reverse(viewname=self.view_name, args=[self.noun.id], current_app='core')
 
 class ProjectPostVerb(ProjectMemberVerb):
     display_name = "Post"
@@ -165,7 +169,19 @@ class ProjectPostVerb(ProjectMemberVerb):
     required = False
 
     def get_url(self):
-        return reverse(viewname=self.view_name, args=[self.instance.id], current_app='core')
+        return reverse(viewname=self.view_name, args=[self.noun.id], current_app='core')
+
+class ProjectDetailVerb(ProjectMemberVerb):
+    display_name = "View Project"
+    view_name = 'project_detail'
+    required = True
+    denied_message = "Sorry, that project isn't published yet."
+
+    def is_available(self, user):
+        return self.noun.is_visible_to(user)
+
+    def get_url(self):
+        return reverse(viewname=self.view_name, args=[self.noun.id], current_app='core')
 
 class Project(Auditable, Noun):
     title = models.CharField(max_length=300)
@@ -179,13 +195,24 @@ class Project(Auditable, Noun):
     upfront = models.FloatField()
     funded = models.BooleanField(default=False)
     #history = HistoricalRecords()
-    verb_classes = [ProjectPledgeVerb, ProjectUploadVerb, ProjectPostVerb, StreamListVerb]
+    verb_classes = [ProjectDetailVerb, ProjectPledgeVerb, ProjectUploadVerb, ProjectPostVerb, StreamListVerb]
 
     def __unicode__(self):
         return self.title
 
     def get_absolute_url(self):
         return reverse(viewname='project_detail', args=[self.id], current_app='core')
+
+    def is_visible_to(self, user):
+        if self.noun.is_published():
+            return True
+        elif self.noun.members.filter(id=user.id).count() > 0:
+                return True
+        else:
+            return False            
+
+    def is_published(self):
+        return self.get_posts().order_by('created_at')[0].is_published()
 
     def get_pledges(self):
         return Pledge.objects.filter(project=self)
@@ -253,19 +280,35 @@ class Project(Auditable, Noun):
 
 
 from taggit.managers import TaggableManager
+class MediaDetailVerb(Verb):
+    display_name = "View Media"
+    view_name = 'media_detail'
+    required = True
+    denied_message = "Sorry, that media isn't published yet."
 
+    def is_available(self, user):
+        post = get_media_post(self.noun)
+        if post.is_published():
+            return True
+        elif post.project.members.filter(id=user.id).count() > 0:
+                return True
+        else:
+            return False
+
+    def get_url(self):
+        return reverse(viewname=self.view_name, args=[self.noun.id], current_app='core')
 
 class MediaUpdateVerb(Verb):
     display_name = "Update Media Details"
     view_name='media_update'
-    required = False
+    required = True
 
     def is_available(self, user):
         
-        return self.instance.post_set.all()[0].project.members.filter(id=user.id).count() > 0
+        return self.noun.post_set.all()[0].project.members.filter(id=user.id).count() > 0
 
     def get_url(self):
-        return reverse(viewname=self.view_name, args=[self.instance.id], current_app='core')
+        return reverse(viewname=self.view_name, args=[self.noun.id], current_app='core')
 
 class Media(Auditable, Noun):
     original_file = models.FileField(upload_to='/')
@@ -275,7 +318,7 @@ class Media(Auditable, Noun):
     tags = TaggableManager(blank=True)
     importance = models.IntegerField(default=5, choices=IMPORTANCE_CHOICES)
     #history = HistoricalRecords()
-    verb_classes = [MediaUpdateVerb, StreamListVerb]
+    verb_classes = [MediaDetailVerb, MediaUpdateVerb, StreamListVerb]
 
     noodles = {}
 
@@ -284,6 +327,15 @@ class Media(Auditable, Noun):
 
     def get_absolute_url(self):
         return reverse(viewname='media_detail', args=[self.id], current_app='core')
+
+    def is_visible_to(self, user):
+        post = get_media_post(self)
+        if post.is_published():
+            return True
+        elif post.project.members.filter(id=user.id).count() > 0:
+                return True
+        else:
+            return False
 
     def get_file_url(self):
         return self.original_file.url
@@ -342,21 +394,32 @@ class PostCreateMediaVerb(Verb):
     display_name = "Upload Post Files"
     view_name = 'post_media_uploads'
     required = True
+    denied_message = "You must be a project member to upload to this post."
 
     def is_available(self, user):
-        return self.instance.project.members.filter(id=user.id).count() > 0
+        return self.noun.project.members.filter(id=user.id).count() > 0
 
     def get_url(self):
-        return reverse(viewname=self.view_name, args=[self.instance.id], current_app='core')
+        return reverse(viewname=self.view_name, args=[self.noun.id], current_app='core')
 
 
 class PostDetailVerb(Verb):
     display_name = "View Post"
     view_name = 'post_detail'
-    required = False
+    required = True
+    denied_message = "Sorry, that post isn't published yet."
+
+    def is_available(self, user):
+        if self.noun.is_published():
+            return True
+        elif self.noun.project.members.filter(id=user.id).count() > 0:
+                return True
+        else:
+            return False
 
     def get_url(self):
-        return reverse(viewname=self.view_name, args=[self.instance.id], current_app='core')
+        return reverse(viewname=self.view_name, args=[self.noun.id], current_app='core')
+
 
 class Post(Auditable, Noun):
     project = models.ForeignKey(Project)
@@ -364,13 +427,24 @@ class Post(Auditable, Noun):
     media = models.ManyToManyField(Media, null=True, blank=True)
     published = models.BooleanField(default=False)
     #history = HistoricalRecords()
-    verb_classes = [PostCreateMediaVerb,StreamListVerb]
+    verb_classes = [PostDetailVerb,PostCreateMediaVerb,StreamListVerb]
 
     def __unicode__(self):
         return self.title
 
     def get_absolute_url(self):
         return reverse(viewname='post_detail', args=[self.id], current_app='core')
+
+    def is_published(self):
+        return self.published
+
+    def is_visible_to(self, user):
+        if self.is_published():
+            return True
+        elif self.project.members.filter(id=user.id).count() > 0:
+                return True
+        else:
+            return False
 
     def get_medias(self):
         return self.media.all().order_by('-importance')
@@ -391,14 +465,6 @@ class Post(Auditable, Noun):
             return t.get_file_url()
         else:
             return None
-
-    def get_audit(self):
-        touches = self.get_touches()
-        for m in self.media.all():
-            touches+=m.get_touches()
-            print m
-        touches = sorted(touches, key = lambda t: t['updated_at'], reverse=True)
-        return touches
 
 
 class Membership(Auditable):
@@ -472,47 +538,3 @@ class Options(models.Model):
 def sort_touches(touches):
     return sorted(touches, key = lambda t: t['updated_at'], reverse=True)
 
-
-
-#VERBS Start
-class Carte(object):
-
-    def get_verbs(self, *args):
-        print "***************************************************YUP"
-        #remove self from args
-        verb_list = []
-        for verb_class in args:
-            instance = verb_class()
-            blob = {}
-            try:
-                blob.__setitem__("noun_class_name", instance.noun_class_name)
-            except Exception as e:
-                pass
-
-            try:
-                blob.__setitem__("view_name", instance.view_name)
-            except Exception as e:
-                pass
-
-            try:
-                blob.__setitem__("required", instance.required)
-            except Exception as e:
-                pass
-
-            try:
-                blob.__setitem__("verb_class", verb_class)
-            except Exception as e:
-                pass
-            verb_list.append(blob)
-        return verb_list
-
-    def get_all_verbs(self):
-        return self.get_verbs(
-            StreamListVerb,
-            ProjectCreateVerb,
-            ProjectPledgeVerb,
-            ProjectMemberVerb,
-            ProjectUploadVerb,
-            ProjectPostVerb,
-            MediaUpdateVerb
-            )

@@ -24,10 +24,16 @@ class RequiredVerbsAvailable(object):
 
         return verbs
 
+    def get_context_data(self, **kwargs):
+        # Call the base implementation first to get a context
+        context = super(RequiredVerbsAvailable, self).get_context_data(**kwargs)
+        context['available_verbs'] = self.noun.get_available_verbs(self.request.user)
+        return context
+
     def dispatch(self, *args, **kwargs):
     	#raise Exception('reached')
         if self.noun == None:
-            self.noun = self.get_object()
+            self.noun = self.get_noun(**kwargs)
         #what verbs are required and available for viewing of this page
         #for each of those, get a forbidden message and direct the user to a messaging view
         view_name = resolve(self.request.path_info).url_name
@@ -35,7 +41,7 @@ class RequiredVerbsAvailable(object):
         for verb in self.get_view_required_unavailable_verbs(view_name, self.request.user):
             denied_messages.append(verb.denied_message)
         if len(denied_messages) > 0:
-            return render_to_response('messages.html',{"messages":denied_messages}, RequestContext(self.request))
+            return render_to_response('messages.html',{"messages":denied_messages, "available_verbs":self.noun.get_available_verbs(self.request.user)}, RequestContext(self.request))
         
         return super(RequiredVerbsAvailable, self).dispatch(*args, **kwargs)
 
