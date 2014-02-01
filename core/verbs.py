@@ -5,7 +5,7 @@ from django.core.urlresolvers import resolve
 from django.template import RequestContext
 
 
-class RequiredVerbsAvailable(object):
+class NounView(object):
     noun = None
 
     def get_view_required_verbs(self, view_name):
@@ -26,12 +26,12 @@ class RequiredVerbsAvailable(object):
 
     def get_context_data(self, **kwargs):
         # Call the base implementation first to get a context
-        context = super(RequiredVerbsAvailable, self).get_context_data(**kwargs)
+        context = super(NounView, self).get_context_data(**kwargs)
         context['available_verbs'] = self.noun.get_available_verbs(self.request.user)
         return context
 
     def dispatch(self, *args, **kwargs):
-    	#raise Exception('reached')
+        #raise Exception('reached')
         if self.noun == None:
             self.noun = self.get_noun(**kwargs)
         #what verbs are required and available for viewing of this page
@@ -43,7 +43,19 @@ class RequiredVerbsAvailable(object):
         if len(denied_messages) > 0:
             return render_to_response('messages.html',{"messages":denied_messages, "available_verbs":self.noun.get_available_verbs(self.request.user)}, RequestContext(self.request))
         
-        return super(RequiredVerbsAvailable, self).dispatch(*args, **kwargs)
+        return super(NounView, self).dispatch(*args, **kwargs)
 
     class Meta:
         abstract = True
+
+class DjangoVerb(cb.Verb):
+    view_name ='pledge_create'
+    login_required = False
+
+    def is_available(self, user):
+        "takes a user and always returns True or False"
+#        raise Exception("stop")
+        if (self.login_required == True) & (user.is_authenticated() == False):
+            self.denied_message = "Sorry, you have to be logged in to do that."
+            return False
+        return True

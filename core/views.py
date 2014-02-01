@@ -9,12 +9,13 @@ from django.contrib.auth.models import User
 from uuid import uuid4
 
 from carteblanche.models import Noun
+#from carteblanche.django.mixins import NounView
+from core.verbs import NounView
 
 from api import v1_api
 import core.models as cm
 import core.forms as cf
-import core.decorators as cd
-import core.verbs as cv
+
 
 
 from django.db.models.signals import post_save
@@ -65,7 +66,7 @@ class BootstrapView(TemplateView):
 from django.contrib.contenttypes.models import ContentType
 from django.shortcuts import get_object_or_404
 
-class StreamListView(cv.RequiredVerbsAvailable, TemplateView):
+class StreamListView(NounView, TemplateView):
     template_name = 'stream.html'
 
     def get_context_data(self, **kwargs):
@@ -80,7 +81,7 @@ class StreamListView(cv.RequiredVerbsAvailable, TemplateView):
         object_type = ContentType.objects.get(app_label="core", model=self.kwargs['instance_model']).model_class()
         return get_object_or_404(object_type, pk=self.kwargs['instance_id'])
 
-class ProjectDetailView(cv.RequiredVerbsAvailable, TemplateView):
+class ProjectDetailView(NounView, TemplateView):
     template_name = 'project.html'
 
     def get_context_data(self, **kwargs):
@@ -127,7 +128,7 @@ class PledgeFormView(FormView):
         context['verb'] = "Pledge"
         return context 
 
-class PledgeCreateView(cv.RequiredVerbsAvailable, CreateView):
+class PledgeCreateView(NounView, CreateView):
     model = cm.Pledge
     template_name = 'form.html'
     fields = ['value']
@@ -162,7 +163,7 @@ class ProjectCreateView(CreateView):
         action.send(self.request.user, verb='created', action_object=self.object)
         return reverse(viewname='project_detail', args=(self.object.id,), current_app='core')
 
-class MediaCreateView(cv.RequiredVerbsAvailable, CreateView):
+class MediaCreateView(NounView, CreateView):
     model = cm.Media
     template_name = 'form.html'
     fields = '__all__'
@@ -216,7 +217,7 @@ class PostUpdateView(UpdateView):
         form.instance.changed_by = self.request.user
         return super(PostCreateView, self).form_valid(form)
 
-class PostDetailView(cv.RequiredVerbsAvailable, TemplateView):
+class PostDetailView(NounView, TemplateView):
     template_name = 'media.html'
 
     def get_context_data(self, **kwargs):
@@ -296,7 +297,7 @@ class PostMediaCreateView(CreateView, Noun):
         context['available_verbs'] = self.get_available_verbs(self.request.user)
         return context
 
-class PostUploadsView(cv.RequiredVerbsAvailable, TemplateView):
+class PostUploadsView(NounView, TemplateView):
     template_name = 'uploads.html'
 
     def get_verbs(self):
@@ -370,7 +371,7 @@ class UserLoginView(FormView):
 #User ENDS
 
 #media STARTS
-class MediaDetailView(cv.RequiredVerbsAvailable, TemplateView):
+class MediaDetailView(NounView, TemplateView):
     template_name = 'media.html'
 
     def get_context_data(self, **kwargs):

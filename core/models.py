@@ -5,6 +5,8 @@ from django.contrib.auth.models import User
 from django.db.models import Sum
 from django.core.urlresolvers import reverse
 from carteblanche.models import Verb, Noun
+#from carteblanche.django.mixins import DjangoVerb
+from core.verbs import DjangoVerb
 #from simple_history.models import HistoricalRecords
 from django.utils.encoding import python_2_unicode_compatible
 from django.utils.translation import ugettext_lazy as _
@@ -127,32 +129,38 @@ class Badge(Auditable):
     def __unicode__(self):
         return self.title
 
-class ProjectCreateVerb(Verb):
+class ProjectCreateVerb(DjangoVerb):
     display_name = "Start New Project"
     view_name='project_create'
     required = False
+    login_required = True
 
     def get_url(self):
         return reverse(viewname=self.view_name, current_app='core')
 
-class ProjectPledgeVerb(Verb):
+class ProjectPledgeVerb(DjangoVerb):
     display_name = "Pledge"
     required = True
     denied_message = "Sorry, you already pledged!"
     view_name='pledge_create'
+    login_required = True
     
     def is_available(self, user):
-        return Pledge.objects.filter(project=self.noun, pledger=user).count() == 0
+        if super(ProjectPledgeVerb, self).is_available(user) == True:
+            return Pledge.objects.filter(project=self.noun, pledger=user).count() == 0
+        return False
 
     def get_url(self):
         return reverse(viewname=self.view_name, args=[self.noun.id], current_app='core')
 
-class ProjectMemberVerb(Verb):
+class ProjectMemberVerb(DjangoVerb):
     availability_key = "is_member"
-    required = True 
+    required = True
+    login_required = True
     denied_message = "Sorry, you must be a member of the project to do this."
 
     def is_available(self, user):
+        super(ProjectMemberVerb, self).is_available(user)
         return self.noun.members.filter(id=user.id).count() > 0
 
 class ProjectUploadVerb(ProjectMemberVerb):
@@ -178,6 +186,7 @@ class ProjectDetailVerb(ProjectMemberVerb):
     denied_message = "Sorry, that project isn't published yet."
 
     def is_available(self, user):
+        super(ProjectDetailVerb, self).is_available(user)
         return self.noun.is_visible_to(user)
 
     def get_url(self):
@@ -204,15 +213,18 @@ class Project(Auditable, Noun):
         return reverse(viewname='project_detail', args=[self.id], current_app='core')
 
     def is_visible_to(self, user):
-        if self.noun.is_published():
+        if self.is_published():
             return True
-        elif self.noun.members.filter(id=user.id).count() > 0:
+        elif self.members.filter(id=user.id).count() > 0:
                 return True
         else:
             return False            
 
     def is_published(self):
-        return self.get_posts().order_by('created_at')[0].is_published()
+        try:
+            return self.get_posts().order_by('created_at')[0].is_published()
+        except Exception as e:
+            return False
 
     def get_pledges(self):
         return Pledge.objects.filter(project=self)
