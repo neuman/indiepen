@@ -49,13 +49,18 @@ class NounView(object):
         abstract = True
 
 class DjangoVerb(cb.Verb):
-    view_name ='pledge_create'
     login_required = False
 
-    def is_available(self, user):
-        "takes a user and always returns True or False"
-#        raise Exception("stop")
-        if (self.login_required == True) & (user.is_authenticated() == False):
-            self.denied_message = "Sorry, you have to be logged in to do that."
+from functools import wraps
+from django.utils.decorators import available_attrs
+
+def availability_login_required(is_available_func):
+    @wraps(is_available_func, assigned=available_attrs(is_available_func))
+    def decorator(self, user):
+
+        if user.is_authenticated(): 
+            return is_available_func(self, user)
+        else:
+            self.denied_message = "You must be logged in to "+self.display_name+"."
             return False
-        return True
+    return decorator

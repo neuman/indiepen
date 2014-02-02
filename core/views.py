@@ -66,6 +66,7 @@ class BootstrapView(TemplateView):
 from django.contrib.contenttypes.models import ContentType
 from django.shortcuts import get_object_or_404
 
+
 class StreamListView(NounView, TemplateView):
     template_name = 'stream.html'
 
@@ -81,17 +82,14 @@ class StreamListView(NounView, TemplateView):
         object_type = ContentType.objects.get(app_label="core", model=self.kwargs['instance_model']).model_class()
         return get_object_or_404(object_type, pk=self.kwargs['instance_id'])
 
+
 class ProjectDetailView(NounView, TemplateView):
     template_name = 'project.html'
 
     def get_context_data(self, **kwargs):
-
-        # Call the base implementation first to get a context
         context = super(ProjectDetailView, self).get_context_data(**kwargs)
-        project = self.noun
-        context['project'] = project
-        context['available_verbs'] = project.get_available_verbs(self.request.user)
-        context['total_pledged'] = project.get_total_pledged()
+        context['project'] = self.noun
+        context['total_pledged'] = self.noun.get_total_pledged()
         return context
 
     def get_noun(self, **kwargs):
@@ -151,7 +149,7 @@ class PledgeCreateView(NounView, CreateView):
         return super(PledgeCreateView, self).dispatch(*args, **kwargs)
 #Pledge ENDS
 
-class ProjectCreateView(CreateView):
+class ProjectCreateView(NounView, CreateView):
     model = cm.Project
     template_name = 'form.html'
     fields = '__all__'
@@ -162,6 +160,9 @@ class ProjectCreateView(CreateView):
         self.object.members.add(self.request.user)
         action.send(self.request.user, verb='created', action_object=self.object)
         return reverse(viewname='project_detail', args=(self.object.id,), current_app='core')
+
+    def get_noun(self, **kwargs):
+        return cm.Project.objects.get(id=self.kwargs['instance_id'])
 
 class MediaCreateView(NounView, CreateView):
     model = cm.Media

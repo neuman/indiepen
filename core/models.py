@@ -6,7 +6,7 @@ from django.db.models import Sum
 from django.core.urlresolvers import reverse
 from carteblanche.models import Verb, Noun
 #from carteblanche.django.mixins import DjangoVerb
-from core.verbs import DjangoVerb
+from core.verbs import DjangoVerb, availability_login_required
 #from simple_history.models import HistoricalRecords
 from django.utils.encoding import python_2_unicode_compatible
 from django.utils.translation import ugettext_lazy as _
@@ -138,17 +138,20 @@ class ProjectCreateVerb(DjangoVerb):
     def get_url(self):
         return reverse(viewname=self.view_name, current_app='core')
 
+    @availability_login_required
+    def is_available(self, user):
+        pass
+
 class ProjectPledgeVerb(DjangoVerb):
     display_name = "Pledge"
     required = True
     denied_message = "Sorry, you already pledged!"
     view_name='pledge_create'
     login_required = True
-    
+
+    @availability_login_required
     def is_available(self, user):
-        if super(ProjectPledgeVerb, self).is_available(user) == True:
-            return Pledge.objects.filter(project=self.noun, pledger=user).count() == 0
-        return False
+        return Pledge.objects.filter(project=self.noun, pledger=user).count() == 0
 
     def get_url(self):
         return reverse(viewname=self.view_name, args=[self.noun.id], current_app='core')
@@ -159,8 +162,8 @@ class ProjectMemberVerb(DjangoVerb):
     login_required = True
     denied_message = "Sorry, you must be a member of the project to do this."
 
+    @availability_login_required
     def is_available(self, user):
-        super(ProjectMemberVerb, self).is_available(user)
         return self.noun.members.filter(id=user.id).count() > 0
 
 class ProjectUploadVerb(ProjectMemberVerb):
@@ -182,11 +185,11 @@ class ProjectPostVerb(ProjectMemberVerb):
 class ProjectDetailVerb(ProjectMemberVerb):
     display_name = "View Project"
     view_name = 'project_detail'
+    availability_key = "is_visible_to"
     required = True
     denied_message = "Sorry, that project isn't published yet."
 
     def is_available(self, user):
-        super(ProjectDetailVerb, self).is_available(user)
         return self.noun.is_visible_to(user)
 
     def get_url(self):
@@ -315,8 +318,8 @@ class MediaUpdateVerb(Verb):
     view_name='media_update'
     required = True
 
+    @availability_login_required
     def is_available(self, user):
-        
         return self.noun.post_set.all()[0].project.members.filter(id=user.id).count() > 0
 
     def get_url(self):
@@ -408,6 +411,7 @@ class PostCreateMediaVerb(Verb):
     required = True
     denied_message = "You must be a project member to upload to this post."
 
+    @availability_login_required
     def is_available(self, user):
         return self.noun.project.members.filter(id=user.id).count() > 0
 
