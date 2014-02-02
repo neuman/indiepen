@@ -3,7 +3,7 @@ from django.views.generic import DetailView
 from django.shortcuts import render_to_response
 from django.core.urlresolvers import resolve
 from django.template import RequestContext
-
+from django.core.urlresolvers import reverse
 
 class NounView(object):
     noun = None
@@ -21,7 +21,6 @@ class NounView(object):
         for v in self.get_view_required_verbs(view_name):
             if not v.is_available(user):
                 verbs.append(v)
-
         return verbs
 
     def get_context_data(self, **kwargs):
@@ -49,7 +48,14 @@ class NounView(object):
         abstract = True
 
 class DjangoVerb(cb.Verb):
-    login_required = False
+    view_name = None
+    app = None
+
+    def get_url(self):
+        '''
+        Default django get_url for urls that require no args.
+        '''
+        return reverse(viewname=self.view_name, current_app=self.app)
 
 from functools import wraps
 from django.utils.decorators import available_attrs

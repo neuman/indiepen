@@ -31,7 +31,7 @@ class ProjectForm(BootstrapForm):
 class PostForm(BootstrapForm):
     class Meta:
         model = cm.Post
-        exclude = ['changed_by', 'project', 'media']
+        exclude = ['changed_by', 'project', 'media','published']
 
 class PledgeForm(BootstrapForm):
     class Meta:

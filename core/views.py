@@ -149,7 +149,11 @@ class PledgeCreateView(NounView, CreateView):
         return super(PledgeCreateView, self).dispatch(*args, **kwargs)
 #Pledge ENDS
 
-class ProjectCreateView(NounView, CreateView):
+class SiteRootView(NounView):
+    def get_noun(self, **kwargs):
+        return cm.SiteRoot()
+
+class ProjectCreateView(SiteRootView, CreateView):
     model = cm.Project
     template_name = 'form.html'
     fields = '__all__'
@@ -160,9 +164,6 @@ class ProjectCreateView(NounView, CreateView):
         self.object.members.add(self.request.user)
         action.send(self.request.user, verb='created', action_object=self.object)
         return reverse(viewname='project_detail', args=(self.object.id,), current_app='core')
-
-    def get_noun(self, **kwargs):
-        return cm.Project.objects.get(id=self.kwargs['instance_id'])
 
 class MediaCreateView(NounView, CreateView):
     model = cm.Media
@@ -338,7 +339,7 @@ class UserDetailView(TemplateView, Noun):
         context['stream'] = actor_stream(user)
         return context
 
-class UserCreateView(CreateView):
+class UserCreateView(SiteRootView, CreateView):
     model = User
     template_name = 'form.html'
     form_class = cf.RegistrationForm
@@ -357,7 +358,7 @@ class UserCreateView(CreateView):
         action.send(self.request.user, verb='joined', action_object=self.object)
         return reverse(viewname='user_detail', args=(self.object.id,), current_app='core')
 
-class UserLoginView(FormView):
+class UserLoginView(SiteRootView, FormView):
     template_name = 'form.html'
     form_class = cf.LoginForm
 
