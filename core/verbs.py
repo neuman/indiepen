@@ -4,6 +4,8 @@ from django.shortcuts import render_to_response
 from django.core.urlresolvers import resolve
 from django.template import RequestContext
 from django.core.urlresolvers import reverse
+from functools import wraps
+from django.utils.decorators import available_attrs
 
 class NounView(object):
     noun = None
@@ -27,12 +29,13 @@ class NounView(object):
         # Call the base implementation first to get a context
         context = super(NounView, self).get_context_data(**kwargs)
         context['available_verbs'] = self.noun.get_available_verbs(self.request.user)
+        context['carteblanche_cache'] = self.noun.carteblanche_cache
+        self.noun.carteblanche_cache = {}
         return context
 
     def dispatch(self, *args, **kwargs):
-        #raise Exception('reached')
-        if self.noun == None:
-            self.noun = self.get_noun(**kwargs)
+        self.noun = self.get_noun(**kwargs)
+#        raise Exception(self.noun.carteblanche_cache)
         #what verbs are required and available for viewing of this page
         #for each of those, get a forbidden message and direct the user to a messaging view
         view_name = resolve(self.request.path_info).url_name
@@ -57,13 +60,10 @@ class DjangoVerb(cb.Verb):
         '''
         return reverse(viewname=self.view_name, current_app=self.app)
 
-from functools import wraps
-from django.utils.decorators import available_attrs
-
 def availability_login_required(is_available_func):
     @wraps(is_available_func, assigned=available_attrs(is_available_func))
     def decorator(self, user):
-
+        print user
         if user.is_authenticated(): 
             return is_available_func(self, user)
         else:

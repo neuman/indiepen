@@ -1,0 +1,23 @@
+{
+  "name": "indiepen",
+  "version": "0.0.0",
+  "description": "indiepen ======== I guess readme stuff will go here when it becomes relevant.",
+  "main": "Gruntfile.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/neuman/indiepen.git"
+  },
+  "author": "neuman",
+  "license": "BSD-2-Clause",
+  "bugs": {
+    "url": "https://github.com/neuman/indiepen/issues"
+  },
+  "devDependencies": {
+    "grunt": "~0.4.2",
+    "bower": "~1.2.8",
+    "grunt-bower-requirejs": "~0.8.4"
+  }
+}

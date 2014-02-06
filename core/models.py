@@ -12,7 +12,7 @@ from django.utils.encoding import python_2_unicode_compatible
 from django.utils.translation import ugettext_lazy as _
 import json
 
-
+APPNAME = 'core'
 
 MEDIUM_CHOICES = (
     ('TXT', 'Text'),
@@ -112,22 +112,20 @@ DURATION_CHOICES = (
 )
 
 class CoreVerb(DjangoVerb):
-    display_name = "Join Indiepen"
-    view_name='user_ceate'
-    required = True
-    app = 'core'
-
-    def is_available(self, user):
-        #only available to non-logged in users
-        if user.is_authenticated():
-            return False
-        return True
+    app = APPNAME
 
 class UnauthenticatedOnlyVerb(CoreVerb):
+    availability_key = 'is_unauthenticated'
+    required = True
+
     def is_available(self, user):
         #only available to non-logged in users
+        print "checking is_unauthenticated"
+        print user
         if user.is_authenticated():
+            print "False"
             return False
+        print "True"
         return True
 
 class StreamListVerb(CoreVerb):
@@ -151,21 +149,22 @@ class Badge(Auditable):
 class ProjectCreateVerb(CoreVerb):
     display_name = "Start New Project"
     view_name='project_create'
+    availability_key = 'is_authenticated'
     required = True
+
 
     @availability_login_required
     def is_available(self, user):
-        pass
+        return True
+
 
 class SiteJoinVerb(UnauthenticatedOnlyVerb):
     display_name = "Join Indiepen"
     view_name='user_ceate'
-    required = True
 
 class SiteLoginVerb(UnauthenticatedOnlyVerb):
     display_name = "Login"
     view_name='user_login'
-    required = True
 
 
 class SiteRoot(Noun):
@@ -174,13 +173,15 @@ class SiteRoot(Noun):
     '''
     verb_classes = [ProjectCreateVerb, SiteJoinVerb, SiteLoginVerb]
 
+    class Meta:
+        abstract = True
+
 
 class ProjectPledgeVerb(CoreVerb):
     display_name = "Pledge"
     required = True
     denied_message = "Sorry, you already pledged!"
     view_name='pledge_create'
-    login_required = True
 
     @availability_login_required
     def is_available(self, user):
@@ -189,44 +190,32 @@ class ProjectPledgeVerb(CoreVerb):
     def get_url(self):
         return reverse(viewname=self.view_name, args=[self.noun.id], current_app=self.app)
 
-class ProjectMemberVerb(DjangoVerb):
+class ProjectVerb(DjangoVerb):
+    def get_url(self):
+        return reverse(viewname=self.view_name, args=[self.noun.id], current_app=self.app)
+
+class ProjectMemberVerb(ProjectVerb):
     availability_key = "is_member"
     required = True
-    login_required = True
     denied_message = "Sorry, you must be a member of the project to do this."
 
     @availability_login_required
     def is_available(self, user):
         return self.noun.members.filter(id=user.id).count() > 0
 
-class ProjectUploadVerb(ProjectMemberVerb):
-    display_name = "Upload Media"
-    view_name='media_create'
-    required = True
-
-    def get_url(self):
-        return reverse(viewname=self.view_name, args=[self.noun.id], current_app=self.app)
-
 class ProjectPostVerb(ProjectMemberVerb):
     display_name = "Post"
     view_name='post_create'
-    required = False
 
-    def get_url(self):
-        return reverse(viewname=self.view_name, args=[self.noun.id], current_app=self.app)
-
-class ProjectDetailVerb(ProjectMemberVerb):
+class ProjectDetailVerb(ProjectVerb):
     display_name = "View Project"
     view_name = 'project_detail'
-    availability_key = "is_visible_to"
+    availability_key = "can_view"
     required = True
     denied_message = "Sorry, that project isn't published yet."
 
     def is_available(self, user):
         return self.noun.is_visible_to(user)
-
-    def get_url(self):
-        return reverse(viewname=self.view_name, args=[self.noun.id], current_app=self.app)
 
 class Project(Auditable, Noun):
     title = models.CharField(max_length=300)
@@ -240,13 +229,13 @@ class Project(Auditable, Noun):
     upfront = models.FloatField()
     funded = models.BooleanField(default=False)
     #history = HistoricalRecords()
-    verb_classes = [ProjectDetailVerb, ProjectPledgeVerb, ProjectUploadVerb, ProjectPostVerb, StreamListVerb]
+    verb_classes = [ProjectDetailVerb, ProjectPledgeVerb, ProjectPostVerb, StreamListVerb]
 
     def __unicode__(self):
         return self.title
 
     def get_absolute_url(self):
-        return reverse(viewname='project_detail', args=[self.id], current_app=self.app)
+        return reverse(viewname='project_detail', args=[self.id], current_app=APPNAME)
 
     def is_visible_to(self, user):
         if self.is_published():
@@ -374,7 +363,7 @@ class Media(Auditable, Noun):
         return self.get_file_name()
 
     def get_absolute_url(self):
-        return reverse(viewname='media_detail', args=[self.id], current_app=self.app)
+        return reverse(viewname='media_detail', args=[self.id], current_app=APPNAME)
 
     def is_visible_to(self, user):
         post = get_media_post(self)
@@ -482,7 +471,7 @@ class Post(Auditable, Noun):
         return self.title
 
     def get_absolute_url(self):
-        return reverse(viewname='post_detail', args=[self.id], current_app=self.app)
+        return reverse(viewname='post_detail', args=[self.id], current_app=APPNAME)
 
     def is_published(self):
         return self.published

@@ -24,9 +24,16 @@ from actstream.models import user_stream, action_object_stream, model_stream, ac
 
 from django.contrib.auth import authenticate, login
 
+from django.contrib.contenttypes.models import ContentType
+from django.shortcuts import get_object_or_404
 
 
-class IndexView(TemplateView):
+class SiteRootView(NounView):
+    def get_noun(self, **kwargs):
+        siteroot = cm.SiteRoot()
+        return siteroot
+
+class IndexView(SiteRootView, TemplateView):
     template_name = 'bootstrap.html'
 
 class MessageView(TemplateView):
@@ -63,9 +70,6 @@ class DetailView(TemplateView):
 
 class BootstrapView(TemplateView):
     template_name = 'grid.html'
-from django.contrib.contenttypes.models import ContentType
-from django.shortcuts import get_object_or_404
-
 
 class StreamListView(NounView, TemplateView):
     template_name = 'stream.html'
@@ -82,8 +86,11 @@ class StreamListView(NounView, TemplateView):
         object_type = ContentType.objects.get(app_label="core", model=self.kwargs['instance_model']).model_class()
         return get_object_or_404(object_type, pk=self.kwargs['instance_id'])
 
+class ProjectView(NounView):
+    def get_noun(self, **kwargs):
+        return cm.Project.objects.get(id=self.kwargs['instance_id'])
 
-class ProjectDetailView(NounView, TemplateView):
+class ProjectDetailView(ProjectView, TemplateView):
     template_name = 'project.html'
 
     def get_context_data(self, **kwargs):
@@ -92,23 +99,14 @@ class ProjectDetailView(NounView, TemplateView):
         context['total_pledged'] = self.noun.get_total_pledged()
         return context
 
-    def get_noun(self, **kwargs):
-        return cm.Project.objects.get(id=self.kwargs['instance_id'])
 
-
-class ProjectListView(TemplateView, Noun):
+class ProjectListView(SiteRootView, TemplateView):
     template_name = 'list.html'
 
-    def get_verbs(self):
-        return [
-            cm.ProjectCreateVerb()
-            ]
-
     def get_context_data(self, **kwargs):
-
         context = super(ProjectListView, self).get_context_data(**kwargs)
         context['projects'] = cm.Project.objects.all()
-        context['available_verbs'] = self.get_available_verbs(self.request.user)
+        self.noun.carteblanche_cache.__setitem__("tester", "Failure")
         return context
 
 from django.views.generic.edit import FormView
@@ -126,7 +124,7 @@ class PledgeFormView(FormView):
         context['verb'] = "Pledge"
         return context 
 
-class PledgeCreateView(NounView, CreateView):
+class PledgeCreateView(ProjectView, CreateView):
     model = cm.Pledge
     template_name = 'form.html'
     fields = ['value']
@@ -149,10 +147,6 @@ class PledgeCreateView(NounView, CreateView):
         return super(PledgeCreateView, self).dispatch(*args, **kwargs)
 #Pledge ENDS
 
-class SiteRootView(NounView):
-    def get_noun(self, **kwargs):
-        return cm.SiteRoot()
-
 class ProjectCreateView(SiteRootView, CreateView):
     model = cm.Project
     template_name = 'form.html'
@@ -165,7 +159,7 @@ class ProjectCreateView(SiteRootView, CreateView):
         action.send(self.request.user, verb='created', action_object=self.object)
         return reverse(viewname='project_detail', args=(self.object.id,), current_app='core')
 
-class MediaCreateView(NounView, CreateView):
+class MediaCreateView(ProjectView, CreateView):
     model = cm.Media
     template_name = 'form.html'
     fields = '__all__'
@@ -180,12 +174,13 @@ class MediaCreateView(NounView, CreateView):
         action.send(self.request.user, verb='uploaded', action_object=self.object)
         return super(MediaCreateView, self).form_valid(form)
 
-    def get_noun(self, **kwargs):
-        return cm.Project.objects.get(id=self.kwargs['instance_id'])
-
 
 #Post STARTS
-class PostCreateView(CreateView):
+class PostView(NounView):
+    def get_noun(self, **kwargs):
+        return cm.Post.objects.get(id=self.kwargs['instance_id'])
+
+class PostCreateView(ProjectView, CreateView):
     model = cm.Post
     template_name = 'form.html'
     success_url = '/'
@@ -205,7 +200,7 @@ class PostCreateView(CreateView):
         action.send(self.request.user, verb='posted', action_object=self.object, target=self.object.project)
         return reverse(viewname='post_media_uploads', args=(self.object.id,), current_app='core')
 
-class PostUpdateView(UpdateView):
+class PostUpdateView(PostView, UpdateView):
     model = cm.Post
     template_name = 'form.html'
     success_url = '/'
@@ -219,7 +214,7 @@ class PostUpdateView(UpdateView):
         form.instance.changed_by = self.request.user
         return super(PostCreateView, self).form_valid(form)
 
-class PostDetailView(NounView, TemplateView):
+class PostDetailView(PostView, TemplateView):
     template_name = 'media.html'
 
     def get_context_data(self, **kwargs):
@@ -241,17 +236,15 @@ class PostDetailView(NounView, TemplateView):
     def get_noun(self, **kwargs):
         return cm.Post.objects.get(id=self.kwargs['instance_id'])
 
-class PostListView(TemplateView, Noun):
+class PostListView(SiteRootView, TemplateView):
     template_name = 'posts.html'
 
     def get_context_data(self, **kwargs):
-
         context = super(PostListView, self).get_context_data(**kwargs)
         context['posts'] = cm.Post.objects.all().order_by('-updated_at')
-        context['available_verbs'] = self.get_available_verbs(self.request.user)
         return context
 
-class PostMediaCreateView(CreateView, Noun):
+class PostMediaCreateView(PostView, CreateView):
     model = cm.Media
     template_name = 'form.html'
     fields = '__all__'
@@ -288,24 +281,8 @@ class PostMediaCreateView(CreateView, Noun):
         action.send(self.request.user, verb='uploaded', action_object=self.new_instance, target=p)
         return reverse(viewname='post_media_create', args=(self.kwargs['instance_id'],), current_app='core')
 
-    def get_verbs(self):
-        return [
-            cm.PostDetailVerb(cm.Post.objects.get(id=self.kwargs['instance_id']))
-            ]
-
-    def get_context_data(self, **kwargs):
-
-        context = super(PostMediaCreateView, self).get_context_data(**kwargs)
-        context['available_verbs'] = self.get_available_verbs(self.request.user)
-        return context
-
-class PostUploadsView(NounView, TemplateView):
+class PostUploadsView(PostView, TemplateView):
     template_name = 'uploads.html'
-
-    def get_verbs(self):
-        return [
-            cm.PostDetailVerb(cm.Post.objects.get(id=self.kwargs['instance_id']))
-            ]
 
     def get_context_data(self, **kwargs):
 
@@ -313,9 +290,6 @@ class PostUploadsView(NounView, TemplateView):
         context = super(PostUploadsView, self).get_context_data(**kwargs)
         context['upload_url'] = reverse(viewname='post_media_create', args=(self.kwargs['instance_id'],), current_app='core')
         return context
-
-    def get_noun(self, **kwargs):
-        return cm.Post.objects.get(id=self.kwargs['instance_id'])
 
 #Post ENDS
 
