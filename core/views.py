@@ -8,7 +8,7 @@ from django.contrib.contenttypes.models import ContentType
 from django.contrib.auth.models import User
 from uuid import uuid4
 
-from carteblanche.models import Noun
+from carteblanche.base import Noun
 #from carteblanche.django.mixins import NounView
 from core.verbs import NounView
 

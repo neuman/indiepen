@@ -4,7 +4,7 @@ from djmoney.models.fields import MoneyField
 from django.contrib.auth.models import User
 from django.db.models import Sum
 from django.core.urlresolvers import reverse
-from carteblanche.models import Verb, Noun
+from carteblanche.base import Verb, Noun
 #from carteblanche.django.mixins import DjangoVerb
 from core.verbs import DjangoVerb, availability_login_required
 #from simple_history.models import HistoricalRecords
@@ -113,9 +113,10 @@ DURATION_CHOICES = (
 
 class CoreVerb(DjangoVerb):
     app = APPNAME
+    condition_name = 'public'
 
 class UnauthenticatedOnlyVerb(CoreVerb):
-    availability_key = 'is_unauthenticated'
+    condition_name = 'is_unauthenticated'
     required = True
 
     def is_available(self, user):
@@ -149,7 +150,7 @@ class Badge(Auditable):
 class ProjectCreateVerb(CoreVerb):
     display_name = "Start New Project"
     view_name='project_create'
-    availability_key = 'is_authenticated'
+    condition_name = 'is_authenticated'
     required = True
 
 
@@ -195,7 +196,7 @@ class ProjectVerb(DjangoVerb):
         return reverse(viewname=self.view_name, args=[self.noun.id], current_app=self.app)
 
 class ProjectMemberVerb(ProjectVerb):
-    availability_key = "is_member"
+    condition_name = "is_member"
     required = True
     denied_message = "Sorry, you must be a member of the project to do this."
 
@@ -210,7 +211,7 @@ class ProjectPostVerb(ProjectMemberVerb):
 class ProjectDetailVerb(ProjectVerb):
     display_name = "View Project"
     view_name = 'project_detail'
-    availability_key = "can_view"
+    condition_name = "can_view"
     required = True
     denied_message = "Sorry, that project isn't published yet."
 
@@ -320,6 +321,7 @@ from taggit.managers import TaggableManager
 class MediaDetailVerb(DjangoVerb):
     display_name = "View Media"
     view_name = 'media_detail'
+    condition_name = 'can_view'
     required = True
     denied_message = "Sorry, that media isn't published yet."
 
@@ -427,11 +429,9 @@ class Media(Auditable, Noun):
 def get_media_post(media):
     return media.post_set.all()[0]
 
-class PostCreateMediaVerb(CoreVerb):
-    display_name = "Upload Post Files"
-    view_name = 'post_media_uploads'
-    required = True
+class PostMemberVerb(CoreVerb):
     denied_message = "You must be a project member to upload to this post."
+    condition_name = "is_member"
 
     @availability_login_required
     def is_available(self, user):
@@ -440,10 +440,20 @@ class PostCreateMediaVerb(CoreVerb):
     def get_url(self):
         return reverse(viewname=self.view_name, args=[self.noun.id], current_app=self.app)
 
+class PostCreateMediasVerb(PostMemberVerb):
+    display_name = "Upload Post Files"
+    view_name = 'post_media_uploads'
+
+class PostCreateMediaVerb(PostMemberVerb):
+    display_name = "Upload a File"
+    view_name = 'post_media_create'
+    visible = False
+
 
 class PostDetailVerb(CoreVerb):
     display_name = "View Post"
     view_name = 'post_detail'
+    condition_name = "can_view"
     required = True
     denied_message = "Sorry, that post isn't published yet."
 
@@ -465,7 +475,7 @@ class Post(Auditable, Noun):
     media = models.ManyToManyField(Media, null=True, blank=True)
     published = models.BooleanField(default=False)
     #history = HistoricalRecords()
-    verb_classes = [PostDetailVerb,PostCreateMediaVerb,StreamListVerb]
+    verb_classes = [PostDetailVerb,PostCreateMediaVerb,StreamListVerb, PostCreateMediasVerb]
 
     def __unicode__(self):
         return self.title

@@ -1,4 +1,4 @@
-import carteblanche.models as cb
+import carteblanche.base as cb
 from django.views.generic import DetailView
 from django.shortcuts import render_to_response
 from django.core.urlresolvers import resolve
@@ -28,9 +28,10 @@ class NounView(object):
     def get_context_data(self, **kwargs):
         # Call the base implementation first to get a context
         context = super(NounView, self).get_context_data(**kwargs)
-        context['available_verbs'] = self.noun.get_available_verbs(self.request.user)
-        context['carteblanche_cache'] = self.noun.carteblanche_cache
-        self.noun.carteblanche_cache = {}
+        available_verbs = self.noun.get_available_verbs(self.request.user)
+        context['available_verbs'] = available_verbs
+        context['conditions'] = self.noun.conditions.get_available(self.request.user)
+        self.noun.conditions.cache = {}
         return context
 
     def dispatch(self, *args, **kwargs):
@@ -53,6 +54,7 @@ class NounView(object):
 class DjangoVerb(cb.Verb):
     view_name = None
     app = None
+    visible = True
 
     def get_url(self):
         '''

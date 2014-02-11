@@ -4,10 +4,7 @@
 
 {% block showcase %}
 
-<form id="my-dropzone" action="{{ upload_url }}" class="dropzone" method="post" enctype="multipart/form-data">{% csrf_token %}
-</form>
-
-
-
+	<form id="my-dropzone" action="{{ upload_url }}" class="dropzone" method="post" enctype="multipart/form-data">{% csrf_token %}
+	</form>
 
 {% endblock %}

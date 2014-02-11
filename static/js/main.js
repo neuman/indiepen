@@ -73,7 +73,6 @@ requirejs(["jquery","dropzone","imagesloaded","masonry","jquery.bootstrap","jque
 
         if($('.dropzone').doesExist()){
           new Dropzone(".dropzone", { 
-          url: "{{ upload_url }}",
           paramName: "original_file"
           });
         };
