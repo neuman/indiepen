@@ -38,8 +38,9 @@ requirejs.config({
 });
 console.log('requiring stuff');
 
-requirejs(["jquery","dropzone","imagesloaded","masonry","jquery.bootstrap","jquery.commonscripts","jquery.nicescroll","stripe"], function($, Dropzone, imagesLoaded, Masonry, bootstrap, commonscripts, nicescroll, stripe) {
+requirejs(["jquery","dropzone","imagesloaded","masonry","jquery.bootstrap","jquery.commonscripts","jquery.nicescroll","stripe"], function($, Dropzone, imagesLoaded, Masonry, bootstrap, commonscripts, nicescroll, Stripe) {
     console.log($);
+    console.log(Stripe);
 
       //owl carousel
 
@@ -113,6 +114,7 @@ requirejs(["jquery","dropzone","imagesloaded","masonry","jquery.bootstrap","jque
           // token contains id, last4, and card type
           var token = response.id;
           // Insert the token into the form so it gets submitted to the server
+          console.log("token: "+token)
           $form.append($('<input type="hidden" name="stripeToken" />').val(token));
           // and submit
           $form.get(0).submit();

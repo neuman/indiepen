@@ -15,8 +15,7 @@ from core.verbs import NounView
 from api import v1_api
 import core.models as cm
 import core.forms as cf
-
-
+import stripe
 
 from django.db.models.signals import post_save
 from actstream import action
@@ -26,6 +25,8 @@ from django.contrib.auth import authenticate, login
 
 from django.contrib.contenttypes.models import ContentType
 from django.shortcuts import get_object_or_404
+
+from django.conf import settings
 
 
 class SiteRootView(NounView):
@@ -125,20 +126,29 @@ class PledgeFormView(FormView):
 
 
 #payment STARTS
-class PaymentMethodCreateView(ProjectView, CreateView):
-    model = cm.Pledge
+class PaymentMethodCreateView(ProjectView, FormView):
+    model = cm.PaymentMethod
     template_name = 'payment_form.html'
-    fields = ['value']
-    form = cf.PledgeForm
+    form_class = cf.PaymentMethodForm
+    fields = ['stripeToken']
 
     def form_valid(self, form):
+        # Create a Customer
+        customer = stripe.Customer.create(
+            api_key=settings.STRIPE_SECRET_KEY,
+            card=form.cleaned_data['stripeToken'],
+            description=self.request.user.email
+        )
+        # Save the customer ID in your database so you can use it later
+        cm.PaymentMethod.objects.create(holder=self.request.user, customer_id=customer.id)
+        #action.send(self.request.user, verb='pledged', action_object=self.object, target=self.object.project)
         return super(PaymentMethodCreateView, self).form_valid(form)
 
     def get_success_url(self):
         #new_options = cm.Options.objects.create(user=self.request.user)
         #new_options.save()
-        #action.send(self.request.user, verb='pledged', action_object=self.object, target=self.object.project)
-        return '/'
+        #return pledge URL from the available_verbs
+        return [x for x in self.noun.get_available_verbs(self.request.user) if x['display_name']=='Pledge'][0]['url']
 
     def dispatch(self, *args, **kwargs):
         self.noun = cm.Project.objects.get(id=self.kwargs['instance_id'])

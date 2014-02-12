@@ -435,6 +435,13 @@ class Media(Auditable, Noun):
 def get_media_post(media):
     return media.post_set.all()[0]
 
+def get_user_payment_method(user):
+    q = cm.PaymentMethod.objects.filter(holder=user).order_by('created_at')
+    if q.count() > 0:
+        return q[0]
+    else:
+        return None
+
 class PostMemberVerb(CoreVerb):
     denied_message = "You must be a project member to upload to this post."
     condition_name = "is_member"
@@ -537,7 +544,7 @@ class Service(Auditable, Noun):
         return self.title
 
 class PaymentMethod(Auditable):
-    holder = models.ManyToManyField(User)
+    holder = models.ForeignKey(User)
     customer_id = models.CharField(max_length=300)
 
     def __unicode__(self):

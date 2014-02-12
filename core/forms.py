@@ -38,6 +38,12 @@ class PledgeForm(BootstrapForm):
         model = cm.Pledge
         fields = ['value']
 
+class PaymentMethodForm(BootstrapForm):
+    stripeToken = forms.CharField(max_length=300)
+    class Meta:
+        model = cm.PaymentMethod
+        fields = ['stripeToken']
+
 class MediaForm(BootstrapForm):
     class Meta:
         model = cm.Media

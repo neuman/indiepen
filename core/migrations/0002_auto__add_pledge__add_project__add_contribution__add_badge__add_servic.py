@@ -17,7 +17,7 @@ class Migration(SchemaMigration):
             ('pledger', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['auth.User'])),
             ('project', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['core.Project'])),
             ('value', self.gf('django.db.models.fields.FloatField')()),
-            ('token', self.gf('django.db.models.fields.CharField')(max_length=300)),
+            ('payment_method', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['core.PaymentMethod'], null=True, blank=True)),
         ))
         db.send_create_signal(u'core', ['Pledge'])
 
@@ -33,6 +33,8 @@ class Migration(SchemaMigration):
             ('duration', self.gf('django.db.models.fields.CharField')(default='1', max_length=3)),
             ('frequency', self.gf('django.db.models.fields.CharField')(default='WEE', max_length=3)),
             ('ask', self.gf('django.db.models.fields.FloatField')()),
+            ('upfront', self.gf('django.db.models.fields.FloatField')()),
+            ('funded', self.gf('django.db.models.fields.BooleanField')(default=False)),
         ))
         db.send_create_signal(u'core', ['Project'])
 
@@ -93,33 +95,6 @@ class Migration(SchemaMigration):
         ))
         db.send_create_signal(u'core', ['Badge'])
 
-        # Adding model 'Post'
-        db.create_table(u'core_post', (
-            (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('created_at', self.gf('django.db.models.fields.DateTimeField')(auto_now_add=True, blank=True)),
-            ('updated_at', self.gf('django.db.models.fields.DateTimeField')(auto_now=True, blank=True)),
-            ('changed_by', self.gf('django.db.models.fields.related.ForeignKey')(blank=True, related_name=u'core_post_related', null=True, to=orm['auth.User'])),
-            ('project', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['core.Project'])),
-            ('title', self.gf('django.db.models.fields.CharField')(max_length=60)),
-        ))
-        db.send_create_signal(u'core', ['Post'])
-
-        # Adding M2M table for field media on 'Post'
-        m2m_table_name = db.shorten_name(u'core_post_media')
-        db.create_table(m2m_table_name, (
-            ('id', models.AutoField(verbose_name='ID', primary_key=True, auto_created=True)),
-            ('post', models.ForeignKey(orm[u'core.post'], null=False)),
-            ('media', models.ForeignKey(orm[u'core.media'], null=False))
-        ))
-        db.create_unique(m2m_table_name, ['post_id', 'media_id'])
-
-        # Adding model 'Options'
-        db.create_table(u'core_options', (
-            (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('user', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['auth.User'], unique=True)),
-        ))
-        db.send_create_signal(u'core', ['Options'])
-
         # Adding model 'Service'
         db.create_table(u'core_service', (
             (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
@@ -141,6 +116,35 @@ class Migration(SchemaMigration):
         ))
         db.create_unique(m2m_table_name, ['service_id', 'user_id'])
 
+        # Adding model 'Options'
+        db.create_table(u'core_options', (
+            (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
+            ('user', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['auth.User'], unique=True)),
+            ('image', self.gf('django.db.models.fields.files.FileField')(max_length=100, null=True, blank=True)),
+        ))
+        db.send_create_signal(u'core', ['Options'])
+
+        # Adding model 'Post'
+        db.create_table(u'core_post', (
+            (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
+            ('created_at', self.gf('django.db.models.fields.DateTimeField')(auto_now_add=True, blank=True)),
+            ('updated_at', self.gf('django.db.models.fields.DateTimeField')(auto_now=True, blank=True)),
+            ('changed_by', self.gf('django.db.models.fields.related.ForeignKey')(blank=True, related_name=u'core_post_related', null=True, to=orm['auth.User'])),
+            ('project', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['core.Project'])),
+            ('title', self.gf('django.db.models.fields.CharField')(max_length=60)),
+            ('published', self.gf('django.db.models.fields.BooleanField')(default=False)),
+        ))
+        db.send_create_signal(u'core', ['Post'])
+
+        # Adding M2M table for field media on 'Post'
+        m2m_table_name = db.shorten_name(u'core_post_media')
+        db.create_table(m2m_table_name, (
+            ('id', models.AutoField(verbose_name='ID', primary_key=True, auto_created=True)),
+            ('post', models.ForeignKey(orm[u'core.post'], null=False)),
+            ('media', models.ForeignKey(orm[u'core.media'], null=False))
+        ))
+        db.create_unique(m2m_table_name, ['post_id', 'media_id'])
+
         # Adding model 'Membership'
         db.create_table(u'core_membership', (
             (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
@@ -152,6 +156,17 @@ class Migration(SchemaMigration):
             ('role', self.gf('django.db.models.fields.CharField')(max_length=100)),
         ))
         db.send_create_signal(u'core', ['Membership'])
+
+        # Adding model 'PaymentMethod'
+        db.create_table(u'core_paymentmethod', (
+            (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
+            ('created_at', self.gf('django.db.models.fields.DateTimeField')(auto_now_add=True, blank=True)),
+            ('updated_at', self.gf('django.db.models.fields.DateTimeField')(auto_now=True, blank=True)),
+            ('changed_by', self.gf('django.db.models.fields.related.ForeignKey')(blank=True, related_name=u'core_paymentmethod_related', null=True, to=orm['auth.User'])),
+            ('holder', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['auth.User'])),
+            ('customer_id', self.gf('django.db.models.fields.CharField')(max_length=300)),
+        ))
+        db.send_create_signal(u'core', ['PaymentMethod'])
 
         # Adding model 'Payout'
         db.create_table(u'core_payout', (
@@ -175,7 +190,8 @@ class Migration(SchemaMigration):
             ('original_file', self.gf('django.db.models.fields.files.FileField')(max_length=100)),
             ('internal_file', self.gf('django.db.models.fields.files.FileField')(max_length=100, null=True, blank=True)),
             ('medium', self.gf('django.db.models.fields.CharField')(max_length=3, null=True, blank=True)),
-            ('brief', self.gf('django.db.models.fields.TextField')(default='')),
+            ('brief', self.gf('django.db.models.fields.TextField')(default='', null=True, blank=True)),
+            ('importance', self.gf('django.db.models.fields.IntegerField')(default=5)),
         ))
         db.send_create_signal(u'core', ['Media'])
 
@@ -205,23 +221,26 @@ class Migration(SchemaMigration):
         # Deleting model 'Badge'
         db.delete_table(u'core_badge')
 
-        # Deleting model 'Post'
-        db.delete_table(u'core_post')
-
-        # Removing M2M table for field media on 'Post'
-        db.delete_table(db.shorten_name(u'core_post_media'))
-
-        # Deleting model 'Options'
-        db.delete_table(u'core_options')
-
         # Deleting model 'Service'
         db.delete_table(u'core_service')
 
         # Removing M2M table for field provider on 'Service'
         db.delete_table(db.shorten_name(u'core_service_provider'))
 
+        # Deleting model 'Options'
+        db.delete_table(u'core_options')
+
+        # Deleting model 'Post'
+        db.delete_table(u'core_post')
+
+        # Removing M2M table for field media on 'Post'
+        db.delete_table(db.shorten_name(u'core_post_media'))
+
         # Deleting model 'Membership'
         db.delete_table(u'core_membership')
+
+        # Deleting model 'PaymentMethod'
+        db.delete_table(u'core_paymentmethod')
 
         # Deleting model 'Payout'
         db.delete_table(u'core_payout')
@@ -289,10 +308,11 @@ class Migration(SchemaMigration):
         },
         u'core.media': {
             'Meta': {'object_name': 'Media'},
-            'brief': ('django.db.models.fields.TextField', [], {'default': "''"}),
+            'brief': ('django.db.models.fields.TextField', [], {'default': "''", 'null': 'True', 'blank': 'True'}),
             'changed_by': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "u'core_media_related'", 'null': 'True', 'to': u"orm['auth.User']"}),
             'created_at': ('django.db.models.fields.DateTimeField', [], {'auto_now_add': 'True', 'blank': 'True'}),
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'importance': ('django.db.models.fields.IntegerField', [], {'default': '5'}),
             'internal_file': ('django.db.models.fields.files.FileField', [], {'max_length': '100', 'null': 'True', 'blank': 'True'}),
             'medium': ('django.db.models.fields.CharField', [], {'max_length': '3', 'null': 'True', 'blank': 'True'}),
             'original_file': ('django.db.models.fields.files.FileField', [], {'max_length': '100'}),
@@ -311,7 +331,17 @@ class Migration(SchemaMigration):
         u'core.options': {
             'Meta': {'object_name': 'Options'},
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'image': ('django.db.models.fields.files.FileField', [], {'max_length': '100', 'null': 'True', 'blank': 'True'}),
             'user': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['auth.User']", 'unique': 'True'})
+        },
+        u'core.paymentmethod': {
+            'Meta': {'object_name': 'PaymentMethod'},
+            'changed_by': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "u'core_paymentmethod_related'", 'null': 'True', 'to': u"orm['auth.User']"}),
+            'created_at': ('django.db.models.fields.DateTimeField', [], {'auto_now_add': 'True', 'blank': 'True'}),
+            'customer_id': ('django.db.models.fields.CharField', [], {'max_length': '300'}),
+            'holder': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['auth.User']"}),
+            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'updated_at': ('django.db.models.fields.DateTimeField', [], {'auto_now': 'True', 'blank': 'True'})
         },
         u'core.payout': {
             'Meta': {'object_name': 'Payout'},
@@ -329,9 +359,9 @@ class Migration(SchemaMigration):
             'changed_by': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "u'core_pledge_related'", 'null': 'True', 'to': u"orm['auth.User']"}),
             'created_at': ('django.db.models.fields.DateTimeField', [], {'auto_now_add': 'True', 'blank': 'True'}),
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'payment_method': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['core.PaymentMethod']", 'null': 'True', 'blank': 'True'}),
             'pledger': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['auth.User']"}),
             'project': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['core.Project']"}),
-            'token': ('django.db.models.fields.CharField', [], {'max_length': '300'}),
             'updated_at': ('django.db.models.fields.DateTimeField', [], {'auto_now': 'True', 'blank': 'True'}),
             'value': ('django.db.models.fields.FloatField', [], {})
         },
@@ -342,6 +372,7 @@ class Migration(SchemaMigration):
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'media': ('django.db.models.fields.related.ManyToManyField', [], {'symmetrical': 'False', 'to': u"orm['core.Media']", 'null': 'True', 'blank': 'True'}),
             'project': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['core.Project']"}),
+            'published': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
             'title': ('django.db.models.fields.CharField', [], {'max_length': '60'}),
             'updated_at': ('django.db.models.fields.DateTimeField', [], {'auto_now': 'True', 'blank': 'True'})
         },
@@ -353,11 +384,13 @@ class Migration(SchemaMigration):
             'created_at': ('django.db.models.fields.DateTimeField', [], {'auto_now_add': 'True', 'blank': 'True'}),
             'duration': ('django.db.models.fields.CharField', [], {'default': "'1'", 'max_length': '3'}),
             'frequency': ('django.db.models.fields.CharField', [], {'default': "'WEE'", 'max_length': '3'}),
+            'funded': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'medium': ('django.db.models.fields.CharField', [], {'default': "'TXT'", 'max_length': '3'}),
             'members': ('django.db.models.fields.related.ManyToManyField', [], {'to': u"orm['auth.User']", 'symmetrical': 'False'}),
             'title': ('django.db.models.fields.CharField', [], {'max_length': '300'}),
-            'updated_at': ('django.db.models.fields.DateTimeField', [], {'auto_now': 'True', 'blank': 'True'})
+            'updated_at': ('django.db.models.fields.DateTimeField', [], {'auto_now': 'True', 'blank': 'True'}),
+            'upfront': ('django.db.models.fields.FloatField', [], {})
         },
         u'core.service': {
             'Meta': {'object_name': 'Service'},
