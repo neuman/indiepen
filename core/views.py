@@ -131,6 +131,7 @@ class PaymentMethodCreateView(ProjectView, FormView):
     template_name = 'payment_form.html'
     form_class = cf.PaymentMethodForm
     fields = ['stripeToken']
+    success_message = "Your new Payment Method was created successfully."
 
     def form_valid(self, form):
         # Create a Customer
@@ -148,7 +149,7 @@ class PaymentMethodCreateView(ProjectView, FormView):
         #new_options = cm.Options.objects.create(user=self.request.user)
         #new_options.save()
         #return pledge URL from the available_verbs
-        return [x for x in self.noun.get_available_verbs(self.request.user) if x['display_name']=='Pledge'][0]['url']
+        return cm.PledgeVerb(self.noun).get_url()
 
     def dispatch(self, *args, **kwargs):
         self.noun = cm.Project.objects.get(id=self.kwargs['instance_id'])
@@ -163,6 +164,7 @@ class PledgeCreateView(ProjectView, CreateView):
     template_name = 'form.html'
     fields = ['value']
     form = cf.PledgeForm
+    success_message = "Thank you for pledging!"
 
     def form_valid(self, form):
         form.instance.changed_by = self.request.user
@@ -174,7 +176,7 @@ class PledgeCreateView(ProjectView, CreateView):
         #new_options = cm.Options.objects.create(user=self.request.user)
         #new_options.save()
         action.send(self.request.user, verb='pledged', action_object=self.object, target=self.object.project)
-        return '/'
+        return cm.ProjectDetailVerb(self.noun).get_url()
 
     def dispatch(self, *args, **kwargs):
         self.noun = cm.Project.objects.get(id=self.kwargs['instance_id'])

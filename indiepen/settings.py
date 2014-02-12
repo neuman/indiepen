@@ -58,6 +58,8 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 )
 
+MESSAGE_STORAGE = 'django.contrib.messages.storage.cookie.CookieStorage'
+
 ROOT_URLCONF = 'indiepen.urls'
 
 WSGI_APPLICATION = 'indiepen.wsgi.application'

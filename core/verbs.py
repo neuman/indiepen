@@ -6,9 +6,14 @@ from django.template import RequestContext
 from django.core.urlresolvers import reverse
 from functools import wraps
 from django.utils.decorators import available_attrs
+from django.contrib.messages.views import SuccessMessageMixin
 
-class NounView(object):
+class NounView(SuccessMessageMixin):
     noun = None
+    success_message = "That worked!"
+
+    def __init__(self, **kwargs):
+        super(NounView, self).__init__(**kwargs)
 
     def get_view_required_verbs(self, view_name):
         verbs = []

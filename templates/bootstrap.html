@@ -332,6 +332,15 @@
                   <h1>{{ object_instance }}</h1>
               </div>
           </div>
+            {% if messages %}
+                <div class="panel-body">
+                {% for message in messages %}
+                    <div class="alert alert-block alert-danger fade in">
+                        {% if message.tags %} {{ message.tags }}:{% endif %}{{ message }}
+                    </div>
+                {% endfor %}
+                </div>
+            {% endif %}
           {% block showcase %}{% endblock %}
           {% block audit %}{% endblock %}
       </section>
