@@ -106,7 +106,6 @@ class ProjectListView(SiteRootView, TemplateView):
     def get_context_data(self, **kwargs):
         context = super(ProjectListView, self).get_context_data(**kwargs)
         context['projects'] = cm.Project.objects.all()
-        self.noun.carteblanche_cache.__setitem__("tester", "Failure")
         return context
 
 from django.views.generic.edit import FormView
@@ -123,6 +122,31 @@ class PledgeFormView(FormView):
         # Add in a QuerySet of all the books
         context['verb'] = "Pledge"
         return context 
+
+
+#payment STARTS
+class PaymentMethodCreateView(ProjectView, CreateView):
+    model = cm.Pledge
+    template_name = 'payment_form.html'
+    fields = ['value']
+    form = cf.PledgeForm
+
+    def form_valid(self, form):
+        return super(PaymentMethodCreateView, self).form_valid(form)
+
+    def get_success_url(self):
+        #new_options = cm.Options.objects.create(user=self.request.user)
+        #new_options.save()
+        #action.send(self.request.user, verb='pledged', action_object=self.object, target=self.object.project)
+        return '/'
+
+    def dispatch(self, *args, **kwargs):
+        self.noun = cm.Project.objects.get(id=self.kwargs['instance_id'])
+        return super(PaymentMethodCreateView, self).dispatch(*args, **kwargs)
+#payment ENDS
+
+
+
 
 class PledgeCreateView(ProjectView, CreateView):
     model = cm.Pledge

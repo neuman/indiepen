@@ -24,9 +24,7 @@ class ProjectTestCase(TestCase):
 
     def test_verb_caching(self):
         """see if verbs are rendering correctly"""
-        print self.projects[0].carteblanche_cache
         verbs_1 = self.projects[0].get_available_verbs(self.users[0])
-        print self.projects[0].carteblanche_cache
         verbs_2 = self.projects[0].get_available_verbs(self.users[0])
         self.assertEqual(verbs_1, verbs_2)
 

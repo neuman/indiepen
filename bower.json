@@ -24,7 +24,8 @@
     "outlayer": "~1.1.9",
     "jquery-bridget": "~1.0.1",
     "jquery.nicescroll": "*",
-    "bootstrap": "~3.0.3"
+    "bootstrap": "~3.0.3",
+    "jquery.payment": "~1.0.2"
   },
   "homepage": "https://github.com/neuman/indiepen",
   "authors": [

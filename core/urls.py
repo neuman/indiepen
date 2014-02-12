@@ -17,6 +17,8 @@ urlpatterns = patterns('',
     url(r'projects/(?P<instance_id>\d+)/pledge/$', cv.PledgeCreateView.as_view(), name='pledge_create'),
     url(r'projects/(?P<instance_id>\d+)/upload/$', cv.MediaCreateView.as_view(), name='media_create'),
 
+    url(r'projects/(?P<instance_id>\d+)/pay/$', cv.PaymentMethodCreateView.as_view(), name='paymentmethod_create'),
+
     url(r'projects/(?P<instance_id>\d+)/post/$', cv.PostCreateView.as_view(), name='post_create'),
     url(r'posts/$', cv.PostListView.as_view(), name='post_list'),
     url(r'posts/(?P<instance_id>\d+)/$', cv.PostDetailView.as_view(), name='post_detail'),

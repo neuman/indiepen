@@ -177,10 +177,7 @@ class SiteRoot(Noun):
     class Meta:
         abstract = True
 
-
-class ProjectPledgeVerb(CoreVerb):
-    display_name = "Pledge"
-    required = True
+class PledgeVerb(CoreVerb):
     denied_message = "Sorry, you already pledged!"
     view_name='pledge_create'
 
@@ -190,6 +187,15 @@ class ProjectPledgeVerb(CoreVerb):
 
     def get_url(self):
         return reverse(viewname=self.view_name, args=[self.noun.id], current_app=self.app)
+
+class CreatePledgeVerb(PledgeVerb):
+    display_name = "Pledge"
+    view_name='pledge_create'
+
+class CreatePaymentMethodVerb(PledgeVerb):
+    display_name = "Add New Payment Method"
+    view_name='paymentmethod_create'
+    visible = False
 
 class ProjectVerb(DjangoVerb):
     def get_url(self):
@@ -230,7 +236,7 @@ class Project(Auditable, Noun):
     upfront = models.FloatField()
     funded = models.BooleanField(default=False)
     #history = HistoricalRecords()
-    verb_classes = [ProjectDetailVerb, ProjectPledgeVerb, ProjectPostVerb, StreamListVerb]
+    verb_classes = [ProjectDetailVerb, CreatePledgeVerb, CreatePaymentMethodVerb, ProjectPostVerb, StreamListVerb]
 
     def __unicode__(self):
         return self.title
@@ -530,13 +536,19 @@ class Service(Auditable, Noun):
     def __unicode__(self):
         return self.title
 
+class PaymentMethod(Auditable):
+    holder = models.ManyToManyField(User)
+    customer_id = models.CharField(max_length=300)
+
+    def __unicode__(self):
+        return self.customer_id
 
 class Pledge(Auditable, Noun):
     pledger = models.ForeignKey(User)
     project = models.ForeignKey(Project)
     #value = MoneyField(max_digits=10, decimal_places=2, default_currency='USD')
     value = models.FloatField()
-    token = models.CharField(max_length=300)
+    payment_method = models.ForeignKey(PaymentMethod, null=True, blank=True)
 
     def __unicode__(self):
         return "$"+str(self.value)
@@ -547,6 +559,7 @@ class Pledge(Auditable, Noun):
         verbose_name_plural = _('pledges')
         swappable = 'CORE_PLEDGE_MODEL'
 '''
+
 
 class Contribution(Auditable):
     contributer = models.ManyToManyField(User)

@@ -123,7 +123,7 @@ BOWER_INSTALLED_APPS = (
     'masonry',
     'oridomi',
     'underscore',
-    'requirejs'
+    'requirejs',
 )
 
 
@@ -137,3 +137,9 @@ ACTSTREAM_SETTINGS = {
 
 DEFAULT_FILE_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
 from local_settings import *
+
+try:
+    stripe.api_key = STRIPE_SECRET_KEY
+except Exception as e:
+    STRIPE_PUBLIC_KEY = 'pk_test_gQYGUBwsm6rzvoSxBpSKbDC2'
+    STRIPE_SECRET_KEY = 'sk_test_v3MTBY0TL2n2KjUCoGo7Sp23'
