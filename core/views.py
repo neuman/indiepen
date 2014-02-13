@@ -1,6 +1,6 @@
 from django.views.generic.base import TemplateView
 from django.views.generic.edit import CreateView, UpdateView
-from django.http import Http404
+from django.http import Http404, HttpResponseRedirect
 from django.shortcuts import render_to_response
 from django.views.generic import DetailView
 from django.core.urlresolvers import reverse
@@ -112,22 +112,27 @@ class ProjectListView(SiteRootView, TemplateView):
 from django.views.generic.edit import FormView
 
 #Pledge STARTS
-class PledgeCreateView(ProjectView, CreateView):
+class PledgeCreateView(ProjectView, FormView):
     model = cm.Pledge
     template_name = 'form.html'
     fields = ['value']
-    form = cf.PledgeForm
+    form_class = cf.PledgeForm
     success_message = "Thank you for pledging!"
+
+    def get(self, request, **kwargs):
+        if cm.get_user_payment_method(self.request.user) == None:
+            return HttpResponseRedirect(cm.CreatePaymentMethodVerb(self.noun).get_url())
+        else:
+            return super(PledgeCreateView, self).get(request, **kwargs)
 
     def form_valid(self, form):
         form.instance.changed_by = self.request.user
         form.instance.pledger = self.request.user
         form.instance.project = cm.Project.objects.get(id=self.kwargs['instance_id'])
+        self.object = form.save()
         return super(PledgeCreateView, self).form_valid(form)
 
     def get_success_url(self):
-        #new_options = cm.Options.objects.create(user=self.request.user)
-        #new_options.save()
         action.send(self.request.user, verb='pledged', action_object=self.object, target=self.object.project)
         return cm.ProjectDetailVerb(self.noun).get_url()
 
@@ -157,9 +162,6 @@ class PaymentMethodCreateView(ProjectView, FormView):
         return super(PaymentMethodCreateView, self).form_valid(form)
 
     def get_success_url(self):
-        #new_options = cm.Options.objects.create(user=self.request.user)
-        #new_options.save()
-        #return pledge URL from the available_verbs
         return cm.PledgeVerb(self.noun).get_url()
 
     def dispatch(self, *args, **kwargs):

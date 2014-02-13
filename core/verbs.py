@@ -10,12 +10,12 @@ from django.contrib.messages.views import SuccessMessageMixin
 from django.contrib import messages
 
 class NounView(SuccessMessageMixin):
-    noun = None
     success_message = "That worked!"
 
     def __init__(self, **kwargs):
         super(NounView, self).__init__(**kwargs)
-
+        self.noun = None
+        
     def get_view_required_verbs(self, view_name):
         verbs = []
         for v in self.noun.get_verbs():
@@ -42,7 +42,6 @@ class NounView(SuccessMessageMixin):
 
     def dispatch(self, *args, **kwargs):
         self.noun = self.get_noun(**kwargs)
-#        raise Exception(self.noun.carteblanche_cache)
         #what verbs are required and available for viewing of this page
         #for each of those, get a forbidden message and direct the user to a messaging view
         view_name = resolve(self.request.path_info).url_name

@@ -432,7 +432,7 @@ def get_media_post(media):
     return media.post_set.all()[0]
 
 def get_user_payment_method(user):
-    q = cm.PaymentMethod.objects.filter(holder=user).order_by('created_at')
+    q = PaymentMethod.objects.filter(holder=user).order_by('created_at')
     if q.count() > 0:
         return q[0]
     else:
