@@ -60,6 +60,11 @@ MIDDLEWARE_CLASSES = (
 
 MESSAGE_STORAGE = 'django.contrib.messages.storage.cookie.CookieStorage'
 
+from django.contrib.messages import constants as message_constants
+MESSAGE_TAGS = {
+    message_constants.ERROR: 'danger'
+}
+
 ROOT_URLCONF = 'indiepen.urls'
 
 WSGI_APPLICATION = 'indiepen.wsgi.application'

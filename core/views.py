@@ -112,18 +112,29 @@ class ProjectListView(SiteRootView, TemplateView):
 from django.views.generic.edit import FormView
 
 #Pledge STARTS
-class PledgeFormView(FormView):
+class PledgeCreateView(ProjectView, CreateView):
+    model = cm.Pledge
     template_name = 'form.html'
-    form_class = cf.PledgeForm
-    success_url = '/'
+    fields = ['value']
+    form = cf.PledgeForm
+    success_message = "Thank you for pledging!"
 
-    def get_context_data(self, **kwargs):
-        # Call the base implementation first to get a context
-        context = super(PledgeFormView, self).get_context_data(**kwargs)
-        # Add in a QuerySet of all the books
-        context['verb'] = "Pledge"
-        return context 
+    def form_valid(self, form):
+        form.instance.changed_by = self.request.user
+        form.instance.pledger = self.request.user
+        form.instance.project = cm.Project.objects.get(id=self.kwargs['instance_id'])
+        return super(PledgeCreateView, self).form_valid(form)
 
+    def get_success_url(self):
+        #new_options = cm.Options.objects.create(user=self.request.user)
+        #new_options.save()
+        action.send(self.request.user, verb='pledged', action_object=self.object, target=self.object.project)
+        return cm.ProjectDetailVerb(self.noun).get_url()
+
+    def dispatch(self, *args, **kwargs):
+        self.noun = cm.Project.objects.get(id=self.kwargs['instance_id'])
+        return super(PledgeCreateView, self).dispatch(*args, **kwargs)
+#Pledge ENDS
 
 #payment STARTS
 class PaymentMethodCreateView(ProjectView, FormView):
@@ -155,33 +166,6 @@ class PaymentMethodCreateView(ProjectView, FormView):
         self.noun = cm.Project.objects.get(id=self.kwargs['instance_id'])
         return super(PaymentMethodCreateView, self).dispatch(*args, **kwargs)
 #payment ENDS
-
-
-
-
-class PledgeCreateView(ProjectView, CreateView):
-    model = cm.Pledge
-    template_name = 'form.html'
-    fields = ['value']
-    form = cf.PledgeForm
-    success_message = "Thank you for pledging!"
-
-    def form_valid(self, form):
-        form.instance.changed_by = self.request.user
-        form.instance.pledger = self.request.user
-        form.instance.project = cm.Project.objects.get(id=self.kwargs['instance_id'])
-        return super(PledgeCreateView, self).form_valid(form)
-
-    def get_success_url(self):
-        #new_options = cm.Options.objects.create(user=self.request.user)
-        #new_options.save()
-        action.send(self.request.user, verb='pledged', action_object=self.object, target=self.object.project)
-        return cm.ProjectDetailVerb(self.noun).get_url()
-
-    def dispatch(self, *args, **kwargs):
-        self.noun = cm.Project.objects.get(id=self.kwargs['instance_id'])
-        return super(PledgeCreateView, self).dispatch(*args, **kwargs)
-#Pledge ENDS
 
 class ProjectCreateView(SiteRootView, CreateView):
     model = cm.Project

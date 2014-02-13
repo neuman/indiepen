@@ -7,6 +7,7 @@ from django.core.urlresolvers import reverse
 from functools import wraps
 from django.utils.decorators import available_attrs
 from django.contrib.messages.views import SuccessMessageMixin
+from django.contrib import messages
 
 class NounView(SuccessMessageMixin):
     noun = None
@@ -49,7 +50,9 @@ class NounView(SuccessMessageMixin):
         for verb in self.get_view_required_unavailable_verbs(view_name, self.request.user):
             denied_messages.append(verb.denied_message)
         if len(denied_messages) > 0:
-            return render_to_response('messages.html',{"messages":denied_messages, "available_verbs":self.noun.get_available_verbs(self.request.user)}, RequestContext(self.request))
+            for message in denied_messages:
+                messages.add_message(self.request, messages.ERROR, message)
+            return render_to_response('messages.html',{"available_verbs":self.noun.get_available_verbs(self.request.user)}, RequestContext(self.request))
         
         return super(NounView, self).dispatch(*args, **kwargs)
 

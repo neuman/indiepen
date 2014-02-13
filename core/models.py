@@ -121,12 +121,8 @@ class UnauthenticatedOnlyVerb(CoreVerb):
 
     def is_available(self, user):
         #only available to non-logged in users
-        print "checking is_unauthenticated"
-        print user
         if user.is_authenticated():
-            print "False"
             return False
-        print "True"
         return True
 
 class StreamListVerb(CoreVerb):
