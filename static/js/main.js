@@ -18,7 +18,8 @@ requirejs.config({
     "get-style-property": "../bower_components/get-style-property",
     "jquery.commonscripts": "../js/common-scripts",
     "jquery.nicescroll": "../bower_components/jquery.nicescroll/jquery.nicescroll",
-    "stripe": "https://js.stripe.com/v2/?1"
+    "stripe": "https://js.stripe.com/v2/?1",
+    "jquery.jquery-ui": "../bower_components/jquery-ui/ui/minified/jquery-ui.min"
   },
     shim: {
         "jquery.bootstrap": {
@@ -32,15 +33,19 @@ requirejs.config({
         },
         "stripe": {
           exports: 'Stripe'
-        }
+        },
+        "jquery.jquery-ui": {
+            deps: ["jquery"]
+        },
     }
     
 });
 console.log('requiring stuff');
 
-requirejs(["jquery","dropzone","imagesloaded","masonry","jquery.bootstrap","jquery.commonscripts","jquery.nicescroll","stripe"], function($, Dropzone, imagesLoaded, Masonry, bootstrap, commonscripts, nicescroll, Stripe) {
+requirejs(["jquery","dropzone","imagesloaded","masonry","jquery.bootstrap","jquery.commonscripts","jquery.nicescroll","stripe", "jquery.jquery-ui"], function($, Dropzone, imagesLoaded, Masonry, bootstrap, commonscripts, nicescroll, Stripe, ui) {
     console.log($);
     console.log(Stripe);
+    console.log($.ui);
 
       //owl carousel
 
@@ -124,6 +129,11 @@ requirejs(["jquery","dropzone","imagesloaded","masonry","jquery.bootstrap","jque
       //$(function(){
       //    $('select.styled').customSelect();
       //});
+
+    $(function() {
+      $( "#sortable" ).sortable();
+      $( "#sortable" ).disableSelection();
+    });
 
   });
 
