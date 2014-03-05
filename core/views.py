@@ -1,5 +1,5 @@
 from django.views.generic.base import TemplateView
-from django.views.generic.edit import CreateView, UpdateView
+from django.views.generic.edit import CreateView, UpdateView, FormView
 from django.http import Http404, HttpResponseRedirect
 from django.shortcuts import render_to_response
 from django.views.generic import DetailView
@@ -28,7 +28,6 @@ from django.shortcuts import get_object_or_404
 
 from django.conf import settings
 
-
 class SiteRootView(NounView):
     def get_noun(self, **kwargs):
         siteroot = cm.SiteRoot()
@@ -37,7 +36,7 @@ class SiteRootView(NounView):
 class IndexView(SiteRootView, TemplateView):
     template_name = 'bootstrap.html'
 
-class MessageView(TemplateView):
+class MessageView(SiteRootView, TemplateView):
     template_name = 'message.html'
     message = 'Message goes here.'
 
@@ -109,8 +108,6 @@ class ProjectListView(SiteRootView, TemplateView):
         context['projects'] = cm.Project.objects.all()
         return context
 
-from django.views.generic.edit import FormView
-
 #Pledge STARTS
 class PledgeCreateView(ProjectView, FormView):
     model = cm.Pledge
@@ -174,7 +171,7 @@ class ProjectCreateView(SiteRootView, CreateView):
     template_name = 'form.html'
     fields = '__all__'
     success_url = '/'
-    form = cf.ProjectForm
+    form_class = cf.ProjectForm
 
     def get_success_url(self):
         self.object.members.add(self.request.user)

@@ -1,34 +1,36 @@
-# git merge files
-*.orig
+*.py[cod]
 
-# Ignore Python compiled objects
-*.pyc
+# C extensions
+*.so
 
-# Ignore Mac OS metadata files
-.DS_Store
+# Packages
+*.egg
+*.egg-info
+dist
+build
+eggs
+parts
+bin
+var
+sdist
+develop-eggs
+.installed.cfg
+lib
+lib64
+__pycache__
 
-# Ignore Mac OS X extended file attribute files
-._*
-._*/
+# Installer logs
+pip-log.txt
 
-# Ignore Vim .swp files and temp backups
-*.swp
-*~
+# Unit test / coverage reports
+.coverage
+.tox
+nosetests.xml
 
-# Ignore pid files
-*.pid
+# Translations
+*.mo
 
-# Ignore .ropeproject folders
-.rope*/
-
-# ddesk local settings
-local_settings.py
-ddesk/local_settings.py
-ddesk/celeryconfig.py
-
-# Sublime workspace
-*.sublime-workspace
-
-#my notes
-.scratch
-
+# Mr Developer
+.mr.developer.cfg
+.project
+.pydevproject
