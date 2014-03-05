@@ -154,6 +154,9 @@ class Project(Auditable, Noun):
         except Exception as e:
             return False
 
+    def can_pledge(self, user):
+        return Pledge.objects.filter(project=self, pledger=user).count() == 0
+
     def get_pledges(self):
         return Pledge.objects.filter(project=self)
 
@@ -315,7 +318,7 @@ class Post(Auditable, Noun):
     media = models.ManyToManyField(Media, null=True, blank=True)
     published = models.BooleanField(default=False)
     #history = HistoricalRecords()
-    verb_classes = [PostDetailVerb,PostCreateMediaVerb,StreamListVerb, PostCreateMediasVerb]
+    verb_classes = [PostDetailVerb,PostCreateMediaVerb,StreamListVerb, PostCreateMediasVerb, PostProjectDetailVerb]
 
     def __unicode__(self):
         return self.title

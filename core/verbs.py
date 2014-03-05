@@ -146,7 +146,7 @@ class PledgeVerb(CoreVerb):
 
     @availability_login_required
     def is_available(self, user):
-        return Pledge.objects.filter(project=self.noun, pledger=user).count() == 0
+        return self.noun.can_pledge(user)
 
     def get_url(self):
         return reverse(viewname=self.view_name, args=[self.noun.id], current_app=self.app)
@@ -257,4 +257,8 @@ class PostDetailVerb(CoreVerb):
 
     def get_url(self):
         return reverse(viewname=self.view_name, args=[self.noun.id], current_app=self.app)
+
+class PostProjectDetailVerb(ProjectDetailVerb):
+    def get_url(self):
+        return reverse(viewname=self.view_name, args=[self.noun.project.id], current_app=self.app)
 
