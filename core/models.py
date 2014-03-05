@@ -230,7 +230,7 @@ class Media(Auditable, Noun):
     medium = models.CharField(max_length=3, choices=MEDIUM_CHOICES, null=True, blank=True)
     brief = models.TextField(default='', null=True, blank=True)
     tags = TaggableManager(blank=True)
-    importance = models.IntegerField(default=5, choices=IMPORTANCE_CHOICES)
+    sort_order = models.IntegerField(default=5, choices=IMPORTANCE_CHOICES)
     #history = HistoricalRecords()
     verb_classes = [MediaDetailVerb, MediaUpdateVerb, StreamListVerb]
 
@@ -301,6 +301,9 @@ class Media(Auditable, Noun):
                     return True
         return False
 
+    def get_post(self):
+        return get_media_post(self)
+
 def get_media_post(media):
     return media.post_set.all()[0]
 
@@ -318,7 +321,7 @@ class Post(Auditable, Noun):
     media = models.ManyToManyField(Media, null=True, blank=True)
     published = models.BooleanField(default=False)
     #history = HistoricalRecords()
-    verb_classes = [PostDetailVerb,PostCreateMediaVerb,StreamListVerb, PostCreateMediasVerb, PostProjectDetailVerb]
+    verb_classes = [PostDetailVerb,PostCreateMediaVerb,StreamListVerb, PostCreateMediasVerb, PostReorderMediasVerb, PostProjectDetailVerb]
 
     def __unicode__(self):
         return self.title
@@ -338,7 +341,7 @@ class Post(Auditable, Noun):
             return False
 
     def get_medias(self):
-        return self.media.all().order_by('-importance')
+        return self.media.all().order_by('-sort_order')
 
     def get_summary_medias(self):
         return self.get_medias()[:2]

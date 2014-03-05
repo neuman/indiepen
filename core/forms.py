@@ -44,10 +44,37 @@ class PaymentMethodForm(BootstrapForm):
         model = cm.PaymentMethod
         fields = ['stripeToken']
 
-class MediaForm(BootstrapForm):
+class MediaReorderForm(BootstrapForm):
+    orderstring = forms.CharField(max_length=500)
+
+    def clean_orderstring(self):
+        orderstring = self.cleaned_data['orderstring']
+        medias = self.instance.get_medias()
+        media_ids = medias.values_list('id', flat=True)
+        orderstring = orderstring.replace(']','').replace(']','').replace(' ','')
+        try:
+            orderstring_ids = [int(n) for n in orderstring.split(',')]
+        except ValueError as e:
+            raise forms.ValidationError("please use numeric ids only")
+
+        if len(orderstring_ids) != len(media_ids):
+            raise forms.ValidationError("Please inpt "+str(len(media_ids))+" ids.")
+
+        for o in ordered_ids:
+            if not o in media_ids:
+                raise forms.ValidationError(str(o)+" is not one of this post's media's ids.")
+
+        for o in media_ids:
+            if not o in ordered_ids:
+                raise forms.ValidationError(str(o)+" wasn't included in your list of ids.")
+
+        # Always return the cleaned data, whether you have changed it or
+        # not.
+        return data
+
     class Meta:
-        model = cm.Media
-        fields = '__all__'
+        model = cm.Post
+        fields = ['orderstring']
 
 class MediaUpdateForm(BootstrapForm):
     class Meta:

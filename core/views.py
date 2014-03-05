@@ -84,11 +84,11 @@ class StreamListView(NounView, TemplateView):
 
     def get_noun(self, **kwargs):
         object_type = ContentType.objects.get(app_label="core", model=self.kwargs['instance_model']).model_class()
-        return get_object_or_404(object_type, pk=self.kwargs['instance_id'])
+        return get_object_or_404(object_type, pk=self.kwargs['pk'])
 
 class ProjectView(NounView):
     def get_noun(self, **kwargs):
-        return cm.Project.objects.get(id=self.kwargs['instance_id'])
+        return cm.Project.objects.get(id=self.kwargs['pk'])
 
 class ProjectDetailView(ProjectView, TemplateView):
     template_name = 'project.html'
@@ -117,6 +117,7 @@ class PledgeCreateView(ProjectView, FormView):
     success_message = "Thank you for pledging!"
 
     def get(self, request, **kwargs):
+        #if the user has no payment methods, redirect to the view where one can be created
         if cm.get_user_payment_method(self.request.user) == None:
             return HttpResponseRedirect(cm.CreatePaymentMethodVerb(self.noun).get_url())
         else:
@@ -125,7 +126,7 @@ class PledgeCreateView(ProjectView, FormView):
     def form_valid(self, form):
         form.instance.changed_by = self.request.user
         form.instance.pledger = self.request.user
-        form.instance.project = cm.Project.objects.get(id=self.kwargs['instance_id'])
+        form.instance.project = cm.Project.objects.get(id=self.kwargs['pk'])
         self.object = form.save()
         return super(PledgeCreateView, self).form_valid(form)
 
@@ -134,7 +135,7 @@ class PledgeCreateView(ProjectView, FormView):
         return cm.ProjectDetailVerb(self.noun).get_url()
 
     def dispatch(self, *args, **kwargs):
-        self.noun = cm.Project.objects.get(id=self.kwargs['instance_id'])
+        self.noun = cm.Project.objects.get(id=self.kwargs['pk'])
         return super(PledgeCreateView, self).dispatch(*args, **kwargs)
 #Pledge ENDS
 
@@ -162,7 +163,7 @@ class PaymentMethodCreateView(ProjectView, FormView):
         return cm.PledgeVerb(self.noun).get_url()
 
     def dispatch(self, *args, **kwargs):
-        self.noun = cm.Project.objects.get(id=self.kwargs['instance_id'])
+        self.noun = cm.Project.objects.get(id=self.kwargs['pk'])
         return super(PaymentMethodCreateView, self).dispatch(*args, **kwargs)
 #payment ENDS
 
@@ -197,7 +198,7 @@ class MediaCreateView(ProjectView, CreateView):
 #Post STARTS
 class PostView(NounView):
     def get_noun(self, **kwargs):
-        return cm.Post.objects.get(id=self.kwargs['instance_id'])
+        return cm.Post.objects.get(id=self.kwargs['pk'])
 
 class PostCreateView(ProjectView, CreateView):
     model = cm.Post
@@ -210,7 +211,7 @@ class PostCreateView(ProjectView, CreateView):
 
     def form_valid(self, form):
         form.instance.user = self.request.user
-        form.instance.project = cm.Project.objects.get(id=self.kwargs['instance_id'])
+        form.instance.project = cm.Project.objects.get(id=self.kwargs['pk'])
         form.instance.changed_by = self.request.user
         self.instance = form.instance
         return super(PostCreateView, self).form_valid(form)
@@ -229,9 +230,31 @@ class PostUpdateView(PostView, UpdateView):
 
     def form_valid(self, form):
         form.instance.user = self.request.user
-        form.instance.project = cm.Project.objects.get(id=self.kwargs['instance_id'])
+        form.instance.project = cm.Project.objects.get(id=self.kwargs['pk'])
         form.instance.changed_by = self.request.user
         return super(PostCreateView, self).form_valid(form)
+
+class PostReorderMediaView(PostView, FormView):
+    model = cm.Post
+    template_name = 'form.html'
+    success_url = '/'
+
+    def get_initial(self):
+        initial = super(PostReorderMediaView, self).get_initial()
+        orderstring = str(self.noun.get_medias().values_list('id', flat=True))
+        initial.__setitem__('orderstring', orderstring)
+        return initial
+
+    def get_form(self, form_class):
+        return cf.MediaReorderForm(self.request.POST or None, self.request.FILES or None, instance=self.noun, initial=self.get_initial())
+
+    def form_valid(self, form):
+        raise Exception("valid")
+        return super(PostCreateView, self).form_valid(form)
+
+    def get_success_url(self):
+        action.send(self.request.user, verb='reordered media', action_object=self.noun)
+        return cm.PostDetailVerb(self.noun).get_url()
 
 class PostDetailView(PostView, TemplateView):
     template_name = 'media.html'
@@ -253,7 +276,7 @@ class PostDetailView(PostView, TemplateView):
         return context
 
     def get_noun(self, **kwargs):
-        return cm.Post.objects.get(id=self.kwargs['instance_id'])
+        return cm.Post.objects.get(id=self.kwargs['pk'])
 
 class PostListView(SiteRootView, TemplateView):
     template_name = 'posts.html'
@@ -295,10 +318,10 @@ class PostMediaCreateView(PostView, CreateView):
         return super(PostMediaCreateView, self).form_valid(form)
 
     def get_success_url(self):
-        p = cm.Post.objects.get(id=self.kwargs['instance_id'])
+        p = cm.Post.objects.get(id=self.kwargs['pk'])
         p.media.add(self.new_instance)
         action.send(self.request.user, verb='uploaded', action_object=self.new_instance, target=p)
-        return reverse(viewname='post_media_create', args=(self.kwargs['instance_id'],), current_app='core')
+        return reverse(viewname='post_media_create', args=(self.kwargs['pk'],), current_app='core')
 
 class PostUploadsView(PostView, TemplateView):
     template_name = 'uploads.html'
@@ -307,7 +330,7 @@ class PostUploadsView(PostView, TemplateView):
 
         # Call the base implementation first to get a context
         context = super(PostUploadsView, self).get_context_data(**kwargs)
-        context['upload_url'] = reverse(viewname='post_media_create', args=(self.kwargs['instance_id'],), current_app='core')
+        context['upload_url'] = reverse(viewname='post_media_create', args=(self.kwargs['pk'],), current_app='core')
         return context
 
 #Post ENDS
@@ -319,14 +342,14 @@ class UserDetailView(TemplateView, Noun):
 
     def get_verbs(self):
         return [
-            #cm.PostDetailVerb(cm.Post.objects.get(id=self.kwargs['instance_id']))
+            #cm.PostDetailVerb(cm.Post.objects.get(id=self.kwargs['pk']))
             ]
 
     def get_context_data(self, **kwargs):
 
         # Call the base implementation first to get a context
         context = super(UserDetailView, self).get_context_data(**kwargs)
-        user = User.objects.get(id=self.kwargs['instance_id'])
+        user = User.objects.get(id=self.kwargs['pk'])
         context['user'] = user
         context['available_verbs'] = None
         context['stream'] = actor_stream(user)
@@ -378,7 +401,7 @@ class MediaDetailView(NounView, TemplateView):
         return context
 
     def get_noun(self, **kwargs):
-        return cm.Media.objects.get(id=self.kwargs['instance_id'])
+        return cm.Media.objects.get(id=self.kwargs['pk'])
 
 class MediaListView(TemplateView):
     template_name = 'media.html'

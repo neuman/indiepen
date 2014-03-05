@@ -9,27 +9,28 @@ urlpatterns = patterns('',
     url(r'bootstrap/$', cv.BootstrapView.as_view(), name='bootstrap'),
     ('^activity/', include('actstream.urls')),
 
-    url(r'(?P<instance_model>\w+)/(?P<instance_id>\w+)/stream/$', cv.StreamListView.as_view(), name='stream_list'),
+    url(r'(?P<instance_model>\w+)/(?P<pk>\w+)/stream/$', cv.StreamListView.as_view(), name='stream_list'),
 
     url(r'projects/$', cv.ProjectListView.as_view(), name='project_list'),
     url(r'projects/create/$', cv.ProjectCreateView.as_view(), name='project_create'),
-    url(r'projects/(?P<instance_id>\d+)/$', cv.ProjectDetailView.as_view(), name='project_detail'),
-    url(r'projects/(?P<instance_id>\d+)/pledge/$', cv.PledgeCreateView.as_view(), name='pledge_create'),
-    url(r'projects/(?P<instance_id>\d+)/upload/$', cv.MediaCreateView.as_view(), name='media_create'),
+    url(r'projects/(?P<pk>\d+)/$', cv.ProjectDetailView.as_view(), name='project_detail'),
+    url(r'projects/(?P<pk>\d+)/pledge/$', cv.PledgeCreateView.as_view(), name='pledge_create'),
+    url(r'projects/(?P<pk>\d+)/upload/$', cv.MediaCreateView.as_view(), name='media_create'),
 
-    url(r'projects/(?P<instance_id>\d+)/pay/$', cv.PaymentMethodCreateView.as_view(), name='paymentmethod_create'),
+    url(r'projects/(?P<pk>\d+)/pay/$', cv.PaymentMethodCreateView.as_view(), name='paymentmethod_create'),
 
-    url(r'projects/(?P<instance_id>\d+)/post/$', cv.PostCreateView.as_view(), name='post_create'),
+    url(r'projects/(?P<pk>\d+)/post/$', cv.PostCreateView.as_view(), name='post_create'),
     url(r'posts/$', cv.PostListView.as_view(), name='post_list'),
-    url(r'posts/(?P<instance_id>\d+)/$', cv.PostDetailView.as_view(), name='post_detail'),
-    url(r'posts/(?P<instance_id>\d+)/upload/$', cv.PostMediaCreateView.as_view(), name='post_media_create'),
-    url(r'posts/(?P<instance_id>\d+)/uploads/$', cv.PostUploadsView.as_view(), name='post_media_uploads'),
+    url(r'posts/(?P<pk>\d+)/$', cv.PostDetailView.as_view(), name='post_detail'),
+    url(r'posts/(?P<pk>\d+)/upload/$', cv.PostMediaCreateView.as_view(), name='post_media_create'),
+    url(r'posts/(?P<pk>\d+)/uploads/$', cv.PostUploadsView.as_view(), name='post_media_uploads'),
+    url(r'posts/(?P<pk>\d+)/reorder/$', cv.PostReorderMediaView.as_view(), name='post_media_reorder'),
 
     url(r'medias/$', cv.MediaListView.as_view(), name='media_list'),
-    url(r'medias/(?P<instance_id>\d+)/$', cv.MediaDetailView.as_view(), name='media_detail'),
+    url(r'medias/(?P<pk>\d+)/$', cv.MediaDetailView.as_view(), name='media_detail'),
     url(r'medias/(?P<pk>\d+)/update/$', cv.MediaUpdateView.as_view(), name='media_update'),
 
-    url(r'users/(?P<instance_id>\d+)/$', cv.UserDetailView.as_view(), name='user_detail'),
+    url(r'users/(?P<pk>\d+)/$', cv.UserDetailView.as_view(), name='user_detail'),
     url(r'users/create/$', cv.UserCreateView.as_view(), name='user_ceate'),
     url(r'users/login/$', cv.UserLoginView.as_view(), name='user_login'),
     #(r'^users/login/$', 'django.contrib.auth.views.login',{'template_name': 'form.html'}),
@@ -38,7 +39,7 @@ urlpatterns = patterns('',
     url(r'^api/', include(v1_api.urls)),
     url(r'^remoteform/$', my_ajax_view, name='remoteform'),
     url(r'^apps/(?P<app_label>\w+)/models/(?P<model_name>\w+)/instances/form/$', handle_instance_form, name='adminapi_handle_instance_add_form'),
-    url(r'^apps/(?P<app_label>\w+)/models/(?P<model_name>\w+)/instances/(?P<instance_id>\d+)/form/$', handle_instance_form, name='adminapi_handle_instance_edit_form'),
+    url(r'^apps/(?P<app_label>\w+)/models/(?P<model_name>\w+)/instances/(?P<pk>\d+)/form/$', handle_instance_form, name='adminapi_handle_instance_edit_form'),
 )
 
 

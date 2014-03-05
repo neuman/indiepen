@@ -105,7 +105,7 @@ class StreamListVerb(CoreVerb):
     denied_message = "Sorry, you can't view that stream yet."
 
     def get_url(self):
-        return reverse(viewname=self.view_name, kwargs={'instance_model':self.noun._meta.model_name, 'instance_id':self.noun.id}, current_app=self.app)
+        return reverse(viewname=self.view_name, kwargs={'instance_model':self.noun._meta.model_name, 'pk':self.noun.id}, current_app=self.app)
 
     def is_available(self, user):
         return self.noun.is_visible_to(user)
@@ -195,7 +195,7 @@ class MediaDetailVerb(DjangoVerb):
     denied_message = "Sorry, that media isn't published yet."
 
     def is_available(self, user):
-        post = get_media_post(self.noun)
+        post = self.noun.get_post()
         if post.is_published():
             return True
         elif post.project.members.filter(id=user.id).count() > 0:
@@ -238,6 +238,10 @@ class PostCreateMediaVerb(PostMemberVerb):
     display_name = "Upload a File"
     view_name = 'post_media_create'
     visible = False
+
+class PostReorderMediasVerb(PostMemberVerb):
+    display_name = "Reorder Post Media"
+    view_name = 'post_media_reorder'
 
 
 class PostDetailVerb(CoreVerb):
