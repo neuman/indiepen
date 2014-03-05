@@ -240,6 +240,9 @@ class PostReorderMediaView(PostView, FormView):
     success_url = '/'
 
     def get_initial(self):
+        '''
+        set the field to have a list of media ids
+        '''
         initial = super(PostReorderMediaView, self).get_initial()
         orderstring = str(self.noun.get_medias().values_list('id', flat=True))
         initial.__setitem__('orderstring', orderstring)
@@ -249,8 +252,12 @@ class PostReorderMediaView(PostView, FormView):
         return cf.MediaReorderForm(self.request.POST or None, self.request.FILES or None, instance=self.noun, initial=self.get_initial())
 
     def form_valid(self, form):
-        raise Exception("valid")
-        return super(PostCreateView, self).form_valid(form)
+        orderstring = form.data['orderstring']
+        orderstring_ids = form.parse_list_string(orderstring)
+        for m in self.noun.get_medias():
+            m.sort_order = orderstring_ids.index(m.id)
+            m.save()
+        return super(PostReorderMediaView, self).form_valid(form)
 
     def get_success_url(self):
         action.send(self.request.user, verb='reordered media', action_object=self.noun)

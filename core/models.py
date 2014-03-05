@@ -341,7 +341,7 @@ class Post(Auditable, Noun):
             return False
 
     def get_medias(self):
-        return self.media.all().order_by('-sort_order')
+        return self.media.all().order_by('sort_order')
 
     def get_summary_medias(self):
         return self.get_medias()[:2]

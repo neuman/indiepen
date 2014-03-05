@@ -47,30 +47,36 @@ class PaymentMethodForm(BootstrapForm):
 class MediaReorderForm(BootstrapForm):
     orderstring = forms.CharField(max_length=500)
 
-    def clean_orderstring(self):
-        orderstring = self.cleaned_data['orderstring']
-        medias = self.instance.get_medias()
-        media_ids = medias.values_list('id', flat=True)
-        orderstring = orderstring.replace(']','').replace(']','').replace(' ','')
+    def get_media_ids(self):
+        return self.instance.get_medias().values_list('id', flat=True)
+
+    def parse_list_string(self, list_string):
+        list_string = list_string.replace('[','').replace(']','').replace(' ','')
         try:
-            orderstring_ids = [int(n) for n in orderstring.split(',')]
+            list_string_ids = [int(n) for n in list_string.split(',')]
         except ValueError as e:
             raise forms.ValidationError("please use numeric ids only")
+        return list_string_ids
+
+    def clean_orderstring(self):
+        orderstring = self.cleaned_data['orderstring']
+        orderstring_ids = self.parse_list_string(orderstring)
+        media_ids = self.get_media_ids()
 
         if len(orderstring_ids) != len(media_ids):
             raise forms.ValidationError("Please inpt "+str(len(media_ids))+" ids.")
 
-        for o in ordered_ids:
+        for o in orderstring_ids:
             if not o in media_ids:
                 raise forms.ValidationError(str(o)+" is not one of this post's media's ids.")
 
         for o in media_ids:
-            if not o in ordered_ids:
+            if not o in orderstring_ids:
                 raise forms.ValidationError(str(o)+" wasn't included in your list of ids.")
 
         # Always return the cleaned data, whether you have changed it or
         # not.
-        return data
+        return self.cleaned_data['orderstring']
 
     class Meta:
         model = cm.Post
