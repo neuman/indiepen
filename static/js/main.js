@@ -131,8 +131,19 @@ requirejs(["jquery","dropzone","imagesloaded","masonry","jquery.bootstrap","jque
       //});
 
     $(function() {
-      $( "#sortable" ).sortable();
-      $( "#sortable" ).disableSelection();
+      $( "#sortable" ).sortable({
+          update: function(event, ui) {
+           console.log("updated");
+        }
+
+        });
+      $("#sortable").disableSelection();
+    });
+
+    $( "#submit_reorder" ).click(function() {
+      $(".media-representation").each(function( index ) {
+        console.log( index + ": " + $( this ).data("pk") );
+      });
     });
 
   });

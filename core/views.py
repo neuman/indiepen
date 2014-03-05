@@ -236,7 +236,7 @@ class PostUpdateView(PostView, UpdateView):
 
 class PostReorderMediaView(PostView, FormView):
     model = cm.Post
-    template_name = 'form.html'
+    template_name = 'reorder.html'
     success_url = '/'
 
     def get_initial(self):
@@ -262,6 +262,12 @@ class PostReorderMediaView(PostView, FormView):
     def get_success_url(self):
         action.send(self.request.user, verb='reordered media', action_object=self.noun)
         return cm.PostDetailVerb(self.noun).get_url()
+
+    def get_context_data(self, **kwargs):
+        # Call the base implementation first to get a context
+        context = super(PostReorderMediaView, self).get_context_data(**kwargs)
+        context['medias'] = self.noun.get_medias()
+        return context
 
 class PostDetailView(PostView, TemplateView):
     template_name = 'media.html'
