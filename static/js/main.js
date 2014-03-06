@@ -21,31 +21,31 @@ requirejs.config({
     "stripe": "https://js.stripe.com/v2/?1",
     "jquery.jquery-ui": "../bower_components/jquery-ui/ui/minified/jquery-ui.min"
   },
-    shim: {
-        "jquery.bootstrap": {
-            deps: ["jquery"]
-        },
-        "jquery.commonscripts": {
-            deps: ["jquery"]
-        },
-        "jquery.nicescroll": {
-            deps: ["jquery"]
-        },
-        "stripe": {
-          exports: 'Stripe'
-        },
-        "jquery.jquery-ui": {
-            deps: ["jquery"]
-        },
-    }
-    
+  shim: {
+    "jquery.bootstrap": {
+      deps: ["jquery"]
+    },
+    "jquery.commonscripts": {
+      deps: ["jquery"]
+    },
+    "jquery.nicescroll": {
+      deps: ["jquery"]
+    },
+    "stripe": {
+      exports: 'Stripe'
+    },
+    "jquery.jquery-ui": {
+      deps: ["jquery"]
+    },
+  }
+
 });
 console.log('requiring stuff');
 
 requirejs(["jquery","dropzone","imagesloaded","masonry","jquery.bootstrap","jquery.commonscripts","jquery.nicescroll","stripe", "jquery.jquery-ui"], function($, Dropzone, imagesLoaded, Masonry, bootstrap, commonscripts, nicescroll, Stripe, ui) {
-    console.log($);
-    console.log(Stripe);
-    console.log($.ui);
+  console.log($);
+  console.log(Stripe);
+  console.log($.ui);
 
       //owl carousel
 
@@ -63,30 +63,34 @@ requirejs(["jquery","dropzone","imagesloaded","masonry","jquery.bootstrap","jque
               paginationSpeed : 400,
               singleItem : true
 
-          });*/
+            });*/
 
-         jQuery.fn.doesExist = function(){
-                return jQuery(this).length > 0;
-         };
+jQuery.fn.doesExist = function(){
+  return jQuery(this).length > 0;
+};
 
 
 
-        imagesLoaded(
-          '.js-masonry', 
-          function() {
-            console.log('images loaded');
-            var container = document.querySelector('.js-masonry');
-            var msnry = new Masonry( container, {
-              // options...
-              itemSelector: '.item'
-            });
-          });
 
-        if($('.dropzone').doesExist()){
-          new Dropzone(".dropzone", { 
-          paramName: "original_file"
-          });
-        };
+imagesLoaded(
+  '.js-masonry', 
+  function() {
+    console.log('images loaded');
+    var container = document.querySelector('.js-masonry');
+    var msnry = new Masonry( container, {
+  itemSelector: '.item',
+  isAnimated: true
+    });
+  });
+
+
+
+
+if($('.dropzone').doesExist()){
+  new Dropzone(".dropzone", { 
+    paramName: "original_file"
+  });
+};
 
       //bootstrapify images included in markdown
       $('img:not([class])').addClass('img-thumbnail');
@@ -132,43 +136,40 @@ requirejs(["jquery","dropzone","imagesloaded","masonry","jquery.bootstrap","jque
 
 
 
-    $(function() {
-      $( "#sortable" ).sortable({
-          handle: '.handle',
-          cursor: 'move',
-          update: function(event, ui) {
-           console.log("updated");
-        }
-
-        });
-      $("#sortable").disableSelection();
+$(function() {
+  $( "#sortable" ).sortable({
+    handle: '.handle',
+    cursor: 'move',
+    update: function(event, ui) {
+     console.log("updated");
+     var orderstring_ids = [];
+    $(".media-representation").each(function( index ) {
+      console.log( index + ": " + $( this ).data("pk") );
+      orderstring_ids.push($(this).data("pk"));
     });
-
-    $('#sortable img').mousedown(function(event) {
-      console.log("preventDefault");
-      event.preventDefault();
+    var orderstring = "["+orderstring_ids.join(",")+"]"
+    console.log(orderstring);
+    $.post( window.location, { orderstring: orderstring, csrfmiddlewaretoken: $('#csrftoken').data('csrftoken')})
+    .done(function( data ) {
+      //window.location.href = window.location;
     });
+   }
 
-    var orderstring_ids = [];
-    $( "#submit_reorder" ).click(function() {
-      $(".media-representation").each(function( index ) {
-        console.log( index + ": " + $( this ).data("pk") );
-        orderstring_ids.push($(this).data("pk"));
-      });
-      var orderstring = "["+orderstring_ids.join(",")+"]"
-      console.log(orderstring);
-      $.post( window.location, { orderstring: orderstring, csrfmiddlewaretoken: $('#csrftoken').data('csrftoken')})
-        .done(function( data ) {
-          window.location.href = window.location;
-        });
+ });
+  $("#sortable").disableSelection();
+});
 
-        
+$('#sortable img').mousedown(function(event) {
+  console.log("preventDefault");
+  event.preventDefault();
+});
 
 
-      
-    });
+$( "#submit_reorder" ).click(function() {
 
-  });
+});
+
+});
 
 
 });

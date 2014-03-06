@@ -42,16 +42,13 @@ FREQUENCIES = {
     "MON":30,
 }
 
-DURATION_CHOICES = (
-    ('1', '1 Month'),
-    ('2', '2 Months'),
-    ('3', '3 Months'),
-    ('4', '4 Months'),
-    ('5', '5 Months'),
-    ('6', '6 Months'),
-)
+DURATION_CHOICES = [(n, (str(n)+" Months")) for n in xrange(1, 6, 1)]
 
-IMPORTANCE_CHOICES = [(n, n) for n in xrange(1, 10, 1)]
+IMPORTANCE_CHOICES = (
+    ('low', 'Low'),
+    ('med', 'Medium'),
+    ('hig', 'High')
+)
 
 @python_2_unicode_compatible
 class Auditable(models.Model):
@@ -230,7 +227,8 @@ class Media(Auditable, Noun):
     medium = models.CharField(max_length=3, choices=MEDIUM_CHOICES, null=True, blank=True)
     brief = models.TextField(default='', null=True, blank=True)
     tags = TaggableManager(blank=True)
-    sort_order = models.IntegerField(default=5, choices=IMPORTANCE_CHOICES)
+    sort_order = models.PositiveIntegerField(default=0)
+    importance = models.CharField(max_length=3, choices=IMPORTANCE_CHOICES, default='med')
     #history = HistoricalRecords()
     verb_classes = [MediaDetailVerb, MediaUpdateVerb, StreamListVerb]
 
@@ -341,7 +339,7 @@ class Post(Auditable, Noun):
             return False
 
     def get_medias(self):
-        return self.media.all().order_by('sort_order')
+        return self.media.all().order_by('sort_order','created_at')
 
     def get_summary_medias(self):
         return self.get_medias()[:2]

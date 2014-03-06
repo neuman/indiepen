@@ -13,11 +13,12 @@
     {% if focus %}
       <div class="col-lg-12 item">
     {% else %}
-      <div class="col-md-3 item">
+      {% if m.importance == "low" %}<div class="col-md-3 item">{% elif m.importance == "med" %}<div class="col-md-6 item">{% elif m.importance == "hig" %}<div class="col-md-9 item">{% else %} <div class="col-lg-12 item">{% endif %}
     {% endif %}
-    media id: {{m.id}} order: {{m.sort_order}}
+    
       <a href="{{ m.get_absolute_url }}"><img class="img-thumbnail" src='{{m.get_file_url }}'></img></a>
       <p><a href="{{ m.get_absolute_url }}" >{{ m.get_file_name }}</a> | {{ m.brief }}</p>
+      <p>media id: {{m.id}} order: {{m.sort_order}} importance {{ m.importance }}</p>
     </div>
     {% endif %}
 
@@ -25,7 +26,7 @@
       {% if focus %}
         <div class="col-lg-12 item">
       {% else %}
-        <div class="col-md-{{ m.importance }} item">
+      {% if m.importance == "low" %}<div class="col-md-3 item">{% elif m.importance == "med" %}<div class="col-md-6 item">{% elif m.importance == "hig" %}<div class="col-md-9 item">{% else %} <div class="col-lg-12 item">{% endif %}
       {% endif %}
       media id: {{m.id}}
       <h2><a href="{{ m.get_absolute_url }}">{{ m.get_file_name }}</a></h2>
@@ -33,13 +34,14 @@
       <div class="panel">
         <div class="row">
           <p>{{ m.brief }}</p>
+          <p>media id: {{m.id}} order: {{m.sort_order}} importance {{ m.importance }}</p>
         </div>
       </div>
     </div>
     {% endif %}
 
       {% if m.medium == "DAT" %}
-media id: {{media.id}} order: {{m.sort_order}}
+      media id: {{m.id}} order: {{m.sort_order}} importance {{ m.importance }}
         <div class="panel terques-chart">
             <div class="panel-body chart-texture">
                 <div class="chart">

@@ -1,0 +1,51 @@
+{% extends "bootstrap.html" %}
+{% load markdown_deux_tags %}
+{% block title %}Indiepen{% endblock %}
+
+{% block showcase %}
+<ul id="sortable">
+  {% for m in medias %}
+  {% if m.medium == "IMA" %}
+  <li class="media-representation span4" data-pk="{{ m.id }}">
+    <div class="thumbnail">
+       <img class="img-thumbnail handle" src='{{m.get_file_url }}'></img>
+      <div class="caption">
+        <p>{{ m.brief }}</p>
+      </div>
+    </div>
+  </li>
+  {% endif %}
+
+  {% if m.medium == "TXT" %}
+  <li class="media-representation span4" data-pk="{{ m.id }}">
+  <div class="handle panel">
+    <p>{{ m.get_file_name }}</p>
+    <p>{{ m.get_content |truncatechars:500 |markdown}}</p>
+  </div>
+  </li>
+  {% endif %}
+  {% endfor %}
+</ul>
+
+{% if form %}
+<div id="csrftoken" data-csrftoken="{{ csrf_token }}"/>
+<form action="" method="post" enctype="multipart/form-data">{% csrf_token %}
+  {% for field in form %}
+  {% if field.errors %}
+  {% for error in field.errors %}
+  <div class="alert alert-danger" id="error_{{ field.name }}">{{ error|escape }}</div>
+  {% endfor %}
+  {% endif %}
+
+  {% endfor %}
+  <input id="submit_reorder" class="btn btn-success" role="button" value="{{ verb|default:"Submit" }}" />
+
+</form>
+
+{% endif %}
+
+
+
+
+
+{% endblock %}
