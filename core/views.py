@@ -76,10 +76,7 @@ class StreamListView(NounView, TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super(StreamListView, self).get_context_data(**kwargs)
-        object_instance = self.noun
-        context['object_instance'] = object_instance
-        context['available_verbs'] = object_instance.get_available_verbs(self.request.user)
-        context['stream'] = object_instance.action_object_actions.all()
+        context['stream'] = self.noun.get_action_stream()
         return context
 
     def get_noun(self, **kwargs):

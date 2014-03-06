@@ -11,7 +11,9 @@ from core.verbs import DjangoVerb, availability_login_required
 from django.utils.encoding import python_2_unicode_compatible
 from django.utils.translation import ugettext_lazy as _
 import json
-
+from django.contrib.contenttypes.models import ContentType
+import actstream
+from django.db.models import Q
 from core.verbs import *
 
 MEDIUM_CHOICES = (
@@ -67,19 +69,8 @@ class Auditable(models.Model):
     def _history_user_setter(self, value):
         self.changed_by = value
 
-    def get_touches(self):
-        touches = []
-        for a in self.history.all():
-            t = Touch()
-            t['title'] = self.__unicode__()
-            t['updated_at'] = a.updated_at
-            #t['url'] = a.get_absolute_url()
-            t['action'] = "Updated"
-            if a.changed_by_id != None:
-                t['user'] = User.objects.get(id=a.changed_by_id)
-            touches.append(t)
-
-        return touches
+    def get_action_stream(self):
+        return self.action_object_actions.all()
 
     class Meta:
         abstract = True
@@ -358,6 +349,26 @@ class Post(Auditable, Noun):
         else:
             return None
 
+    def get_action_streamz(self):
+        stream = []
+        for a in self.action_object_actions.all():
+            stream.append(a)
+        for m in self.media.all():
+            for a in m.action_object_actions.all():
+                stream.append(a)
+        return stream 
+
+
+    def get_action_stream(self):
+        post_type = ContentType.objects.get(app_label=APPNAME, model="post")
+        media_type = ContentType.objects.get(app_label=APPNAME, model="media")
+        query = Q(action_object_object_id=self.id, action_object_content_type=post_type)
+        for m in self.get_medias():
+            query = query | Q(action_object_object_id=m.id, action_object_content_type=media_type)
+        stream = actstream.models.Action.objects.filter(query).order_by('-timestamp')
+        return stream
+        
+
 
 class Membership(Auditable):
     user = models.ForeignKey(User)
@@ -437,3 +448,27 @@ class Options(models.Model):
 def sort_touches(touches):
     return sorted(touches, key = lambda t: t['updated_at'], reverse=True)
 
+def super_search(model, fields, matches, strings, initial=None):
+    """
+    Designed to lesson the code needed to run complex searches with ORed filters.
+    Model: the model being queried.
+    fields: an iterable containing string names of fields to query.
+    match:  an iterable containing strings of what type of Django lookup to apply to those fields.
+    strings: an iterable containing strings to be matched.
+    """
+    queries = []
+    for field in fields:
+        for string in strings:
+            for match in matches:
+                kwargs = {'%s__%s' % (field, match): string}
+                queries.append(Q(**kwargs))
+    #if there are no filters return no objects
+    if queries.__len__() < 1:
+        return model.objects.none()
+    q = queries[0]
+    for query in queries:
+        q = q | query
+    if initial != None:
+        return initial.filter(q)
+    else:
+        return model.objects.filter(q)
