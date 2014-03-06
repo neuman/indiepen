@@ -134,6 +134,8 @@ requirejs(["jquery","dropzone","imagesloaded","masonry","jquery.bootstrap","jque
 
     $(function() {
       $( "#sortable" ).sortable({
+          handle: '.handle',
+          cursor: 'move',
           update: function(event, ui) {
            console.log("updated");
         }
@@ -141,6 +143,12 @@ requirejs(["jquery","dropzone","imagesloaded","masonry","jquery.bootstrap","jque
         });
       $("#sortable").disableSelection();
     });
+
+    $('#sortable img').mousedown(function(event) {
+      console.log("preventDefault");
+      event.preventDefault();
+    });
+
     var orderstring_ids = [];
     $( "#submit_reorder" ).click(function() {
       $(".media-representation").each(function( index ) {
