@@ -70,7 +70,13 @@ class Auditable(models.Model):
         self.changed_by = value
 
     def get_action_stream(self):
-        return self.action_object_actions.all()
+        stream = actstream.models.Action.objects.filter(self.get_action_stream_query()).order_by('-timestamp')
+        return stream
+
+    def get_action_stream_query(self):
+        post_type = ContentType.objects.get_for_model(self)
+        query = Q(action_object_object_id=self.id, action_object_content_type=post_type)
+        return query
 
     class Meta:
         abstract = True
@@ -208,6 +214,13 @@ class Project(Auditable, Noun):
             return q[0].get_thumb_url()
         else:
             return None
+
+    def get_action_stream_query(self):
+        self_type = ContentType.objects.get_for_model(self)
+        query = Q(action_object_object_id=self.id, action_object_content_type=self_type)
+        for p in self.get_posts():
+            query = query | p.get_action_stream_query()
+        return query
 
 
 from taggit.managers import TaggableManager
@@ -349,24 +362,12 @@ class Post(Auditable, Noun):
         else:
             return None
 
-    def get_action_streamz(self):
-        stream = []
-        for a in self.action_object_actions.all():
-            stream.append(a)
-        for m in self.media.all():
-            for a in m.action_object_actions.all():
-                stream.append(a)
-        return stream 
-
-
-    def get_action_stream(self):
-        post_type = ContentType.objects.get(app_label=APPNAME, model="post")
-        media_type = ContentType.objects.get(app_label=APPNAME, model="media")
-        query = Q(action_object_object_id=self.id, action_object_content_type=post_type)
+    def get_action_stream_query(self):
+        self_type = ContentType.objects.get_for_model(self)
+        query = Q(action_object_object_id=self.id, action_object_content_type=self_type)
         for m in self.get_medias():
-            query = query | Q(action_object_object_id=m.id, action_object_content_type=media_type)
-        stream = actstream.models.Action.objects.filter(query).order_by('-timestamp')
-        return stream
+            query = query | m.get_action_stream_query()
+        return query
         
 
 
