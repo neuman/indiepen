@@ -37,6 +37,7 @@ class NounView(SuccessMessageMixin):
         available_verbs = self.noun.get_available_verbs(self.request.user)
         context['available_verbs'] = available_verbs
         context['conditions'] = self.noun.conditions.get_available(self.request.user)
+        context['noun'] = self.noun
         self.noun.conditions.cache = {}
         return context
 

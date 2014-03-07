@@ -287,7 +287,7 @@
               <li class="sub-menu active">
                 <a href="javascript:;" class="">
                     <i class="icon-cogs"></i>
-                    <span>Verbs</span>
+                    <span>{{ noun.get_class_name }}</span>
                     <span class="arrow"></span>
                 </a>
                 <ul class="sub">
@@ -321,10 +321,10 @@
 <!--main content start-->
 <section id="main-content">
     <section class="wrapper">
-        <section class="panel">
+        <section class="">
             <div class="panel-body progress-panel">
               <div class="task-progress">
-                  <h1>{{ object_instance }}</h1>
+                  
               </div>
           </div>
             {% for message in messages %}

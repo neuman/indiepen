@@ -4,8 +4,9 @@
 {% block title %}Indiepen{% endblock %}
 
 {% block showcase %}
-
-<div class="js-masonry" data-masonry-options='{ "itemSelector": ".item" }'>
+<section class="panel">
+<div class="panel-body">
+<section class="js-masonry panel" data-masonry-options='{ "itemSelector": ".item" }'>
 
   {% for m in medias %}
 
@@ -58,7 +59,10 @@
         </div>
       {% endif %}
   {% endfor %}
+</section>
 </div>
+</section>
+
 
 {% endblock %}
 
