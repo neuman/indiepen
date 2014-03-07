@@ -296,7 +296,7 @@ class PostReorderMediaView(PostView, FormView, AjaxableResponseMixin):
         return super(PostReorderMediaView, self).form_valid(form)
 
     def get_success_url(self):
-        action.send(self.request.user, verb='reordered', action_object=cm.get_history_most_recent(self.object), target=self.object)
+        action.send(self.request.user, verb='reordered', action_object=cm.get_history_most_recent(self.noun), target=self.noun)
         return cm.PostDetailVerb(self.noun).get_url()
 
     def get_context_data(self, **kwargs):

@@ -5,25 +5,19 @@
 {% block showcase %}
 <ul id="sortable">
   {% for m in medias %}
+  <li class="media-representation span4" data-pk="{{ m.id }}">
+  <div class="row">
+  <div class="handle col-xs-6 col-md-3">
   {% if m.medium == "IMA" %}
-  <li class="media-representation span4" data-pk="{{ m.id }}">
-    <div class="thumbnail">
-       <img class="img-thumbnail handle" src='{{m.get_file_url }}'></img>
-      <div class="caption">
-        <p>{{ m.brief }}</p>
-      </div>
-    </div>
-  </li>
+      <a href="{{ m.get_absolute_url }}" class="thumbnail">
+          <img src='{{ m.get_file_url }}' style="display: block;"></img>
+      </a>
+  {% elif m.medium == "TXT" %}
+      {{ m.get_content |truncatechars:200 |markdown}}
   {% endif %}
-
-  {% if m.medium == "TXT" %}
-  <li class="media-representation span4" data-pk="{{ m.id }}">
-  <div class="handle panel">
-    <p>{{ m.get_file_name }}</p>
-    <p>{{ m.get_content |truncatechars:500 |markdown}}</p>
+  </div>
   </div>
   </li>
-  {% endif %}
   {% endfor %}
 </ul>
 
