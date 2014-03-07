@@ -16,56 +16,54 @@
         </header>
         <div class="panel-body">
             <div class="timeline-messages">
-              {% for s in stream %}
-                <!-- Comment -->
-                <div class="msg-time-chat">
-                    <a href="#" class="message-img"><img class="avatar" src="https://fbcdn-profile-a.akamaihd.net/hprofile-ak-prn2/t5/1086357_15502297_576294039_q.jpg" alt=""></a>
-                    <div class="message-body msg-in">
-                        <span class="arrow"></span>
-                        <div class="text">
-                            <p class="attribution">{{ s.timestamp }}</p>
-                            <a href="/users/{{ s.actor.id}}/">{{ s.actor.first_name }} {{ s.actor.last_name }}</a> {{ s.verb }} <a href="{{ s.action_object.get_absolute_url }}">{{ s.action_object }}</a>{% if s.target %} to <a href="{{ s.target.get_absolute_url }}">{{ s.target }}</a>.{% endif %}
-                        </div>
+{% for s in stream %}
+          <!-- Comment -->
+          <div class="msg-time-chat">
+            <a href="#" class="message-img"><span class="avatar glyphicon glyphicon-user"></span></a>
+            <div class="message-body msg-in ">
+                <span class="arrow"></span>
+                <div class="text row">
+                    <div class="col-xs-5 col-md-9">
+                    <p class="attribution">{{ s.timestamp }}</p>
+                    <a href="/users/{{ s.actor.id}}/">{{ s.actor.first_name }} {{ s.actor.last_name }}</a>{{ s.verb }} <a href="{{ s.target.get_absolute_url }}">{{ s.target }}</a>
+                        <p><a href="{{ m.get_absolute_url }}" >{{ m.get_file_name }}</a> {{ m.brief }}</p>
+                    </div>
+                    <div>
+                        {% with m=s.action_object.instance %}
+                            <div class="col-xs-6 col-md-3">
+                            {% if m.get_class_name == "Media" %}
+                                {% if m.medium == "IMA" %}
+                                    <a href="{{ m.get_absolute_url }}" class="thumbnail">
+                                        <img src='{{ m.get_file_url }}' style="height: 180px; width: 100%; display: block;"></img>
+                                    </a>
+                                {% elif m.medium == "TXT" %}
+                                    {{ m.get_content |truncatechars:200 |markdown}}
+                                {% endif %}
+                            {% elif m.get_class_name == "Project" %}
+                                <a href="{{ m.get_absolute_url }}" class="thumbnail">
+                                    <img src='{{ m.get_thumb_url }}' style="height: 180px; width: 100%; display: block;"></img>
+                                </a>
+                            {% else %}
+                                {% if s.action_object.get_class_name == "Pledge" %}
+                                    <a class="thumbnail">${{ s.action_object.value }}</a>
+                                {% else %}
+                                    
+                                {% endif %}
+                            {% endif %}
+                            </div>
+                        {% endwith %}
                     </div>
                 </div>
-                <!-- /comment -->
-                {% endfor %}
+
+            </div>
+        </div>
+        <!-- /comment -->
+        {% endfor %}
             </div>
         </div>
     </section>
 </div>
 
-<div class="col-md-3">
-<div class="pricing-table">
-                          <div class="pricing-head">
-                              <h1> Platinum </h1>
-                              <h2>
-                                  <span class="note">$</span>3000 </h2>
-                          </div>
-                          <ul class="list-unstyled">
-                              <li>8 hours coverage</li>
-                              <li>500 digital images</li>
-                              <li>100 A3 Hard Copy</li>
-                              <li>Bridal portrait with 11X14</li>
-                              <li>Engagement portrait with 11X14</li>
-                              <li>Income Tax included</li>
-                          </ul>
-                          <div class="price-actions">
-                              <a class="btn" href="javascript:;">Get Now</a>
-                          </div>
-                      </div>
-
-<section class="panel">
-      <div class="panel-body">
-          <div class="chart">
-              <div id="pie-chart"><canvas width="100" height="100" style="display: inline-block; width: 100px; height: 100px; vertical-align: top;"></canvas></div>
-          </div>
-      </div>
-      <footer class="pie-foot">
-          Funding Spread
-      </footer>
-  </section>
-</div>
 
 
 

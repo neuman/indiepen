@@ -1,11 +1,12 @@
 from django.conf.urls import patterns, include, url
+from django.views.generic.base import RedirectView
 
 import core.views as cv
 from core.remote_forms import my_ajax_view, handle_instance_form
 from api import v1_api
 
 urlpatterns = patterns('',
-    url(r'^$', cv.IndexView.as_view(), name='index'),
+    url(r'^$', RedirectView.as_view(url='/posts/'), name='index'),
     url(r'bootstrap/$', cv.BootstrapView.as_view(), name='bootstrap'),
     ('^activity/', include('actstream.urls')),
 

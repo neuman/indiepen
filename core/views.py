@@ -33,9 +33,6 @@ class SiteRootView(NounView):
         siteroot = cm.SiteRoot()
         return siteroot
 
-class IndexView(SiteRootView, TemplateView):
-    template_name = 'bootstrap.html'
-
 class MessageView(SiteRootView, TemplateView):
     template_name = 'message.html'
     message = 'Message goes here.'
@@ -426,15 +423,13 @@ class UserCreateView(SiteRootView, CreateView):
 class UserLoginView(SiteRootView, FormView):
     template_name = 'form.html'
     form_class = cf.LoginForm
+    success_url = '/'
 
     def form_valid(self, form):
         user = form.user_cache
         login(self.request, user)
         form.instance = user
         return super(UserLoginView, self).form_valid(form)
-
-    def get_success_url(self):
-        return reverse(viewname='user_detail', args=(self.object.id,), current_app='core')
 #User ENDS
 
 #media STARTS
