@@ -237,7 +237,7 @@ class Media(Auditable, Noun):
     sort_order = models.PositiveIntegerField(default=0)
     importance = models.CharField(max_length=3, choices=IMPORTANCE_CHOICES, default='med')
     history = HistoricalRecords()
-    verb_classes = [MediaDetailVerb, MediaUpdateVerb, StreamListVerb]
+    verb_classes = [MediaDetailVerb, MediaUpdateVerb, StreamListVerb, MediaPostDetailVerb]
 
     noodles = {}
 

@@ -19,7 +19,7 @@
           {% for s in stream %}
           <!-- Comment -->
           <div class="msg-time-chat">
-            <a href="#" class="message-img"><img class="avatar" src="https://fbcdn-profile-a.akamaihd.net/hprofile-ak-prn2/t5/1086357_15502297_576294039_q.jpg" alt=""></a>
+            <a href="#" class="message-img"><span class="avatar glyphicon glyphicon-user"></span></a>
             <div class="message-body msg-in ">
                 <span class="arrow"></span>
                 <div class="text row">
@@ -47,7 +47,7 @@
                                 {% if s.action_object.get_class_name == "Pledge" %}
                                     <a class="thumbnail">${{ s.action_object.value }}</a>
                                 {% else %}
-                                    No Representation Yet
+                                    
                                 {% endif %}
                             {% endif %}
                             </div>
