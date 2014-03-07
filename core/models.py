@@ -7,7 +7,7 @@ from django.core.urlresolvers import reverse
 from carteblanche.base import Verb, Noun
 #from carteblanche.django.mixins import DjangoVerb
 from core.verbs import DjangoVerb, availability_login_required
-#from simple_history.models import HistoricalRecords
+from simple_history.models import HistoricalRecords
 from django.utils.encoding import python_2_unicode_compatible
 from django.utils.translation import ugettext_lazy as _
 import json
@@ -125,7 +125,7 @@ class Project(Auditable, Noun):
     ask = models.FloatField()
     upfront = models.FloatField()
     funded = models.BooleanField(default=False)
-    #history = HistoricalRecords()
+    history = HistoricalRecords()
     verb_classes = [ProjectDetailVerb, CreatePledgeVerb, CreatePaymentMethodVerb, ProjectPostVerb, StreamListVerb]
 
     def __unicode__(self):
@@ -233,7 +233,7 @@ class Media(Auditable, Noun):
     tags = TaggableManager(blank=True)
     sort_order = models.PositiveIntegerField(default=0)
     importance = models.CharField(max_length=3, choices=IMPORTANCE_CHOICES, default='med')
-    #history = HistoricalRecords()
+    history = HistoricalRecords()
     verb_classes = [MediaDetailVerb, MediaUpdateVerb, StreamListVerb]
 
     noodles = {}
@@ -322,7 +322,7 @@ class Post(Auditable, Noun):
     title = models.CharField(max_length=60)
     media = models.ManyToManyField(Media, null=True, blank=True)
     published = models.BooleanField(default=False)
-    #history = HistoricalRecords()
+    history = HistoricalRecords()
     verb_classes = [PostDetailVerb,PostCreateMediaVerb,StreamListVerb, PostCreateMediasVerb, PostReorderMediasVerb, PostProjectDetailVerb]
 
     def __unicode__(self):
@@ -381,7 +381,7 @@ class Service(Auditable, Noun):
     title = models.CharField(max_length=300)
     cost_per_hour = MoneyField(max_digits=10, decimal_places=2, default_currency='USD')
     provider = models.ManyToManyField(User)
-    #history = HistoricalRecords()
+    history = HistoricalRecords()
 
     def __unicode__(self):
         return self.title
@@ -416,13 +416,13 @@ class Contribution(Auditable):
     pledge = models.ManyToManyField(Pledge)
     project = models.ManyToManyField(Project)
     value = MoneyField(max_digits=10, decimal_places=2, default_currency='USD')
-    #history = HistoricalRecords()
+    history = HistoricalRecords()
 
 class Payout(Auditable):
     payee = models.ForeignKey(User, null=True, blank=True)
     project = models.ForeignKey(Project, null=True, blank=True)
     value = MoneyField(max_digits=10, decimal_places=2, default_currency='USD')
-    #history = HistoricalRecords()
+    history = HistoricalRecords()
 
 class Touch(dict):
 
