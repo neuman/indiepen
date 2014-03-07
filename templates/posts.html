@@ -1,65 +1,64 @@
-{% extends "bootstrap.html" %}
-{% load markdown_deux_tags %}
+  {% extends "bootstrap.html" %}
+  {% load markdown_deux_tags %}
 
-{% block title %}Indiepen{% endblock %}
+  {% block title %}Indiepen{% endblock %}
 
-{% block showcase %}
+  {% block showcase %}
+  <section class="js-masonry" data-masonry-options='{ "itemSelector": ".item" }'>
 
-<div class="js-masonry" data-masonry-options='{ "itemSelector": ".item" }'>
-
-  {% for post in posts %}
-    <div class="col-md-3 item well">
-      {% if post.published %}<span class="label label-error">Not Yet Published</span>{% endif %}
-      {% for media in post.get_summary_medias %}
+    {% for post in posts %}
+    <section class="col-md-3 item">
+      <section class="panel">
+      <div class="panel-heading">
+        <a href="{{ post.get_absolute_url }}">{{ post.title }}</a>
+        {% if not post.published %}<span class="badge bg-warning">Not Yet Published</span>{% endif %}
+      </div>
+      <div class="panel-body">
+        
+        {% for media in post.get_summary_medias %}
         {% if media.medium == "IMA" %}
-          <a href="{{ post.get_absolute_url }}"><img class="img-thumbnail" src='{{ media.get_file_url }}'></img></a>
-          <p><a href="{{ post.get_absolute_url }}" >{{ media.get_file_name }}</a> | {{ media.brief }}</p>
+        <a href="{{ post.get_absolute_url }}"><img class="img-thumbnail" src='{{ media.get_file_url }}'></img></a>
+        <p></p>
         {% endif %}
 
-      {% if media.medium == "TXT" %}
-        <h2><a href="{{ post.get_absolute_url }}">{{ mmediaget_file_name }}</a></h2>
-        <span>{{ media.get_content |truncatechars:500 |markdown}}<a href="{{ post.get_absolute_url }}">continued on page {{ post.id }}</a></span>
+        {% if media.medium == "TXT" %}
+        <h2><a href="{{ post.get_absolute_url }}">{{ mmedia.get_file_name }}</a></h2>
+        <span>{{ media.get_content |truncatechars:250 |markdown}}</span>
         <div class="panel">
           <div class="row">
             <p>{{ media.brief }}</p>
           </div>
         </div>
-      {% endif %}
+        {% endif %}
 
-      {% if media.medium == "DAT" %}
+        {% if media.medium == "DAT" %}
         <div class="panel terques-chart">
-            <div class="panel-body chart-texture">
-                <div class="chart">
-                    <div class="heading">
-                        <span>{{ mmediaget_file_name }}</span>
-                        <strong></strong>
-                    </div>
-                    <div class="sparkline" data-type="line" data-resize="true" data-height="75" data-width="90%" data-line-width="1" data-line-color="#fff" data-spot-color="#fff" data-fill-color="" data-highlight-line-color="#fff" data-spot-radius="4" data-data="[{% for value in media.get_content_data_values %}{{ value }}{% if forloop.last %}{% else %},{% endif %}{% endfor %}]"><canvas style="display: inline-block; width: 363px; height: 75px; vertical-align: top;" width="363" height="75"></canvas></div>
-                </div>
+          <div class="panel-body chart-texture">
+            <div class="chart">
+              <div class="heading">
+                <span>{{ mmediaget_file_name }}</span>
+                <strong></strong>
+              </div>
+              <div class="sparkline" data-type="line" data-resize="true" data-height="75" data-width="90%" data-line-width="1" data-line-color="#fff" data-spot-color="#fff" data-fill-color="" data-highlight-line-color="#fff" data-spot-radius="4" data-data="[{% for value in media.get_content_data_values %}{{ value }}{% if forloop.last %}{% else %},{% endif %}{% endfor %}]"><canvas style="display: inline-block; width: 363px; height: 75px; vertical-align: top;" width="363" height="75"></canvas></div>
             </div>
-            <div class="chart-tittle">
-                <span class="title">Title goes here</span>
-                <span class="value">
-                    <a href="{{ post.get_absolute_url }}">{{ media.get_file_name }}</a>
-                </span>
-            </div>
+          </div>
+          <div class="chart-tittle">
+            <span class="title">Title goes here</span>
+            <span class="value">
+              <a href="{{ post.get_absolute_url }}">{{ media.get_file_name }}</a>
+            </span>
+          </div>
         </div>
-      {% endif %}
-    {%endfor %}
-    <hr></hr>
-          <div class="btn-row">
-      <div class="btn-group  btn-group-sm">
-      <button class="btn btn-white" type="button">View</button>
-      <button class="btn btn-white" type="button">Fund</button>
-      <button class="btn btn-white" type="button">Share</button>
+        {% endif %}
+        {%endfor %}
       </div>
-      </div>
-    </div>
+    </section>
+    </section>
 
-  {% endfor %}
-</div>
+    {% endfor %}
+  </section>
 
-{% endblock %}
+  {% endblock %}
 
-{% block audit %}
-{% endblock %}
+  {% block audit %}
+  {% endblock %}

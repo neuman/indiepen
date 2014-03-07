@@ -85,7 +85,7 @@ class MediaReorderForm(BootstrapForm):
 class MediaUpdateForm(BootstrapForm):
     class Meta:
         model = cm.Media
-        exclude = ['original_file','internal_file','changed_by','medium', 'sort_order']
+        exclude = ['internal_file','changed_by','medium', 'sort_order']
 
 class MediaCreateForm(BootstrapForm):
     class Meta:

@@ -7,7 +7,7 @@ from django.core.urlresolvers import reverse
 from carteblanche.base import Verb, Noun
 #from carteblanche.django.mixins import DjangoVerb
 from core.verbs import DjangoVerb, availability_login_required
-#from simple_history.models import HistoricalRecords
+from simple_history.models import HistoricalRecords
 from django.utils.encoding import python_2_unicode_compatible
 from django.utils.translation import ugettext_lazy as _
 import json
@@ -75,8 +75,11 @@ class Auditable(models.Model):
 
     def get_action_stream_query(self):
         post_type = ContentType.objects.get_for_model(self)
-        query = Q(action_object_object_id=self.id, action_object_content_type=post_type)
+        query = Q(target_object_id=self.id, target_content_type=post_type)
         return query
+
+    def get_class_name(self):
+        return self.__class__.__name__
 
     class Meta:
         abstract = True
@@ -125,7 +128,7 @@ class Project(Auditable, Noun):
     ask = models.FloatField()
     upfront = models.FloatField()
     funded = models.BooleanField(default=False)
-    #history = HistoricalRecords()
+    history = HistoricalRecords()
     verb_classes = [ProjectDetailVerb, CreatePledgeVerb, CreatePaymentMethodVerb, ProjectPostVerb, StreamListVerb]
 
     def __unicode__(self):
@@ -217,7 +220,7 @@ class Project(Auditable, Noun):
 
     def get_action_stream_query(self):
         self_type = ContentType.objects.get_for_model(self)
-        query = Q(action_object_object_id=self.id, action_object_content_type=self_type)
+        query = Q(target_object_id=self.id, target_content_type=self_type)
         for p in self.get_posts():
             query = query | p.get_action_stream_query()
         return query
@@ -233,8 +236,8 @@ class Media(Auditable, Noun):
     tags = TaggableManager(blank=True)
     sort_order = models.PositiveIntegerField(default=0)
     importance = models.CharField(max_length=3, choices=IMPORTANCE_CHOICES, default='med')
-    #history = HistoricalRecords()
-    verb_classes = [MediaDetailVerb, MediaUpdateVerb, StreamListVerb]
+    history = HistoricalRecords()
+    verb_classes = [MediaDetailVerb, MediaUpdateVerb, StreamListVerb, MediaPostDetailVerb]
 
     noodles = {}
 
@@ -322,7 +325,7 @@ class Post(Auditable, Noun):
     title = models.CharField(max_length=60)
     media = models.ManyToManyField(Media, null=True, blank=True)
     published = models.BooleanField(default=False)
-    #history = HistoricalRecords()
+    history = HistoricalRecords()
     verb_classes = [PostDetailVerb,PostCreateMediaVerb,StreamListVerb, PostCreateMediasVerb, PostReorderMediasVerb, PostProjectDetailVerb]
 
     def __unicode__(self):
@@ -364,7 +367,7 @@ class Post(Auditable, Noun):
 
     def get_action_stream_query(self):
         self_type = ContentType.objects.get_for_model(self)
-        query = Q(action_object_object_id=self.id, action_object_content_type=self_type)
+        query = Q(target_object_id=self.id, target_content_type=self_type)
         for m in self.get_medias():
             query = query | m.get_action_stream_query()
         return query
@@ -381,7 +384,7 @@ class Service(Auditable, Noun):
     title = models.CharField(max_length=300)
     cost_per_hour = MoneyField(max_digits=10, decimal_places=2, default_currency='USD')
     provider = models.ManyToManyField(User)
-    #history = HistoricalRecords()
+    history = HistoricalRecords()
 
     def __unicode__(self):
         return self.title
@@ -416,13 +419,13 @@ class Contribution(Auditable):
     pledge = models.ManyToManyField(Pledge)
     project = models.ManyToManyField(Project)
     value = MoneyField(max_digits=10, decimal_places=2, default_currency='USD')
-    #history = HistoricalRecords()
+    history = HistoricalRecords()
 
 class Payout(Auditable):
     payee = models.ForeignKey(User, null=True, blank=True)
     project = models.ForeignKey(Project, null=True, blank=True)
     value = MoneyField(max_digits=10, decimal_places=2, default_currency='USD')
-    #history = HistoricalRecords()
+    history = HistoricalRecords()
 
 class Touch(dict):
 
@@ -473,3 +476,6 @@ def super_search(model, fields, matches, strings, initial=None):
         return initial.filter(q)
     else:
         return model.objects.filter(q)
+
+def get_history_most_recent(instance):
+    return instance.history.all().order_by('-updated_at')[0]
