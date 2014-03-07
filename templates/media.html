@@ -5,6 +5,8 @@
 
 {% block showcase %}
 <section class="panel">
+  <div class="panel-heading">
+    {% if not noun.published %}<span class="badge bg-warning">Not Yet Published</span>{% endif %}
 <div class="panel-body">
 <section class="js-masonry panel" data-masonry-options='{ "itemSelector": ".item" }'>
 
