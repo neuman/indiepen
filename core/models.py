@@ -75,8 +75,11 @@ class Auditable(models.Model):
 
     def get_action_stream_query(self):
         post_type = ContentType.objects.get_for_model(self)
-        query = Q(action_object_object_id=self.id, action_object_content_type=post_type)
+        query = Q(target_object_id=self.id, target_content_type=post_type)
         return query
+
+    def get_class_name(self):
+        return self.__class__.__name__
 
     class Meta:
         abstract = True
@@ -217,7 +220,7 @@ class Project(Auditable, Noun):
 
     def get_action_stream_query(self):
         self_type = ContentType.objects.get_for_model(self)
-        query = Q(action_object_object_id=self.id, action_object_content_type=self_type)
+        query = Q(target_object_id=self.id, target_content_type=self_type)
         for p in self.get_posts():
             query = query | p.get_action_stream_query()
         return query
@@ -364,7 +367,7 @@ class Post(Auditable, Noun):
 
     def get_action_stream_query(self):
         self_type = ContentType.objects.get_for_model(self)
-        query = Q(action_object_object_id=self.id, action_object_content_type=self_type)
+        query = Q(target_object_id=self.id, target_content_type=self_type)
         for m in self.get_medias():
             query = query | m.get_action_stream_query()
         return query
@@ -473,3 +476,6 @@ def super_search(model, fields, matches, strings, initial=None):
         return initial.filter(q)
     else:
         return model.objects.filter(q)
+
+def get_history_most_recent(instance):
+    return instance.history.all().order_by('-updated_at')[0]

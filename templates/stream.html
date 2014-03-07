@@ -25,17 +25,32 @@
                 <div class="text row">
                     <div class="col-xs-5 col-md-9">
                     <p class="attribution">{{ s.timestamp }}</p>
-                    <a href="/users/{{ s.actor.id}}/">{{ s.actor.first_name }} {{ s.actor.last_name }}</a>{{ s.verb }} <a href="{{ s.action_object.get_absolute_url }}">{{ s.action_object }}</a>{% if s.target %} on <a href="{{ s.target.get_absolute_url }}">{{ s.target }}</a>.{% endif %}
-                        <p><a href="{{ m.get_absolute_url }}" >{{ m.get_file_name }}</a> | {{ m.brief }}</p>
-                        <p>media id: {{ m.id }} order: {{m.sort_order}} importance {{ m.importance }}</p>
+                    <a href="/users/{{ s.actor.id}}/">{{ s.actor.first_name }} {{ s.actor.last_name }}</a>{{ s.verb }} <a href="{{ s.target.get_absolute_url }}">{{ s.target }}</a>
+                        <p><a href="{{ m.get_absolute_url }}" >{{ m.get_file_name }}</a> {{ m.brief }}</p>
                     </div>
                     <div>
-                        {% with m=s.target.instance %}
-                        <div class="col-xs-6 col-md-3">
-                            <a href="{{ m.get_absolute_url }}" class="thumbnail">
-                                <img src='{{m.get_file_url }}' style="height: 180px; width: 100%; display: block;"></img>
-                            </a>
-                        </div>
+                        {% with m=s.action_object.instance %}
+                            <div class="col-xs-6 col-md-3">
+                            {% if m.get_class_name == "Media" %}
+                                {% if m.medium == "IMA" %}
+                                    <a href="{{ m.get_absolute_url }}" class="thumbnail">
+                                        <img src='{{ m.get_file_url }}' style="height: 180px; width: 100%; display: block;"></img>
+                                    </a>
+                                {% elif m.medium == "TXT" %}
+                                    {{ m.get_content |truncatechars:200 |markdown}}
+                                {% endif %}
+                            {% elif m.get_class_name == "Project" %}
+                                <a href="{{ m.get_absolute_url }}" class="thumbnail">
+                                    <img src='{{ m.get_thumb_url }}' style="height: 180px; width: 100%; display: block;"></img>
+                                </a>
+                            {% else %}
+                                {% if s.action_object.get_class_name == "Pledge" %}
+                                    <a class="thumbnail">${{ s.action_object.value }}</a>
+                                {% else %}
+                                    No Representation Yet
+                                {% endif %}
+                            {% endif %}
+                            </div>
                         {% endwith %}
                     </div>
                 </div>
