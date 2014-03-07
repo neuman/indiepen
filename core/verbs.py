@@ -143,6 +143,7 @@ class SiteRoot(Noun):
 class PledgeVerb(CoreVerb):
     denied_message = "Sorry, you already pledged!"
     view_name='pledge_create'
+    condition_name = 'can_pledge'
 
     @availability_login_required
     def is_available(self, user):
@@ -174,7 +175,7 @@ class ProjectMemberVerb(ProjectVerb):
         return self.noun.members.filter(id=user.id).count() > 0
 
 class ProjectPostVerb(ProjectMemberVerb):
-    display_name = "Post"
+    display_name = "Create New Post"
     view_name='post_create'
 
 class ProjectDetailVerb(ProjectVerb):
@@ -265,4 +266,9 @@ class PostDetailVerb(CoreVerb):
 class PostProjectDetailVerb(ProjectDetailVerb):
     def get_url(self):
         return reverse(viewname=self.view_name, args=[self.noun.project.id], current_app=self.app)
+
+
+class MediaPostDetailVerb(PostDetailVerb):
+    def get_url(self):
+        return reverse(viewname=self.view_name, args=[self.noun.get_post().id], current_app=self.app)
 

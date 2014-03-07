@@ -139,7 +139,8 @@ TEMPLATE_DIRS = (
 )
 
 ACTSTREAM_SETTINGS = {
-    'MODELS': ('core.project', 'core.post', 'core.pledge', 'core.media', 'core.options', 'auth.user', 'auth.group'),
+    'MODELS': ('core.project', 'core.post', 'core.pledge', 'core.media', 'core.options', 'auth.user', 'auth.group', 'core.historicalproject','core.historicalpost','core.historicalmedia'),
+    'USE_JSONFIELD':True,
 }
 
 DEFAULT_FILE_STORAGE = 'storages.backends.s3boto.S3BotoStorage'

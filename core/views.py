@@ -173,7 +173,7 @@ class ProjectCreateView(SiteRootView, CreateView):
 
     def get_success_url(self):
         self.object.members.add(self.request.user)
-        action.send(self.request.user, verb='created', action_object=self.object)
+        action.send(self.request.user, verb='created', action_object=cm.get_history_most_recent(self.object), target=self.object)
         return reverse(viewname='project_detail', args=(self.object.id,), current_app='core')
 
 class MediaCreateView(ProjectView, CreateView):
@@ -188,7 +188,7 @@ class MediaCreateView(ProjectView, CreateView):
     def form_valid(self, form):
         form.instance.user = self.request.user
         form.instance.changed_by = self.request.user
-        action.send(self.request.user, verb='uploaded', action_object=self.object)
+        action.send(self.request.user, verb='uploaded', action_object=cm.get_history_most_recent(self.object), target=self.object)
         return super(MediaCreateView, self).form_valid(form)
 
 
@@ -214,7 +214,7 @@ class PostCreateView(ProjectView, CreateView):
         return super(PostCreateView, self).form_valid(form)
 
     def get_success_url(self):
-        action.send(self.request.user, verb='posted', action_object=self.object, target=self.object.project)
+        action.send(self.request.user, verb='created', action_object=cm.get_history_most_recent(self.object), target=self.object)
         return reverse(viewname='post_media_uploads', args=(self.object.id,), current_app='core')
 
 class PostUpdateView(PostView, UpdateView):
@@ -296,7 +296,7 @@ class PostReorderMediaView(PostView, FormView, AjaxableResponseMixin):
         return super(PostReorderMediaView, self).form_valid(form)
 
     def get_success_url(self):
-        action.send(self.request.user, verb='reordered media', action_object=self.noun)
+        action.send(self.request.user, verb='reordered', action_object=cm.get_history_most_recent(self.noun), target=self.noun)
         return cm.PostDetailVerb(self.noun).get_url()
 
     def get_context_data(self, **kwargs):
@@ -369,7 +369,7 @@ class PostMediaCreateView(PostView, CreateView):
     def get_success_url(self):
         p = cm.Post.objects.get(id=self.kwargs['pk'])
         p.media.add(self.new_instance)
-        action.send(self.request.user, verb='uploaded', action_object=self.new_instance, target=p)
+        action.send(self.request.user, verb='uploaded', action_object=cm.get_history_most_recent(self.new_instance), target=self.object)
         return reverse(viewname='post_media_create', args=(self.kwargs['pk'],), current_app='core')
 
 class PostUploadsView(PostView, TemplateView):
@@ -452,6 +452,21 @@ class MediaDetailView(NounView, TemplateView):
     def get_noun(self, **kwargs):
         return cm.Media.objects.get(id=self.kwargs['pk'])
 
+class MediaHistoryView(NounView, TemplateView):
+    template_name = 'media.html'
+
+    def get_context_data(self, **kwargs):
+        context = super(MediaHistoryView, self).get_context_data(**kwargs)
+        media = self.noun
+        context['medias'] = [media]
+        context['available_verbs'] = media.get_available_verbs(self.request.user)
+        context['focus'] = True
+        return context
+
+    def get_noun(self, **kwargs):
+        history_instance = cm.HistoricalMedia.objects.get(id=self.kwargs['pk'])
+        return cm.Media.objects.get(id=self.kwargs['pk'])
+
 class MediaListView(TemplateView):
     template_name = 'media.html'
 
@@ -479,7 +494,7 @@ class MediaUpdateView(UpdateView):
 
     def get_success_url(self):
         post = cm.get_media_post(self.object)
-        action.send(self.request.user, verb='updated', action_object=self.object, target=post)
+        action.send(self.request.user, verb='updated', action_object=cm.get_history_most_recent(self.object), target=self.object)
         return post.get_absolute_url()
 
     def get(self, request, *args, **kwargs):

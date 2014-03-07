@@ -28,6 +28,7 @@ urlpatterns = patterns('',
 
     url(r'medias/$', cv.MediaListView.as_view(), name='media_list'),
     url(r'medias/(?P<pk>\d+)/$', cv.MediaDetailView.as_view(), name='media_detail'),
+    url(r'medias/(?P<pk>\d+)/history/$', cv.MediaHistoryView.as_view(), name='media_history'),
     url(r'medias/(?P<pk>\d+)/update/$', cv.MediaUpdateView.as_view(), name='media_update'),
 
     url(r'users/(?P<pk>\d+)/$', cv.UserDetailView.as_view(), name='user_detail'),
