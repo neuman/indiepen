@@ -99,11 +99,11 @@ class UnauthenticatedOnlyVerb(CoreVerb):
             return False
         return True
 
-class StreamListVerb(CoreVerb):
-    display_name = "View Stream"
-    view_name='stream_list'
+class HistoryListVerb(CoreVerb):
+    display_name = "View History"
+    view_name='history_list'
     required = True
-    denied_message = "Sorry, you can't view that stream yet."
+    denied_message = "Sorry, you can't view that history yet."
 
     def get_url(self):
         return reverse(viewname=self.view_name, kwargs={'instance_model':self.noun._meta.model_name, 'pk':self.noun.id}, current_app=self.app)

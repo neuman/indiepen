@@ -68,11 +68,11 @@ class DetailView(TemplateView):
 class BootstrapView(TemplateView):
     template_name = 'grid.html'
 
-class StreamListView(NounView, TemplateView):
-    template_name = 'stream.html'
+class HistoryListView(NounView, TemplateView):
+    template_name = 'history.html'
 
     def get_context_data(self, **kwargs):
-        context = super(StreamListView, self).get_context_data(**kwargs)
+        context = super(HistoryListView, self).get_context_data(**kwargs)
         context['stream'] = self.noun.get_action_stream()
         return context
 

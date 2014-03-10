@@ -129,7 +129,7 @@ class Project(Auditable, Noun):
     upfront = models.FloatField()
     funded = models.BooleanField(default=False)
     history = HistoricalRecords()
-    verb_classes = [ProjectDetailVerb, CreatePledgeVerb, CreatePaymentMethodVerb, ProjectPostVerb, StreamListVerb]
+    verb_classes = [ProjectDetailVerb, CreatePledgeVerb, CreatePaymentMethodVerb, ProjectPostVerb, HistoryListVerb]
 
     def __unicode__(self):
         return self.title
@@ -237,7 +237,7 @@ class Media(Auditable, Noun):
     sort_order = models.PositiveIntegerField(default=0)
     importance = models.CharField(max_length=3, choices=IMPORTANCE_CHOICES, default='med')
     history = HistoricalRecords()
-    verb_classes = [MediaDetailVerb, MediaUpdateVerb, StreamListVerb, MediaPostDetailVerb]
+    verb_classes = [MediaDetailVerb, MediaUpdateVerb, HistoryListVerb, MediaPostDetailVerb]
 
     noodles = {}
 
@@ -326,7 +326,7 @@ class Post(Auditable, Noun):
     media = models.ManyToManyField(Media, null=True, blank=True)
     published = models.BooleanField(default=False)
     history = HistoricalRecords()
-    verb_classes = [PostDetailVerb,PostCreateMediaVerb,StreamListVerb, PostCreateMediasVerb, PostReorderMediasVerb, PostProjectDetailVerb]
+    verb_classes = [PostDetailVerb,PostCreateMediaVerb,HistoryListVerb, PostCreateMediasVerb, PostReorderMediasVerb, PostProjectDetailVerb]
 
     def __unicode__(self):
         return self.title
