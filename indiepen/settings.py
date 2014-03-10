@@ -38,6 +38,7 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'social.apps.django_app.default',
     'markdown_deux',
     'south',
     'djangobower',
@@ -151,3 +152,22 @@ try:
 except Exception as e:
     STRIPE_PUBLIC_KEY = 'pk_test_gQYGUBwsm6rzvoSxBpSKbDC2'
     STRIPE_SECRET_KEY = 'sk_test_v3MTBY0TL2n2KjUCoGo7Sp23'
+
+
+#SOCIAL SOCIAL_AUTH
+AUTHENTICATION_BACKENDS = (
+  'social.backends.facebook.FacebookOAuth2',
+  'django.contrib.auth.backends.ModelBackend',
+)
+
+TEMPLATE_CONTEXT_PROCESSORS = (
+    "django.contrib.auth.context_processors.auth",
+    "django.core.context_processors.debug",
+    "django.core.context_processors.i18n",
+    "django.core.context_processors.media",
+    "django.core.context_processors.static",
+    "django.core.context_processors.tz",
+    "django.contrib.messages.context_processors.messages",
+    'social.apps.django_app.context_processors.backends',
+    'social.apps.django_app.context_processors.login_redirect',
+)

@@ -10,5 +10,6 @@ urlpatterns = patterns('',
     # url(r'^blog/', include('blog.urls')),
 
     url(r'^admin/', include(admin.site.urls)),
-    (r'', include('core.urls'))
+    (r'', include('core.urls')),
+    url('', include('social.apps.django_app.urls', namespace='social'))
 ) + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
