@@ -47,9 +47,9 @@ FREQUENCIES = {
 DURATION_CHOICES = [(n, (str(n)+" Months")) for n in xrange(1, 6, 1)]
 
 IMPORTANCE_CHOICES = (
-    ('low', 'Low'),
+    ('low', 'Small'),
     ('med', 'Medium'),
-    ('hig', 'High')
+    ('hig', 'Large')
 )
 
 @python_2_unicode_compatible

@@ -168,7 +168,7 @@ a, a:hover, a:focus {
     width: 210px;
     height: 100%;
     position: fixed;
-    background: #2a3542;
+    background: #f0f2f7;
 }
 
 #sidebar ul li {
@@ -226,7 +226,7 @@ ul.sidebar-menu {
 }
 
 ul.sidebar-menu li ul.sub li{
-    background: #35404D;
+    background: #ffffff;
     margin-bottom: 0;
     margin-left: 0;
     margin-right: 0;
@@ -247,7 +247,7 @@ ul.sidebar-menu li ul.sub li a {
     -o-transition: all 0.3s ease;
     -ms-transition: all 0.3s ease;
     transition: all 0.3s ease;
-    color: #aeb2b7;
+    color: #797979;
 }
 
 ul.sidebar-menu li ul.sub li a:hover, ul.sidebar-menu li ul.sub li.active a {
@@ -276,7 +276,7 @@ ul.sidebar-menu li a span{
 }
 
 ul.sidebar-menu li a{
-    color: #aeb2b7;
+    color: #797979;
     text-decoration: none;
     display: block;
     padding: 15px 0 15px 10px;
@@ -290,7 +290,7 @@ ul.sidebar-menu li a{
 }
 
 ul.sidebar-menu li a.active, ul.sidebar-menu li a:hover, ul.sidebar-menu li a:focus {
-    background: #35404d;
+    background: #ffffff;
     color: #fff;
     display: block;
     border-radius: 4px;
@@ -1067,7 +1067,7 @@ ul.top-menu > li > a:hover, ul.top-menu > li > a:focus {
 }
 
 .badge.bg-inverse {
-    background: #2A3542;
+    background: #f0f2f7;
 }
 
 
@@ -1878,7 +1878,7 @@ ul.ft-link li a i {
 }
 
 .fontawesome-icon-list a:hover{
-    color: #35404D;
+    color: #ffffff;
 }
 
 .fontawesome-icon-list i {
@@ -2671,8 +2671,8 @@ ul.amounts li {
 /*panel heading color*/
 
 .panel-primary > .panel-heading.navyblue {
-    background-color: #2A3542;
-    border-color: #2A3542;
+    background-color: #f0f2f7;
+    border-color: #f0f2f7;
     color: #FFFFFF;
 }
 
@@ -3262,7 +3262,7 @@ table.sliders tr td {
 }
 .has-switch span.switch-left {
     border-radius: 30px 0 0 30px;
-    background-color: #2A3542;
+    background-color: #f0f2f7;
     color: #41cac0;
     border-left: 1px solid transparent;
 }
@@ -3276,7 +3276,7 @@ table.sliders tr td {
     text-indent: 0;
 }
 .has-switch label {
-    border: 4px solid #2A3542;
+    border: 4px solid #f0f2f7;
     border-radius: 50%;
     -webkit-border-radius: 50%;
     float: left;
@@ -3930,7 +3930,7 @@ span.customSelect.changed {
 }
 
 .boxed-page .container {
-    background: #2A3542;
+    background: #f0f2f7;
     padding-left: 0;
     padding-right: 0;
 }
@@ -4290,7 +4290,7 @@ tr.odd.gradeX td.sorting_1, tr.even.gradeX td.sorting_1, table.display tr.even.g
 /*multiselect*/
 
 .ms-container .ms-selectable li.ms-hover, .ms-container .ms-selection li.ms-hover {
-    background-color: #2A3542;
+    background-color: #f0f2f7;
     color: #FFFFFF;
     cursor: pointer;
     text-decoration: none;
@@ -4301,7 +4301,7 @@ tr.odd.gradeX td.sorting_1, tr.even.gradeX td.sorting_1, table.display tr.even.g
 }
 
 .ms-container .ms-list.ms-focus {
-    border: 1px solid #2A3542;
+    border: 1px solid #f0f2f7;
 }
 
 .ms-selectable .search-input, .ms-selection .search-input{
@@ -4641,7 +4641,7 @@ tr.odd.gradeX td.sorting_1, tr.even.gradeX td.sorting_1, table.display tr.even.g
 }
 
 .go-top i {
-    color: #2A3542;
+    color: #f0f2f7;
 }
 
 .site-min-height {
@@ -4814,7 +4814,7 @@ tr.odd.gradeX td.sorting_1, tr.even.gradeX td.sorting_1, table.display tr.even.g
 }
 
 .vertical-menu li a:hover, .vertical-menu li a:focus, .vertical-menu li.active a {
-    background: #2A3542;
+    background: #f0f2f7;
     width: 100%;
     float: left;
     padding: 10px;

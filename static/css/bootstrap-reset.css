@@ -4,7 +4,7 @@ a {
 }
 
 a:hover {
-    color: #2A3542;
+    color: #f0f2f7;
 }
 
 /*panel*/
@@ -20,7 +20,7 @@ a:hover {
 }
 
 .panel-title {
-    color: #2A3542;
+    color: #f0f2f7;
     font-size: 14px;
     font-weight: 400;
     margin-bottom: 0;
@@ -301,7 +301,7 @@ ul {
 }
 
 .navbar-inverse .navbar-nav > li a:hover {
-    color: #2A3542;
+    color: #f0f2f7;
 }
 
 .navbar-inverse .navbar-nav > li > ul > li a:hover {
