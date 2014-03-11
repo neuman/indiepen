@@ -35,6 +35,7 @@ urlpatterns = patterns('',
     url(r'users/(?P<pk>\d+)/$', cv.UserDetailView.as_view(), name='user_detail'),
     url(r'users/create/$', cv.UserCreateView.as_view(), name='user_ceate'),
     url(r'users/login/$', cv.UserLoginView.as_view(), name='user_login'),
+    url(r'users/logout/$', cv.UserLogoutView.as_view(), name='user_logout'),
     #(r'^users/login/$', 'django.contrib.auth.views.login',{'template_name': 'form.html'}),
 
     url(r'^(?P<pk>\d+)/$',cv.DetailView.as_view(), name="detail"),

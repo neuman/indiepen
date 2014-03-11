@@ -122,21 +122,32 @@ class ProjectCreateVerb(CoreVerb):
     def is_available(self, user):
         return True
 
+class StaffVerb(CoreVerb):
+    condition_name = 'is_staff'
+    required = True
+
+    @availability_login_required
+    def is_available(self, user):
+        return user.is_staff
+
 
 class SiteJoinVerb(UnauthenticatedOnlyVerb):
     display_name = "Join Indiepen"
     view_name='user_ceate'
 
 class SiteLoginVerb(UnauthenticatedOnlyVerb):
-    display_name = "Login"
-    view_name='user_login'
+    display_name = "Login with Facebook"
+    #no view name ok because this is always allowed, fb handles the authentication
+
+    def get_url(self):
+        return reverse('social:begin', args=[u'facebook'])
 
 
 class SiteRoot(Noun):
     '''
     A hack that lets pages that have no actual noun have verbs and verb-based permissions. 
     '''
-    verb_classes = [ProjectCreateVerb, SiteJoinVerb, SiteLoginVerb]
+    verb_classes = [ProjectCreateVerb, SiteLoginVerb]
 
     class Meta:
         abstract = True

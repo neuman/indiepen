@@ -21,7 +21,7 @@ from django.db.models.signals import post_save
 from actstream import action
 from actstream.models import user_stream, action_object_stream, model_stream, actor_stream
 
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate, login, logout
 
 from django.contrib.contenttypes.models import ContentType
 from django.shortcuts import get_object_or_404
@@ -430,6 +430,14 @@ class UserLoginView(SiteRootView, FormView):
         login(self.request, user)
         form.instance = user
         return super(UserLoginView, self).form_valid(form)
+
+class UserLogoutView(SiteRootView, TemplateView):
+    template_name = 'bootstrap.html'
+
+    def get(self, request, **kwargs):
+        #if the user has no payment methods, redirect to the view where one can be created
+        logout(self.request)
+        return HttpResponseRedirect(reverse(viewname='post_list', current_app='core'))
 #User ENDS
 
 #media STARTS
