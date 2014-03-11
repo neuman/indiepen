@@ -81,7 +81,6 @@ def availability_login_required(is_available_func):
             return False
     return decorator
 
-
 from carteblanche.base import Verb, Noun
 APPNAME = 'core'
 
@@ -256,6 +255,9 @@ class PostReorderMediasVerb(PostMemberVerb):
     display_name = "Reorder Post Media"
     view_name = 'post_media_reorder'
 
+class PostPublishVerb(PostMemberVerb):
+    display_name = "Publish"
+    view_name = "post_publish"
 
 class PostDetailVerb(CoreVerb):
     display_name = "View Post"

@@ -321,8 +321,20 @@ class PostDetailView(PostView, TemplateView):
         context['stream'] = stream
         return context
 
-    def get_noun(self, **kwargs):
-        return cm.Post.objects.get(id=self.kwargs['pk'])
+class PostPublishView(PostView, FormView):
+    template_name = 'form.html'
+    form_class = cf.BooleanForm
+
+    def get_context_data(self, **kwargs):
+        context = super(PostPublishView, self).get_context_data(**kwargs)
+        context['briefs'] = ["This makes your post public."]
+        return context
+
+    def get_success_url(self):
+        self.noun.published = True
+        self.noun.save()
+        action.send(self.request.user, verb='published', action_object=cm.get_history_most_recent(self.noun), target=self.noun)
+        return self.noun.get_absolute_url()
 
 class PostListView(SiteRootView, TemplateView):
     template_name = 'posts.html'
