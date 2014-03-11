@@ -130,11 +130,9 @@
                 <div class="alert alert-{{ message.tags }}">{{ message }}</div>
             {% endfor %}
             {% if briefs %}
-            <ul>
             {% for brief in briefs %}
-                <li><h2>{{ brief }}</h2></li>
+                <div class="alert alert-warning">{{ brief }}</div>
             {% endfor %}
-            </ul>
             {% endif %}
           {% block showcase %}{% endblock %}
           {% block audit %}{% endblock %}

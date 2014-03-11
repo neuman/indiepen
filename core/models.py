@@ -127,7 +127,9 @@ class Project(Auditable, Noun):
     #ask = MoneyField(max_digits=10, decimal_places=2, default_currency='USD')
     ask = models.FloatField()
     upfront = models.FloatField()
-    funded = models.BooleanField(default=False)
+    approved = models.BooleanField(default=False, blank=True)
+    funded = models.BooleanField(default=False, blank=True)
+    first = models.ForeignKey('Post', related_name="%(app_label)s_%(class)s_related", null=True, blank=True)
     history = HistoricalRecords()
     verb_classes = [ProjectDetailVerb, CreatePledgeVerb, CreatePaymentMethodVerb, ProjectPostVerb, HistoryListVerb]
 

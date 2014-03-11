@@ -43,7 +43,7 @@ class DropzoneForm(BootstrapForm):
 class ProjectForm(BootstrapForm):
     class Meta:
         model = cm.Project
-        exclude = ['changed_by', 'members','funded']
+        exclude = ['changed_by', 'members','funded', 'approved', 'first']
 
 class PostForm(BootstrapForm):
     class Meta:
