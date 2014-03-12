@@ -33,18 +33,14 @@ EXTENSIONS = {
     "DAT":['csv','json'],
 }
 
-FREQUENCY_CHOICES = (
-    ('DAI', 'Daily'),
-    ('WEE', 'Weekly'),
-    ('MON', 'Monthly'),
+PROJECT_PHASE_CHOICES = (
+    ('PRI', 'Private'),
+    ('DEL', 'Deliberation'),
+    ('APP', 'Approved'),
+    ('FUN', 'Funded'),
+    ('CAN', 'Canceled'),
+    ('COM', 'Completed'),
 )
-FREQUENCIES = {
-    "DAI":1,
-    "WEE":7,
-    "MON":30,
-}
-
-DURATION_CHOICES = [(n, (str(n)+" Months")) for n in xrange(1, 6, 1)]
 
 IMPORTANCE_CHOICES = (
     ('low', 'Small'),
@@ -121,14 +117,14 @@ class Project(Auditable, Noun):
     title = models.CharField(max_length=300)
     brief = models.TextField(default='')
     members = models.ManyToManyField(User)
-    medium = models.CharField(max_length=3, choices=MEDIUM_CHOICES, default='TXT')
-    duration = models.CharField(max_length=3, choices=DURATION_CHOICES, default='1')
-    frequency = models.CharField(max_length=3, choices=FREQUENCY_CHOICES, default='WEE')
+    schedule = models.TextField(default='')
+    planned_posts = models.PositiveIntegerField()
+    end_date = models.DateField()
     #ask = MoneyField(max_digits=10, decimal_places=2, default_currency='USD')
     ask = models.FloatField()
+    ask_per_post = models.FloatField()
     upfront = models.FloatField()
-    approved = models.BooleanField(default=False, blank=True)
-    funded = models.BooleanField(default=False, blank=True)
+    phase = models.CharField(max_length=3, choices=PROJECT_PHASE_CHOICES, null=True, blank=True)
     first = models.ForeignKey('Post', related_name="%(app_label)s_%(class)s_related", null=True, blank=True)
     history = HistoricalRecords()
     verb_classes = [ProjectDetailVerb, CreatePledgeVerb, CreatePaymentMethodVerb, ProjectPostVerb, HistoryListVerb]
@@ -159,25 +155,11 @@ class Project(Auditable, Noun):
     def get_pledges(self):
         return Pledge.objects.filter(project=self)
 
-    def get_days(self):
-        return self.duration*FREQUENCIES['MON']
-
-    def get_occurances_per_month(self):
-        output = round(float(FREQUENCIES['MON'])/FREQUENCIES[self.frequency] )
-        print(output)
-        return int(output)
-
     def get_number_of_posts(self):
-        output = int(self.duration)*self.get_occurances_per_month()
-        return output
+        return self.planned_posts
 
     def get_ask_per_post(self):
-        count = self.get_number_of_posts()
-        ask = float(self.ask-self.upfront)/count
-        return ask
-
-    def get_asks_per_post(self):
-        return [self.get_ask_per_post()]*self.get_number_of_posts()
+        return self.ask_per_post
 
     def get_total_pledged(self):
         sums = Pledge.objects.filter(project=self).aggregate(Sum('value'))
@@ -188,7 +170,7 @@ class Project(Auditable, Noun):
         return total
 
     def get_percent(self, piece):
-        output = (float(piece)/float(self.ask))*100
+        output = (float(piece)/float(self.get_ask()))*100
         print(output)
         return output
 
@@ -203,7 +185,7 @@ class Project(Auditable, Noun):
         return output
 
     def get_percent_per_post(self):
-        output = self.get_percent(round((self.ask-self.upfront)/self.get_number_of_posts()))
+        output = self.get_percent(round((self.get_ask()-self.upfront)/self.get_number_of_posts()))
         print(output)
         return output
 
