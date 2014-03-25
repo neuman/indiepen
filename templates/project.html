@@ -24,9 +24,9 @@
         </div>
     </div>
       <p>
-      <span class="label label-default">${{ project.upfront }} Up Front</span>
+      <span class="label label-default">${{ project.upfront_ask }} Up Front</span>
       <span class="label label-primary">{{ project.get_number_of_posts }} Posts at ${{ project.get_ask_per_post }} Per Post</span>
-      <span class="label label-success">${{ project.ask }} Total</span>
+      <span class="label label-success">${{ project.get_ask_total }} Total</span>
       <span class="label label-warning">${{ project.get_total_pledged }} Pledged So Far</span>
       </p>
       <p>Members: {% for m in project.get_members %} {{ m.email }} {% endfor%} </p>

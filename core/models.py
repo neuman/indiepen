@@ -36,7 +36,7 @@ EXTENSIONS = {
 PROJECT_PHASE_CHOICES = (
     ('PRI', 'Private'),
     ('DEL', 'Deliberation'),
-    ('APP', 'Approved'),
+    ('OPE', 'Open'),
     ('FUN', 'Funded'),
     ('CAN', 'Canceled'),
     ('COM', 'Completed'),
@@ -112,20 +112,19 @@ class Badge(Auditable):
     def __unicode__(self):
         return self.title
 
-
 class Project(Auditable, Noun):
-    title = models.CharField(max_length=300)
-    brief = models.TextField(default='')
-    members = models.ManyToManyField(User)
-    schedule = models.TextField(default='')
-    planned_posts = models.PositiveIntegerField()
-    end_date = models.DateField()
-    #ask = MoneyField(max_digits=10, decimal_places=2, default_currency='USD')
-    ask = models.FloatField()
-    ask_per_post = models.FloatField()
-    upfront = models.FloatField()
-    phase = models.CharField(max_length=3, choices=PROJECT_PHASE_CHOICES, null=True, blank=True)
+    title = models.CharField(max_length=300, help_text="examples: Why Do Men Bite Dogs?")
+    brief = models.TextField(default='', help_text="A short complete description of exactly what you will do.  If for any reason you do not follow through on this, you will not be paid, so think about it carefully.")
+    schedule = models.TextField(default='', help_text="examples: Daily, Every Other Tuesday, Single Post")
+    planned_posts = models.PositiveIntegerField(help_text="How many posts do you intend to produce?")
+    end_date = models.DateField(help_text="This is when the project will close fully, all unused money is returned to the pledgers. Must be within the next 6 months. Please use the following format: <em>YYYY-MM-DD</em>.")
+    ask_total = models.FloatField()
+    ask_per_post = models.FloatField(help_text="How much it will cost to get each post made.  This can include expenses for living, travel, accomodations, per diems, etc.")
+    upfront_ask = models.FloatField(help_text="Here you can ask for the crowd to cover any upfront expenses you have.  Please include a detailed breakdown in the project brief. examples: plane tickets, equipment")
+    #phase = models.CharField(max_length=3, choices=PROJECT_PHASE_CHOICES, null=True, blank=True)
     first = models.ForeignKey('Post', related_name="%(app_label)s_%(class)s_related", null=True, blank=True)
+    upfront_ask = models.FloatField(help_text="Here you can ask for the crowd to cover any upfront expenses you have.  examples: plane tickets, equipment")
+    members = models.ManyToManyField(User)
     history = HistoricalRecords()
     verb_classes = [ProjectDetailVerb, CreatePledgeVerb, CreatePaymentMethodVerb, ProjectPostVerb, HistoryListVerb]
 
@@ -158,8 +157,14 @@ class Project(Auditable, Noun):
     def get_number_of_posts(self):
         return self.planned_posts
 
+    def get_ask_total(self):
+        return self.upfront_ask+(self.ask_per_post * self.planned_posts)
+
     def get_ask_per_post(self):
         return self.ask_per_post
+
+    def get_asks_per_post(self):
+        return [self.get_ask_per_post()]*self.get_number_of_posts()
 
     def get_total_pledged(self):
         sums = Pledge.objects.filter(project=self).aggregate(Sum('value'))
@@ -170,7 +175,7 @@ class Project(Auditable, Noun):
         return total
 
     def get_percent(self, piece):
-        output = (float(piece)/float(self.get_ask()))*100
+        output = (float(piece)/float(self.get_ask_total()))*100
         print(output)
         return output
 
@@ -180,12 +185,15 @@ class Project(Auditable, Noun):
         return output
 
     def get_percent_upfront(self):
-        output = self.get_percent(self.upfront)
+        output = self.get_percent(self.upfront_ask)
         print(output)
         return output
 
+    def get_number_of_posts(self):
+        return self.planned_posts
+
     def get_percent_per_post(self):
-        output = self.get_percent(round((self.get_ask()-self.upfront)/self.get_number_of_posts()))
+        output = self.get_percent(round((self.ask_per_post)))
         print(output)
         return output
 
@@ -463,3 +471,6 @@ def super_search(model, fields, matches, strings, initial=None):
 
 def get_history_most_recent(instance):
     return instance.history.all().order_by('-updated_at')[0]
+
+
+
