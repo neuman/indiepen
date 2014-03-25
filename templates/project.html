@@ -32,9 +32,9 @@
       <p>Members: {% for m in project.get_members %} {{ m.email }} {% endfor%} </p>
 	</div>
 	<ul class="list-group">
-	  <li class="list-group-item">Duration: {{ project.duration }}</li>
-	  <li class="list-group-item">Frequency: {{ frequency }}</li>
-	  <li class="list-group-item">Medium: {{ project.medium }}</li>
+	  <li class="list-group-item">End Date: {{ project.end_date }}</li>
+	  <li class="list-group-item">Planned Number of Posts: {{ project.planned_posts }}</li>
+	  <li class="list-group-item">Scheduled To Be Published: {{ project.schedule }}</li>
 	</ul>
 </div>
 </div>
