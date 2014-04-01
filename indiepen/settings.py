@@ -180,3 +180,7 @@ LOGIN_REDIRECT_URL = '/'
 BROKER_URL = 'redis://localhost:6379/0'
 BROKER_TRANSPORT_OPTIONS = {'visibility_timeout': 3600}  # 1 hour.
 CELERY_RESULT_BACKEND = 'redis://localhost:6379/0'
+
+
+# Elastic Transcoder Settings
+DD_ELASTIC_TRANSCODER_PIPELINE_ID = '1395113752900-hi4huc'

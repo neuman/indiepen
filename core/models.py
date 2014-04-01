@@ -16,22 +16,7 @@ import actstream
 from django.db.models import Q
 from core.verbs import *
 
-MEDIUM_CHOICES = (
-    ('TXT', 'Text'),
-    ('VID', 'Video'),
-    ('AUD', 'Audio'),
-    ('IMA', 'Image'),
-    ('MUL', 'Multimedia'),
-    ('DAT', 'Data'),
-)
-EXTENSIONS = {
-    "TXT":['txt','md'],
-    "VID":['avi', 'm4v', 'mov', 'mp4', 'mpeg', 'mpg', 'vob', 'wmv'],
-    "AUD":['aac', 'aiff', 'm4a', 'mp3', 'wav', 'wma'],
-    "IMA":['gif', 'jpeg', 'jpg', 'png'],
-    "MUL":[],
-    "DAT":['csv','json'],
-}
+
 
 PROJECT_PHASE_CHOICES = (
     ('PRI', 'Private'),
@@ -219,11 +204,89 @@ class Project(Auditable, Noun):
 
 
 from taggit.managers import TaggableManager
+import logging
+logger = logging.getLogger(__name__)
+
+MEDIA_TYPE_CHOICES = (
+    ('V', 'Video'),
+    ('A', 'Audio'),
+    ('I', 'Image'),
+    ('D', 'Document'),
+    ('U', 'Unknown')
+)
+
+MEDIUM_CHOICES = (
+    ('TXT', 'Text'),
+    ('VID', 'Video'),
+    ('AUD', 'Audio'),
+    ('IMG', 'Image'),
+    ('MUL', 'Multimedia'),
+    ('DAT', 'Data'),
+)
+
+EXTENSIONS = {
+    "TXT":['txt','md'],
+    "VID":['avi', 'm4v', 'mov', 'mp4', 'mpeg', 'mpg', 'vob', 'wmv'],
+    "AUD":['aac', 'aiff', 'm4a', 'mp3', 'wav', 'wma'],
+    "IMA":['gif', 'jpeg', 'jpg', 'png'],
+    "MUL":[],
+    "DAT":['csv','json'],
+}
+
+CONVERSION_STATUS = (
+    ('U', 'Unconverted'),
+    ('Q', 'In Conversion Queue'),
+    ('I', 'In Progress'),
+    ('C', 'Converted'),
+    ('E', 'Error'),
+)
+
+VIDEO_EXTENSIONS = [
+    'avi',
+    'm4v',
+    'mov',
+    'mp4',
+    'mpeg',
+    'mpg',
+    'vob',
+    'wmv',
+    'mkv',
+]
+AUDIO_EXTENSIONS = [
+    'aac',
+    'aiff',
+    'm4a',
+    'mp3',
+    'wav',
+    'wma',
+]
+IMAGE_EXTENSIONS = [
+    'gif',
+    'jpeg',
+    'jpg',
+    'png',
+]
+DOCUMENT_EXTENSIONS = [
+    'doc',
+    'docx',
+    'mus',
+    'pdf',
+    'ppt',
+    'pptx',
+    'rtf',
+    'sib',
+    'txt',
+    'xls',
+    'xlsx',
+]
+ALL_EXTS = VIDEO_EXTENSIONS + AUDIO_EXTENSIONS + IMAGE_EXTENSIONS +\
+    DOCUMENT_EXTENSIONS
 
 class Media(Auditable, Noun):
     original_file = models.FileField(upload_to='/')
     internal_file = models.FileField(upload_to='/', null=True, blank=True)
     medium = models.CharField(max_length=3, choices=MEDIUM_CHOICES, null=True, blank=True)
+    status = models.CharField(max_length=1, choices=CONVERSION_STATUS, null=True, blank=True)
     brief = models.TextField(default='', null=True, blank=True)
     tags = TaggableManager(blank=True)
     sort_order = models.PositiveIntegerField(default=0)
@@ -250,6 +313,13 @@ class Media(Auditable, Noun):
 
     def get_file_url(self):
         return self.original_file.url
+
+    def set_internal_file_s3_key(self, key):
+        self.internal_file.name = key
+        self.save()
+
+    def get_original_s3_key(self):
+        return self.original_file.name
 
     def get_content(self):
         return self.original_file._get_file().read()
@@ -300,6 +370,37 @@ class Media(Auditable, Noun):
 
     def get_post(self):
         return get_media_post(self)
+
+    #for celery
+    @property
+    def noext(self):
+        return os.path.splitext(self.s3_key)[0]
+
+    @property
+    def basename(self):
+        return os.path.splitext(os.path.basename(self.s3_key))[0]
+
+    @property
+    def fileext(self):
+        return os.path.splitext(self.s3_key)[1][1:]
+
+    def reprocess(self):
+        self.update(set__status='U', set__s3_key=self.original_s3_key)
+        from ddesk.tasks import get_info
+        get_info.apply_async(args=[str(self.id)])
+
+    def set_complete(self):
+        self.status = 'C'
+        self.save()
+        #get applications
+        for application in self.get_applications():
+            app_media = application.get_medias_proxy()
+            if app_media.count() == app_media.filter(status='C').count():
+                application.update(set__in_progress=False)
+                # Immediate notifications have been suppressed until now since
+                # media was being converted, so update all reviewers that
+                # have immediate update frequency
+                application.notify_reviewers()
 
 def get_media_post(media):
     return media.post_set.all()[0]

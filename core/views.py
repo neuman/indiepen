@@ -187,7 +187,10 @@ class MediaCreateView(ProjectView, CreateView):
     def form_valid(self, form):
         form.instance.user = self.request.user
         form.instance.changed_by = self.request.user
+        #add action to stream
         action.send(self.request.user, verb='uploaded', action_object=cm.get_history_most_recent(self.object), target=self.object)
+        #kick off transcoding task
+        
         return super(MediaCreateView, self).form_valid(form)
 
 
