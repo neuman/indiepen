@@ -184,3 +184,40 @@ CELERY_RESULT_BACKEND = 'redis://localhost:6379/0'
 
 # Elastic Transcoder Settings
 DD_ELASTIC_TRANSCODER_PIPELINE_ID = '1395113752900-hi4huc'
+
+## celery settings
+
+#sqs settings
+AWS_EXPIRE_TIME = 60 * 60 * 24 * 365
+
+# celery config
+CELERYCONF = {'CELERY_ALWAYS_EAGER': True}
+
+# transcoder task settings
+CONVERTED_INFO_BIN = '/usr/bin/avprobe'
+CONVERTER_BIN = '/usr/bin/avconv'
+TRANSCODER_DIR = '/tmp/cg_transcoder'
+CONVERTER_OUT_EXT = {
+    'A': 'mp4',
+    'V': 'mp4',
+}
+CONVERTER_FLAGS = {
+    'A': [
+        '-acodec libvo_aacenc',
+        '-ar 44100',
+        '-ab 320k',
+        '-threads auto',
+    ],
+    'V': [
+        '-acodec libvo_aacenc',
+        '-ar 44100',
+        '-ab 320k',
+        '-threads auto',
+        '-vcodec libx264',
+        '-vprofile main',
+        '-b:v 800k',
+        '-maxrate 800k',
+        '-bufsize 1600k',
+        '-vf scale=-1:720',
+    ],
+}

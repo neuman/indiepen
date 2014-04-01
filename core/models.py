@@ -14,6 +14,8 @@ import json
 from django.contrib.contenttypes.models import ContentType
 import actstream
 from django.db.models import Q
+import uuid
+import os
 from core.verbs import *
 
 
@@ -32,6 +34,11 @@ IMPORTANCE_CHOICES = (
     ('med', 'Medium'),
     ('hig', 'Large')
 )
+
+def get_file_path(instance, filename):
+    ext = filename.split('.')[-1]
+    filename = "%s.%s" % (uuid.uuid4(), ext)
+    return os.path.join('uploads/logos', filename)
 
 @python_2_unicode_compatible
 class Auditable(models.Model):
@@ -283,7 +290,7 @@ ALL_EXTS = VIDEO_EXTENSIONS + AUDIO_EXTENSIONS + IMAGE_EXTENSIONS +\
     DOCUMENT_EXTENSIONS
 
 class Media(Auditable, Noun):
-    original_file = models.FileField(upload_to='/')
+    original_file = models.FileField(upload_to=get_file_path, null=True, blank=True)
     internal_file = models.FileField(upload_to='/', null=True, blank=True)
     medium = models.CharField(max_length=3, choices=MEDIUM_CHOICES, null=True, blank=True)
     status = models.CharField(max_length=1, choices=CONVERSION_STATUS, null=True, blank=True)
@@ -319,7 +326,7 @@ class Media(Auditable, Noun):
         self.save()
 
     def get_original_s3_key(self):
-        return self.original_file.name
+        return self.original_file.name.lstrip('/')
 
     def get_content(self):
         return self.original_file._get_file().read()
