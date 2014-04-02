@@ -36,9 +36,11 @@ IMPORTANCE_CHOICES = (
 )
 
 def get_file_path(instance, filename):
-    ext = filename.split('.')[-1]
+    blocks = filename.split('.')
+    ext = blocks[-1]
     filename = "%s.%s" % (uuid.uuid4(), ext)
-    return os.path.join('uploads/logos', filename)
+    instance.name = blocks[0]
+    return os.path.join('uploads/', filename)
 
 @python_2_unicode_compatible
 class Auditable(models.Model):
@@ -292,6 +294,7 @@ ALL_EXTS = VIDEO_EXTENSIONS + AUDIO_EXTENSIONS + IMAGE_EXTENSIONS +\
 class Media(Auditable, Noun):
     original_file = models.FileField(upload_to=get_file_path, null=True, blank=True)
     internal_file = models.FileField(upload_to='/', null=True, blank=True)
+    name = models.CharField(max_length=500, null=True, blank=True)
     medium = models.CharField(max_length=3, choices=MEDIUM_CHOICES, null=True, blank=True)
     status = models.CharField(max_length=1, choices=CONVERSION_STATUS, null=True, blank=True)
     brief = models.TextField(default='', null=True, blank=True)
@@ -360,7 +363,7 @@ class Media(Auditable, Noun):
         return output
 
     def get_file_name(self):
-                return self.original_file.name
+        return self.name
 
     def get_file_extension(self):
         #return string_in.__getslice__(string_in.__len__()-3, string_in.__len__()).lower()

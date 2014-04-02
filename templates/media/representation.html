@@ -1,0 +1,26 @@
+{% load markdown_deux_tags %}
+{% if m.medium == "IMA" %}
+  <a href="{{ m.get_absolute_url }}"><img class="img-thumbnail" src='{{m.get_file_url }}'></img></a>
+  <p><a href="{{ m.get_absolute_url }}" >{{ m.get_file_name }}</a> | {{ m.brief }}</p>
+{% endif %}
+{% if m.medium == "AUD" or m.medium == "VID" %}
+  <video id="example_video_1" class="video-js vjs-default-skin"
+  controls preload="auto" width="640" height="264"
+  data-setup='{"example_option":true}'>
+    <source src="{{m.get_file_url }}" type='video/mp4' />
+  </video>
+  <p><a href="{{ m.get_absolute_url }}" >{{ m.get_file_name }}</a> | {{ m.brief }}</p>
+{% endif %}
+{% if m.medium == "TXT" %}
+{% if truncate %}
+  {{ media.get_content |truncatechars:250 |markdown}}
+{% else %}
+  {{ m.get_content|markdown }}
+{% endif %}
+<a href="{{ m.get_absolute_url }}">{{ m.get_file_name }}</a>
+<div class="panel">
+  <div class="row">
+    <p>{{ m.brief }}</p>
+  </div>
+</div>
+{% endif %}
