@@ -19,9 +19,9 @@
 {% endif %}
 {% if m.medium == "TXT" %}
 {% if truncate %}
-{{ media.get_content |truncatechars:250 |markdown}}
+  {{ m.get_content |truncatechars:250 |markdown}}
 {% else %}
-{{ m.get_content|markdown }}
+  {{ m.get_content|markdown }}
 {% endif %}
 <a href="{{ m.get_absolute_url }}">{{ m.get_file_name }}</a>
 <div class="panel">

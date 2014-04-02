@@ -32,23 +32,7 @@
                         {% with m=s.action_object.instance %}
                             <div class="col-xs-6 col-md-3">
                             {% if m.get_class_name == "Media" %}
-                                {% if m.medium == "IMA" %}
-                                    <a href="{{ m.get_absolute_url }}" class="thumbnail">
-                                        <img src='{{ m.get_file_url }}' style="height: 180px; width: 100%; display: block;"></img>
-                                    </a>
-                                {% elif m.medium == "TXT" %}
-                                    {{ m.get_content |truncatechars:200 |markdown}}
-                                {% endif %}
-                            {% elif m.get_class_name == "Project" %}
-                                <a href="{{ m.get_absolute_url }}" class="thumbnail">
-                                    <img src='{{ m.get_thumb_url }}' style="height: 180px; width: 100%; display: block;"></img>
-                                </a>
-                            {% else %}
-                                {% if s.action_object.get_class_name == "Pledge" %}
-                                    <a class="thumbnail">${{ s.action_object.value }}</a>
-                                {% else %}
-                                    
-                                {% endif %}
+                                {% include "media/representation.html" with truncate=True%}
                             {% endif %}
                             </div>
                         {% endwith %}
