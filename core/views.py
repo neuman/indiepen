@@ -15,6 +15,7 @@ from core.verbs import NounView
 from api import v1_api
 import core.models as cm
 import core.forms as cf
+import core.tasks as ct
 import stripe
 
 from django.db.models.signals import post_save
@@ -189,8 +190,6 @@ class MediaCreateView(ProjectView, CreateView):
         form.instance.changed_by = self.request.user
         #add action to stream
         action.send(self.request.user, verb='uploaded', action_object=cm.get_history_most_recent(self.object), target=self.object)
-        #kick off transcoding task
-        
         return super(MediaCreateView, self).form_valid(form)
 
 
@@ -394,6 +393,12 @@ class PostMediaCreateView(PostView, CreateView):
         p = cm.Post.objects.get(id=self.kwargs['pk'])
         p.media.add(self.new_instance)
         action.send(self.request.user, verb='uploaded', action_object=cm.get_history_most_recent(self.new_instance), target=self.object)
+        #if not audio/video, set internal file to original file
+        if self.object.medium not in (cm.EXTENSIONS['AUD']+cm.EXTENSIONS['VID']):
+            self.object.internal_file = self.object.original_file
+            self.object.save()
+        #kick off transcoding task
+        ct.convert_media_elastic.delay(self.object.id, settings.ELASTIC_TRANSCODER_PIPELINE_NAME)
         return reverse(viewname='post_media_create', args=(self.kwargs['pk'],), current_app='core')
 
 class PostUploadsView(PostView, TemplateView):

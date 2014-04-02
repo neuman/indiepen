@@ -319,7 +319,10 @@ class Media(Auditable, Noun):
             return False
 
     def get_file_url(self):
-        return self.original_file.url
+        try:
+            return self.internal_file.url
+        except ValueError:
+            return None
 
     def set_internal_file_s3_key(self, key):
         self.internal_file.name = key
