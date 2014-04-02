@@ -1,8 +1,6 @@
 {% extends "bootstrap.html" %}
 {% load markdown_deux_tags %}
-
 {% block title %}Indiepen{% endblock %}
-
 {% block showcase %}
   <section class="js-masonry" data-masonry-options='{ "itemSelector": ".item" }'>
     {% for post in posts %}
@@ -22,6 +20,5 @@
     {% endfor %}
   </section>
 {% endblock %}
-
 {% block audit %}
 {% endblock %}

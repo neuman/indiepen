@@ -307,7 +307,7 @@ class Media(Auditable, Noun):
     noodles = {}
 
     def __unicode__(self):
-        return self.get_file_name()
+        return self.name
 
     def get_absolute_url(self):
         return reverse(viewname='media_detail', args=[self.id], current_app=APPNAME)
