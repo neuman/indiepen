@@ -333,6 +333,24 @@ class PostDetailView(PostView, TemplateView):
         context['stream'] = stream
         return context
 
+class PostSubmitView(PostView, FormView):
+    template_name = 'form.html'
+    form_class = cf.BooleanForm
+
+    def get_context_data(self, **kwargs):
+        context = super(PostSubmitView, self).get_context_data(**kwargs)
+        context['briefs'] = ["Submit your project for publishing by the indiepen staff.","As long as it meets our guidelines, we'll publish it."]
+        return context
+
+    def form_valid(self, form):
+        self.noun.submitted = True
+        self.noun.save()
+        return super(PostSubmitView, self).form_valid(form)
+
+    def get_success_url(self):
+        action.send(self.request.user, verb='published', action_object=cm.get_history_most_recent(self.noun), target=self.noun)
+        return self.noun.get_absolute_url()
+
 class PostPublishView(PostView, FormView):
     template_name = 'form.html'
     form_class = cf.BooleanForm
@@ -355,7 +373,7 @@ class PostListView(SiteRootView, TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super(PostListView, self).get_context_data(**kwargs)
-        context['posts'] = cm.Post.objects.all().order_by('-updated_at')
+        context['posts'] = cm.Post.objects.filter(published=True).order_by('-updated_at')
         return context
 
 class PostMediaCreateView(PostView, CreateView):

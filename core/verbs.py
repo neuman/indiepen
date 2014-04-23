@@ -116,7 +116,6 @@ class ProjectCreateVerb(CoreVerb):
     condition_name = 'is_authenticated'
     required = True
 
-
     @availability_login_required
     def is_available(self, user):
         return True
@@ -237,10 +236,18 @@ class PostMemberVerb(CoreVerb):
 
     @availability_login_required
     def is_available(self, user):
-        return self.noun.project.members.filter(id=user.id).count() > 0
+        if self.noun.submitted == True:
+            return False
+        else:
+            return self.noun.project.members.filter(id=user.id).count() > 0
 
     def get_url(self):
         return reverse(viewname=self.view_name, args=[self.noun.id], current_app=self.app)
+
+class PostSubmitVerb(PostMemberVerb):
+    display_name = "Submit For Publishing"
+    view_name = 'post_submit'
+    success_message = "Your post has now been submitted!  An indiepen staffer has been alerted and will check it for compliance with our guidelines before publishing.  You'll be notified when it's live."
 
 class PostCreateMediasVerb(PostMemberVerb):
     display_name = "Upload Post Files"

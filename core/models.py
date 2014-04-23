@@ -425,14 +425,14 @@ def get_user_payment_method(user):
     else:
         return None
 
-
 class Post(Auditable, Noun):
     project = models.ForeignKey(Project)
     title = models.CharField(max_length=60)
     media = models.ManyToManyField(Media, null=True, blank=True)
+    submitted = models.BooleanField(default=False)
     published = models.BooleanField(default=False)
     history = HistoricalRecords()
-    verb_classes = [PostDetailVerb,PostCreateMediaVerb,HistoryListVerb, PostCreateMediasVerb, PostReorderMediasVerb, PostProjectDetailVerb]
+    verb_classes = [PostDetailVerb,PostCreateMediaVerb,HistoryListVerb, PostCreateMediasVerb, PostReorderMediasVerb, PostSubmitVerb, PostProjectDetailVerb]
 
     def __unicode__(self):
         return self.title
