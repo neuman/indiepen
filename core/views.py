@@ -15,6 +15,7 @@ from core.verbs import NounView
 from api import v1_api
 import core.models as cm
 import core.forms as cf
+import core.tasks as ct
 import stripe
 
 from django.db.models.signals import post_save
@@ -165,13 +166,15 @@ class ProjectCreateView(SiteRootView, CreateView):
     model = cm.Project
     template_name = 'form.html'
     fields = '__all__'
-    success_url = '/'
     form_class = cf.ProjectForm
 
     def get_success_url(self):
         self.object.members.add(self.request.user)
+        new_post = cm.Post.objects.create(title=self.object.title, project=self.object)
+        self.object.first = new_post
+        self.object.save()
         action.send(self.request.user, verb='created', action_object=cm.get_history_most_recent(self.object), target=self.object)
-        return reverse(viewname='project_detail', args=(self.object.id,), current_app='core')
+        return cm.PostCreateMediasVerb(new_post).get_url()
 
 class MediaCreateView(ProjectView, CreateView):
     model = cm.Media
@@ -185,6 +188,7 @@ class MediaCreateView(ProjectView, CreateView):
     def form_valid(self, form):
         form.instance.user = self.request.user
         form.instance.changed_by = self.request.user
+        #add action to stream
         action.send(self.request.user, verb='uploaded', action_object=cm.get_history_most_recent(self.object), target=self.object)
         return super(MediaCreateView, self).form_valid(form)
 
@@ -197,7 +201,6 @@ class PostView(NounView):
 class PostCreateView(ProjectView, CreateView):
     model = cm.Post
     template_name = 'form.html'
-    success_url = '/'
     instance = None
 
     def get_form(self, form_class):
@@ -213,6 +216,15 @@ class PostCreateView(ProjectView, CreateView):
     def get_success_url(self):
         action.send(self.request.user, verb='created', action_object=cm.get_history_most_recent(self.object), target=self.object)
         return reverse(viewname='post_media_uploads', args=(self.object.id,), current_app='core')
+
+    def get_context_data(self, **kwargs):
+        context = super(PostCreateView, self).get_context_data(**kwargs)
+        context['briefs'] = ["Begin by giving your post a name.  This can be changed later at any time."]
+        return context
+
+    def get_success_message(self, cleaned_data):
+        if self.object.project.first == self.object:
+            return "Your project and it's first post will remain editable and private until you submit for approval.  If your project is approved it and your first post will become public, along with their full history."
 
 class PostUpdateView(PostView, UpdateView):
     model = cm.Post
@@ -321,8 +333,22 @@ class PostDetailView(PostView, TemplateView):
         context['stream'] = stream
         return context
 
-    def get_noun(self, **kwargs):
-        return cm.Post.objects.get(id=self.kwargs['pk'])
+class PostPublishView(PostView, FormView):
+    template_name = 'form.html'
+    form_class = cf.BooleanForm
+
+    def get_context_data(self, **kwargs):
+        context = super(PostPublishView, self).get_context_data(**kwargs)
+        context['briefs'] = ["This makes your post public."]
+        return context
+
+    def form_valid(self, form):
+        self.noun.published = True
+        self.noun.save()
+
+    def get_success_url(self):
+        action.send(self.request.user, verb='published', action_object=cm.get_history_most_recent(self.noun), target=self.noun)
+        return self.noun.get_absolute_url()
 
 class PostListView(SiteRootView, TemplateView):
     template_name = 'posts.html'
@@ -366,6 +392,14 @@ class PostMediaCreateView(PostView, CreateView):
     def get_success_url(self):
         p = cm.Post.objects.get(id=self.kwargs['pk'])
         p.media.add(self.new_instance)
+        #if not audio/video, set internal file to original file
+        if self.object.medium not in (cm.EXTENSIONS['AUD']+cm.EXTENSIONS['VID']):
+            self.object.internal_file = self.object.original_file
+            self.object.save()
+        else:
+            #kick off transcoding task if media is a video
+            ct.convert_media_elastic.delay(self.object.id, settings.ELASTIC_TRANSCODER_PIPELINE_NAME)
+        #save action after files are set 
         action.send(self.request.user, verb='uploaded', action_object=cm.get_history_most_recent(self.new_instance), target=self.object)
         return reverse(viewname='post_media_create', args=(self.kwargs['pk'],), current_app='core')
 
@@ -377,6 +411,7 @@ class PostUploadsView(PostView, TemplateView):
         # Call the base implementation first to get a context
         context = super(PostUploadsView, self).get_context_data(**kwargs)
         context['upload_url'] = reverse(viewname='post_media_create', args=(self.kwargs['pk'],), current_app='core')
+        context['briefs'] = ["You must create a first post that explains your project before you can submit for approval.","On Indiepen, a post is really just a collection of media.  You can upload any images or text files and worry about ordering and formatting them later.  Unlike most publishing platforms, text is treated just like any other media and must be uploaded as a file. Please use markdown (.md) or plaintext (.txt) files for written content."]
         return context
 
 #Post ENDS

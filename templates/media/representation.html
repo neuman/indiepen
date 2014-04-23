@@ -1,0 +1,44 @@
+{% load markdown_deux_tags %}
+{% if m.medium == "IMA" %}
+<a href="{{ m.get_absolute_url }}"><img class="img-thumbnail" src='{{m.get_file_url }}'></img></a>
+
+{% elif m.medium == "AUD" or m.medium == "VID" %}
+
+
+      <div class="videocontent">
+        <video id="myvideo" class="video-js vjs-default-skin" controls
+        preload="auto" width="auto" height="auto"
+        data-setup="{}">
+          <source src="{{m.get_file_url }}" type='video/mp4'>
+        </video>
+      </div>
+
+{% elif m.medium == "TXT" %}
+  {% if truncate %}
+    {{ m.get_content |truncatechars:250 |markdown}}
+  {% else %}
+    {{ m.get_content|markdown }}
+  {% endif %}
+  <a href="{{ m.get_absolute_url }}">{{ m.get_file_name }}</a>
+
+{% else %}
+  <section class="thumbnail">
+  <i class="fa fa-3x fa-file-text"></i> | <a href="{{ m.get_file_url }}" >
+      <i class="fa fa-cloud-download"></i> Download
+    </a>
+    </section>
+
+{% endif %}
+<p>
+  <a href="{{ m.get_absolute_url }}" >{{ m.get_file_name }}</a>
+  {% if download %}
+
+  {% endif %}
+</p>
+{% if brief %}  
+  <div class="panel">
+    <div class="row">
+      <p>{{ m.brief }}</p>
+    </div>
+  </div>
+{% endif %}

@@ -26,6 +26,7 @@ urlpatterns = patterns('',
     url(r'posts/(?P<pk>\d+)/upload/$', cv.PostMediaCreateView.as_view(), name='post_media_create'),
     url(r'posts/(?P<pk>\d+)/uploads/$', cv.PostUploadsView.as_view(), name='post_media_uploads'),
     url(r'posts/(?P<pk>\d+)/reorder/$', cv.PostReorderMediaView.as_view(), name='post_media_reorder'),
+    url(r'posts/(?P<pk>\d+)/publish/$', cv.PostPublishView.as_view(), name='post_publish'),
 
     url(r'medias/$', cv.MediaListView.as_view(), name='media_list'),
     url(r'medias/(?P<pk>\d+)/$', cv.MediaDetailView.as_view(), name='media_detail'),

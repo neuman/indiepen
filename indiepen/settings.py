@@ -39,6 +39,7 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'social.apps.django_app.default',
+    'djcelery',
     'markdown_deux',
     'south',
     'djangobower',
@@ -174,3 +175,11 @@ TEMPLATE_CONTEXT_PROCESSORS = (
 
 SOCIAL_AUTH_LOGIN_REDIRECT_URL = '/'
 LOGIN_REDIRECT_URL = '/'
+
+#celery / redis
+BROKER_URL = 'redis://localhost:6379/0'
+BROKER_TRANSPORT_OPTIONS = {'visibility_timeout': 3600}  # 1 hour.
+CELERY_RESULT_BACKEND = 'redis://localhost:6379/0'
+CELERYCONF = {'CELERY_ALWAYS_EAGER': True}
+ELASTIC_TRANSCODER_PIPELINE_ID = '1395113752900-hi4huc'
+ELASTIC_TRANSCODER_PIPELINE_NAME = 'indiepen_test'

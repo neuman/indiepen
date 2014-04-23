@@ -1,0 +1,14 @@
+{% load markdown_deux_tags %}
+{% if focus %}
+<div class="col-lg-12 item">
+  {% elif m.importance == "low" %}
+    <div class="col-md-3 item">
+  {% elif m.importance == "med" %}
+    <div class="col-md-6 item">
+  {% elif m.importance == "hig" %}
+    <div class="col-md-7 item">
+  {% else %}
+    <div class="col-lg-12 item">
+{% endif %}
+  {% include "media/representation.html" %}
+</div>

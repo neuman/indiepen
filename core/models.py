@@ -14,43 +14,33 @@ import json
 from django.contrib.contenttypes.models import ContentType
 import actstream
 from django.db.models import Q
+import uuid
+import os
 from core.verbs import *
 
-MEDIUM_CHOICES = (
-    ('TXT', 'Text'),
-    ('VID', 'Video'),
-    ('AUD', 'Audio'),
-    ('IMA', 'Image'),
-    ('MUL', 'Multimedia'),
-    ('DAT', 'Data'),
-)
-EXTENSIONS = {
-    "TXT":['txt','md'],
-    "VID":['avi', 'm4v', 'mov', 'mp4', 'mpeg', 'mpg', 'vob', 'wmv'],
-    "AUD":['aac', 'aiff', 'm4a', 'mp3', 'wav', 'wma'],
-    "IMA":['gif', 'jpeg', 'jpg', 'png'],
-    "MUL":[],
-    "DAT":['csv','json'],
-}
 
-FREQUENCY_CHOICES = (
-    ('DAI', 'Daily'),
-    ('WEE', 'Weekly'),
-    ('MON', 'Monthly'),
-)
-FREQUENCIES = {
-    "DAI":1,
-    "WEE":7,
-    "MON":30,
-}
 
-DURATION_CHOICES = [(n, (str(n)+" Months")) for n in xrange(1, 6, 1)]
+PROJECT_PHASE_CHOICES = (
+    ('PRI', 'Private'),
+    ('DEL', 'Deliberation'),
+    ('OPE', 'Open'),
+    ('FUN', 'Funded'),
+    ('CAN', 'Canceled'),
+    ('COM', 'Completed'),
+)
 
 IMPORTANCE_CHOICES = (
     ('low', 'Small'),
     ('med', 'Medium'),
     ('hig', 'Large')
 )
+
+def get_file_path(instance, filename):
+    blocks = filename.split('.')
+    ext = blocks[-1]
+    filename = "%s.%s" % (uuid.uuid4(), ext)
+    instance.name = blocks[0]
+    return os.path.join('uploads/', filename)
 
 @python_2_unicode_compatible
 class Auditable(models.Model):
@@ -116,18 +106,19 @@ class Badge(Auditable):
     def __unicode__(self):
         return self.title
 
-
 class Project(Auditable, Noun):
-    title = models.CharField(max_length=300)
-    brief = models.TextField(default='')
+    title = models.CharField(max_length=300, help_text="examples: Why Do Men Bite Dogs?")
+    brief = models.TextField(default='', help_text="A short complete description of exactly what you will do.  If for any reason you do not follow through on this, you will not be paid, so think about it carefully.")
+    schedule = models.TextField(default='', help_text="examples: Daily, Every Other Tuesday, Single Post")
+    planned_posts = models.PositiveIntegerField(help_text="How many posts do you intend to produce?")
+    end_date = models.DateField(help_text="This is when the project will close fully, all unused money is returned to the pledgers. Must be within the next 6 months. Please use the following format: <em>YYYY-MM-DD</em>.")
+    ask_total = models.FloatField()
+    ask_per_post = models.FloatField(help_text="How much it will cost to get each post made.  This can include expenses for living, travel, accomodations, per diems, etc.")
+    upfront_ask = models.FloatField(help_text="Here you can ask for the crowd to cover any upfront expenses you have.  Please include a detailed breakdown in the project brief. examples: plane tickets, equipment")
+    #phase = models.CharField(max_length=3, choices=PROJECT_PHASE_CHOICES, null=True, blank=True)
+    first = models.ForeignKey('Post', related_name="%(app_label)s_%(class)s_related", null=True, blank=True)
+    upfront_ask = models.FloatField(help_text="Here you can ask for the crowd to cover any upfront expenses you have.  examples: plane tickets, equipment")
     members = models.ManyToManyField(User)
-    medium = models.CharField(max_length=3, choices=MEDIUM_CHOICES, default='TXT')
-    duration = models.CharField(max_length=3, choices=DURATION_CHOICES, default='1')
-    frequency = models.CharField(max_length=3, choices=FREQUENCY_CHOICES, default='WEE')
-    #ask = MoneyField(max_digits=10, decimal_places=2, default_currency='USD')
-    ask = models.FloatField()
-    upfront = models.FloatField()
-    funded = models.BooleanField(default=False)
     history = HistoricalRecords()
     verb_classes = [ProjectDetailVerb, CreatePledgeVerb, CreatePaymentMethodVerb, ProjectPostVerb, HistoryListVerb]
 
@@ -157,22 +148,14 @@ class Project(Auditable, Noun):
     def get_pledges(self):
         return Pledge.objects.filter(project=self)
 
-    def get_days(self):
-        return self.duration*FREQUENCIES['MON']
-
-    def get_occurances_per_month(self):
-        output = round(float(FREQUENCIES['MON'])/FREQUENCIES[self.frequency] )
-        print(output)
-        return int(output)
-
     def get_number_of_posts(self):
-        output = int(self.duration)*self.get_occurances_per_month()
-        return output
+        return self.planned_posts
+
+    def get_ask_total(self):
+        return self.upfront_ask+(self.ask_per_post * self.planned_posts)
 
     def get_ask_per_post(self):
-        count = self.get_number_of_posts()
-        ask = float(self.ask-self.upfront)/count
-        return ask
+        return self.ask_per_post
 
     def get_asks_per_post(self):
         return [self.get_ask_per_post()]*self.get_number_of_posts()
@@ -186,7 +169,7 @@ class Project(Auditable, Noun):
         return total
 
     def get_percent(self, piece):
-        output = (float(piece)/float(self.ask))*100
+        output = (float(piece)/float(self.get_ask_total()))*100
         print(output)
         return output
 
@@ -196,12 +179,15 @@ class Project(Auditable, Noun):
         return output
 
     def get_percent_upfront(self):
-        output = self.get_percent(self.upfront)
+        output = self.get_percent(self.upfront_ask)
         print(output)
         return output
 
+    def get_number_of_posts(self):
+        return self.planned_posts
+
     def get_percent_per_post(self):
-        output = self.get_percent(round((self.ask-self.upfront)/self.get_number_of_posts()))
+        output = self.get_percent(round((self.ask_per_post)))
         print(output)
         return output
 
@@ -227,11 +213,90 @@ class Project(Auditable, Noun):
 
 
 from taggit.managers import TaggableManager
+import logging
+logger = logging.getLogger(__name__)
+
+MEDIA_TYPE_CHOICES = (
+    ('V', 'Video'),
+    ('A', 'Audio'),
+    ('I', 'Image'),
+    ('D', 'Document'),
+    ('U', 'Unknown')
+)
+
+MEDIUM_CHOICES = (
+    ('TXT', 'Text'),
+    ('VID', 'Video'),
+    ('AUD', 'Audio'),
+    ('IMG', 'Image'),
+    ('MUL', 'Multimedia'),
+    ('DAT', 'Data'),
+)
+
+EXTENSIONS = {
+    "TXT":['txt','md'],
+    "VID":['avi', 'm4v', 'mov', 'mp4', 'mpeg', 'mpg', 'vob', 'wmv'],
+    "AUD":['aac', 'aiff', 'm4a', 'mp3', 'wav', 'wma'],
+    "IMA":['gif', 'jpeg', 'jpg', 'png'],
+    "MUL":[],
+    "DAT":['csv','json'],
+}
+
+CONVERSION_STATUS = (
+    ('U', 'Unconverted'),
+    ('Q', 'In Conversion Queue'),
+    ('I', 'In Progress'),
+    ('C', 'Converted'),
+    ('E', 'Error'),
+)
+
+VIDEO_EXTENSIONS = [
+    'avi',
+    'm4v',
+    'mov',
+    'mp4',
+    'mpeg',
+    'mpg',
+    'vob',
+    'wmv',
+    'mkv',
+]
+AUDIO_EXTENSIONS = [
+    'aac',
+    'aiff',
+    'm4a',
+    'mp3',
+    'wav',
+    'wma',
+]
+IMAGE_EXTENSIONS = [
+    'gif',
+    'jpeg',
+    'jpg',
+    'png',
+]
+DOCUMENT_EXTENSIONS = [
+    'doc',
+    'docx',
+    'mus',
+    'pdf',
+    'ppt',
+    'pptx',
+    'rtf',
+    'sib',
+    'txt',
+    'xls',
+    'xlsx',
+]
+ALL_EXTS = VIDEO_EXTENSIONS + AUDIO_EXTENSIONS + IMAGE_EXTENSIONS +\
+    DOCUMENT_EXTENSIONS
 
 class Media(Auditable, Noun):
-    original_file = models.FileField(upload_to='/')
+    original_file = models.FileField(upload_to=get_file_path, null=True, blank=True)
     internal_file = models.FileField(upload_to='/', null=True, blank=True)
+    name = models.CharField(max_length=500, null=True, blank=True)
     medium = models.CharField(max_length=3, choices=MEDIUM_CHOICES, null=True, blank=True)
+    status = models.CharField(max_length=1, choices=CONVERSION_STATUS, null=True, blank=True)
     brief = models.TextField(default='', null=True, blank=True)
     tags = TaggableManager(blank=True)
     sort_order = models.PositiveIntegerField(default=0)
@@ -242,7 +307,7 @@ class Media(Auditable, Noun):
     noodles = {}
 
     def __unicode__(self):
-        return self.get_file_name()
+        return self.name
 
     def get_absolute_url(self):
         return reverse(viewname='media_detail', args=[self.id], current_app=APPNAME)
@@ -257,7 +322,17 @@ class Media(Auditable, Noun):
             return False
 
     def get_file_url(self):
-        return self.original_file.url
+        try:
+            return self.internal_file.url
+        except ValueError:
+            return None
+
+    def set_internal_file_s3_key(self, key):
+        self.internal_file.name = key
+        self.save()
+
+    def get_original_s3_key(self):
+        return self.original_file.name.lstrip('/')
 
     def get_content(self):
         return self.original_file._get_file().read()
@@ -288,7 +363,7 @@ class Media(Auditable, Noun):
         return output
 
     def get_file_name(self):
-                return self.original_file.name
+        return self.name
 
     def get_file_extension(self):
         #return string_in.__getslice__(string_in.__len__()-3, string_in.__len__()).lower()
@@ -308,6 +383,37 @@ class Media(Auditable, Noun):
 
     def get_post(self):
         return get_media_post(self)
+
+    #for celery
+    @property
+    def noext(self):
+        return os.path.splitext(self.s3_key)[0]
+
+    @property
+    def basename(self):
+        return os.path.splitext(os.path.basename(self.s3_key))[0]
+
+    @property
+    def fileext(self):
+        return os.path.splitext(self.s3_key)[1][1:]
+
+    def reprocess(self):
+        self.update(set__status='U', set__s3_key=self.original_s3_key)
+        from ddesk.tasks import get_info
+        get_info.apply_async(args=[str(self.id)])
+
+    def set_complete(self):
+        self.status = 'C'
+        self.save()
+        #get applications
+        for application in self.get_applications():
+            app_media = application.get_medias_proxy()
+            if app_media.count() == app_media.filter(status='C').count():
+                application.update(set__in_progress=False)
+                # Immediate notifications have been suppressed until now since
+                # media was being converted, so update all reviewers that
+                # have immediate update frequency
+                application.notify_reviewers()
 
 def get_media_post(media):
     return media.post_set.all()[0]
@@ -479,3 +585,6 @@ def super_search(model, fields, matches, strings, initial=None):
 
 def get_history_most_recent(instance):
     return instance.history.all().order_by('-updated_at')[0]
+
+
+

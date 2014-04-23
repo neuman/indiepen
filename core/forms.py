@@ -14,6 +14,23 @@ class BootstrapForm(forms.ModelForm):
             else:
                 field.widget.attrs.update({'class':'form-control'})
 
+class BooleanForm(forms.Form):
+    decision = forms.BooleanField(required=True, label="Confirm", help_text="I swear, I'm ready to do this.")
+
+    def clean(self):
+        cleaned_data = super(BooleanForm, self).clean()
+        decision = cleaned_data.get("decision")
+
+        if decision==None:
+            self._errors["decision"] = self.error_class(["You have to check the box if you want to publish."])
+            # These fields are no longer valid. Remove them from the
+            # cleaned data.
+
+
+        # Always return the cleaned data, whether you have changed it or
+        # not.
+        return cleaned_data
+
 class DropzoneForm(BootstrapForm):
     def __init__(self, *args, **kwargs):
         super(DropzoneForm, self).__init__(*args, **kwargs)
@@ -26,7 +43,7 @@ class DropzoneForm(BootstrapForm):
 class ProjectForm(BootstrapForm):
     class Meta:
         model = cm.Project
-        exclude = ['changed_by', 'members']
+        exclude = ['changed_by', 'members','funded', 'approved', 'first']
 
 class PostForm(BootstrapForm):
     class Meta:
