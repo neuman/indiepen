@@ -2,24 +2,66 @@
 {% load markdown_deux_tags %}
 {% block title %}Indiepen{% endblock %}
 {% block showcase %}
-  <section class="js-masonry" data-masonry-options='{ "itemSelector": ".item" }'>
-    {% for post in posts %}
-    <section class="col-md-3 item">
+<!--features carousel start-->
+<div class="panel" id="bg">
+  <div class="panel-body">
+    <div class="row">
+      <div class="col-lg-4">
+        <section class="panel">
+          <div class="panel-body">
+            <h1>Journalists used to be watchdogs</h1>
+          </div>
+        </section>
+      </div>
+      <div class="col-lg-4">
+        <section class="panel">
+          <div class="panel-body">
+            <h1>Corruption and misinformation are rampant.</h1>
+          </div>
+        </section>
+      </div>
+      <div class="col-lg-4">
+        <section class="panel">
+          <div class="panel-body">
+            <h1>We've lost one of our best tools to fight back.</h1>
+          </div>
+        </section>
+      </div>
+    </div>
+
+    <div class="col-lg-12">
       <section class="panel">
-        <div class="panel-heading">
-          <a href="{{ post.get_absolute_url }}">{{ post.title }}</a>
-          {% if not post.published %}<span class="badge bg-warning">Not Yet Published</span>{% endif %}
-          {% if post.submitted %}<span class="badge bg-warning">Submitted for Approval</span>{% endif %}
-        </div>
         <div class="panel-body">
-          {% for m in post.get_summary_medias %}
-            {% include "media/representation.html" %}
-          {%endfor %}
+          <h1>Get paid by the crowd to investigate what it cares about.</h1>
+          <form action="/login/facebook">
+            <button type="submit" class="btn btn-primary btn-lg">Submit a Proposal</button>
+          </form>
+          <p><a href='example'>See an example.</a></p>
         </div>
       </section>
+    </div>
+  </div>
+</div>
+<!--features carousel end-->
+
+<section class="js-masonry" data-masonry-options='{ "itemSelector": ".item" }'>
+  {% for post in posts %}
+  <section class="col-md-3 item">
+    <section class="panel">
+      <div class="panel-heading">
+        <a href="{{ post.get_absolute_url }}">{{ post.title }}</a>
+        {% if not post.published %}<span class="badge bg-warning">Not Yet Published</span>{% endif %}
+        {% if post.submitted %}<span class="badge bg-warning">Submitted for Approval</span>{% endif %}
+      </div>
+      <div class="panel-body">
+        {% for m in post.get_summary_medias %}
+        {% include "media/representation.html" %}
+        {%endfor %}
+      </div>
     </section>
-    {% endfor %}
   </section>
+  {% endfor %}
+</section>
 {% endblock %}
 {% block audit %}
 {% endblock %}

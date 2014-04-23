@@ -64,8 +64,8 @@ requirejs(["jquery","dropzone","imagesloaded","masonry","jquery.bootstrap","jque
               paginationSpeed : 400,
               singleItem : true
 
-            });*/
-
+            });
+*/
 jQuery.fn.doesExist = function(){
   return jQuery(this).length > 0;
 };
