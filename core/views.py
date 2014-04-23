@@ -315,13 +315,14 @@ class PostReorderMediaView(PostView, FormView, AjaxableResponseMixin):
         return context
 
 class PostDetailView(PostView, TemplateView):
-    template_name = 'media.html'
+    template_name = 'post.html'
 
     def get_context_data(self, **kwargs):
         # Call the base implementation first to get a context
         context = super(PostDetailView, self).get_context_data(**kwargs)
         post = self.noun
         context['post'] = post
+        context['project'] = post.project
         context['medias'] = post.get_medias()
         context['available_verbs'] = post.get_available_verbs(self.request.user)
         stream = []
@@ -339,7 +340,7 @@ class PostSubmitView(PostView, FormView):
 
     def get_context_data(self, **kwargs):
         context = super(PostSubmitView, self).get_context_data(**kwargs)
-        context['briefs'] = ["Submit your project for publishing by the indiepen staff.","As long as it meets our guidelines, we'll publish it."]
+        context['briefs'] = ["Freeze and submit your project for publishing by the indiepen staff.","As long as it meets our guidelines, we'll publish it.","This action cannot be undone so make sure everything is ready. "]
         return context
 
     def form_valid(self, form):
@@ -348,7 +349,7 @@ class PostSubmitView(PostView, FormView):
         return super(PostSubmitView, self).form_valid(form)
 
     def get_success_url(self):
-        action.send(self.request.user, verb='published', action_object=cm.get_history_most_recent(self.noun), target=self.noun)
+        action.send(self.request.user, verb='submitted', action_object=cm.get_history_most_recent(self.noun), target=self.noun)
         return self.noun.get_absolute_url()
 
 class PostPublishView(PostView, FormView):
@@ -429,7 +430,7 @@ class PostUploadsView(PostView, TemplateView):
         # Call the base implementation first to get a context
         context = super(PostUploadsView, self).get_context_data(**kwargs)
         context['upload_url'] = reverse(viewname='post_media_create', args=(self.kwargs['pk'],), current_app='core')
-        context['briefs'] = ["You must create a first post that explains your project before you can submit for approval.","On Indiepen, a post is really just a collection of media.  You can upload any images or text files and worry about ordering and formatting them later.  Unlike most publishing platforms, text is treated just like any other media and must be uploaded as a file. Please use markdown (.md) or plaintext (.txt) files for written content."]
+        context['briefs'] = ["You must create a first post that explains your project before you can submit for approval.","On Indiepen, a post is really just a collection of media and it's history.  You can upload any images or text files and worry about ordering and formatting them later.  Unlike most publishing platforms, text is treated just like any other media and must be uploaded as a file. Please use <a href='http://whatismarkdown.com/'>markdown</a> (.md) or plaintext (.txt) files for written content."]
         return context
 
 #Post ENDS

@@ -139,7 +139,7 @@
             {% endfor %}
             {% if briefs %}
             {% for brief in briefs %}
-                <div class="alert alert-warning">{{ brief }}</div>
+                <div class="alert alert-warning">{{ brief|safe }}</div>
             {% endfor %}
             {% endif %}
           {% block showcase %}{% endblock %}

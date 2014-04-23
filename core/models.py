@@ -112,7 +112,7 @@ class Project(Auditable, Noun):
     schedule = models.TextField(default='', help_text="examples: Daily, Every Other Tuesday, Single Post")
     planned_posts = models.PositiveIntegerField(help_text="How many posts do you intend to produce?")
     end_date = models.DateField(help_text="This is when the project will close fully, all unused money is returned to the pledgers. Must be within the next 6 months. Please use the following format: <em>YYYY-MM-DD</em>.")
-    ask_total = models.FloatField()
+    ask_total = models.FloatField(default=0)
     ask_per_post = models.FloatField(help_text="How much it will cost to get each post made.  This can include expenses for living, travel, accomodations, per diems, etc.")
     upfront_ask = models.FloatField(help_text="Here you can ask for the crowd to cover any upfront expenses you have.  Please include a detailed breakdown in the project brief. examples: plane tickets, equipment")
     #phase = models.CharField(max_length=3, choices=PROJECT_PHASE_CHOICES, null=True, blank=True)

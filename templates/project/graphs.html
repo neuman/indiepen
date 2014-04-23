@@ -1,0 +1,60 @@
+
+<div class="row state-overview">
+                  <div class="col-lg-3 col-sm-6">
+                      <section class="panel">
+                          <div class="symbol terques">
+                              <i class="fa fa-puzzle-piece"></i>
+                          </div>
+                          <div class="value">
+                              <h1 class="count">{{ project.planned_posts }}</h1>
+                              <p>Planned Posts</p>
+                          </div>
+                      </section>
+                  </div>
+                  <div class="col-lg-3 col-sm-6">
+                      <section class="panel">
+                          <div class="symbol red">
+                              <i class="fa fa-credit-card"></i>
+                          </div>
+                          <div class="value">
+                              <h1 class=" count2">${{ project.get_ask_per_post }}</h1>
+                              <p>Fee Per Post</p>
+                          </div>
+                      </section>
+                  </div>
+                  <div class="col-lg-3 col-sm-6">
+                      <section class="panel">
+                          <div class="symbol yellow">
+                              <i class="fa fa-shopping-cart"></i>
+                          </div>
+                          <div class="value">
+                              <h1 class=" count3">${{ project.upfront_ask }}</h1>
+                              <p>Upfront Costs</p>
+                          </div>
+                      </section>
+                  </div>
+                  <div class="col-lg-3 col-sm-6">
+                      <section class="panel">
+                          <div class="symbol blue">
+                              <i class="fa fa-calendar-o"></i>
+                          </div>
+                          <div class="value">
+                              <h3 class=" count4">{{ project.end_date }}</h3>
+                              <p>Deadline</p>
+                          </div>
+                      </section>
+                  </div>
+              </div>
+
+  		<div class="progress progress-sm">
+  			<div class="progress-bar label-warning" style="width: {{ project.get_percent_pledged }}%">
+  			</div>
+  		</div>
+
+  <div class="panel">
+  	<div class="panel-heading">
+<h1>{{ project.title }}</h1>
+
+  		<p>{% for member in project.get_members %}<a href="/users/{{ member.id }}/">{{ member.first_name }} {{ member.last_name }}</a> {% endfor%} </p>
+  	</div>
+  </div>
