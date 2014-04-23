@@ -8,9 +8,9 @@
       {% if not noun.published %}<span class="badge bg-warning">Not Yet Published</span>{% endif %}
       </div>
     <div class="panel-body">
-      <section class="js-masonry panel" data-masonry-options='{ "itemSelector": ".item" }'>
+      <section >
         {% for m in medias %}
-          {% include "media/container.html" %}
+          {% include "media/container.html" with download=True%}
         {% endfor %}
       </section>
     </div>

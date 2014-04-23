@@ -396,8 +396,9 @@ class PostMediaCreateView(PostView, CreateView):
         if self.object.medium not in (cm.EXTENSIONS['AUD']+cm.EXTENSIONS['VID']):
             self.object.internal_file = self.object.original_file
             self.object.save()
-        #kick off transcoding task
-        ct.convert_media_elastic.delay(self.object.id, settings.ELASTIC_TRANSCODER_PIPELINE_NAME)
+        else:
+            #kick off transcoding task if media is a video
+            ct.convert_media_elastic.delay(self.object.id, settings.ELASTIC_TRANSCODER_PIPELINE_NAME)
         #save action after files are set 
         action.send(self.request.user, verb='uploaded', action_object=cm.get_history_most_recent(self.new_instance), target=self.object)
         return reverse(viewname='post_media_create', args=(self.kwargs['pk'],), current_app='core')

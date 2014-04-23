@@ -8,13 +8,7 @@
   <li class="media-representation span4" data-pk="{{ m.id }}">
   <div class="row">
   <div class="handle col-xs-6 col-md-3">
-  {% if m.medium == "IMA" %}
-      <a href="{{ m.get_absolute_url }}" class="thumbnail">
-          <img src='{{ m.get_file_url }}' style="display: block;"></img>
-      </a>
-  {% elif m.medium == "TXT" %}
-      {{ m.get_content |truncatechars:200 |markdown}}
-  {% endif %}
+    {% include "media/representation.html" %}
   </div>
   </div>
   </li>
@@ -30,10 +24,7 @@
   <div class="alert alert-danger" id="error_{{ field.name }}">{{ error|escape }}</div>
   {% endfor %}
   {% endif %}
-
   {% endfor %}
-  <input id="submit_reorder" class="btn btn-success" role="button" value="{{ verb|default:"Submit" }}" />
-
 </form>
 
 {% endif %}

@@ -73,20 +73,6 @@ jQuery.fn.doesExist = function(){
 
 
 
-imagesLoaded(
-  '.js-masonry', 
-  function() {
-    console.log('images loaded');
-    var container = document.querySelector('.js-masonry');
-    var msnry = new Masonry( container, {
-  itemSelector: '.item',
-  isAnimated: true
-    });
-  });
-
-
-
-
 if($('.dropzone').doesExist()){
   new Dropzone(".dropzone", { 
     paramName: "original_file"
