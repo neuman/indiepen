@@ -28,59 +28,7 @@
 
 <body data-spy="scroll" data-target="#navbar">
     <div id="lazyload"></div>
-    <!-- BEGIN Navbar -->
-    <nav id="navbars" class="navbar navbar-default navbar-fixed-top" role="navigation">
-        <!-- Brand and toggle get grouped for better mobile display -->
-        <div class="wrapper">
-            <div class="navbar-header">
-                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
-                    <span class="sr-only">Toggle navigation</span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                </button>
-                <a class="navbar-brand" href="javascript:;">
-                    <img src="{{ STATIC_URL }}memandang/images/logo.png" class="logo" alt="logo">indiepen.</a>
-            </div>
-
-            <div id="navbar" class="collapse navbar-collapse navbar-ex1-collapse">
-                <ul class="nav navbar-nav navbar-right">
-                    <li class=""><a href="/">HOME</a>
-                    </li>
-                    <li class=""><a href="/">ABOUT</a>
-                    </li>
-                    <li class=""><a href="#contact">CONTACT</a>
-                    </li>
-                    {% if available_verbs %}
-                    <li class="dropdown">
-                        <a href="javascript:;" class="dropdown-toggle" data-toggle="dropdown">{{ noun.get_class_name }} <b class="caret"></b></a>
-                        <ul class="dropdown-menu">
-                          {% block left_menu %}
-                          {% for verb in available_verbs %}
-                            {% if verb.visible %}
-                                <li><a href="{{ verb.url }}">{{ verb.display_name }}</a></li>
-                            {% endif %}
-                          {% endfor %}
-                          {% endblock %}
-                        </ul>
-                        </li>
-                      {% endif %}
-                    
-                    <li><a class="nav-spacer">&nbsp;</a>
-                    </li>
-                    <li><a href="javascript:;"><i class="icon-facebook"></i></a>
-                    </li>
-                    <li><a href="javascript:;"><i class="icon-twitter"></i></a>
-                    </li>
-                    <li><a href="javascript:;"><i class="icon-envelope-alt"></i></a>
-                    </li>
-                </ul>
-            </div>
-            <!-- /.navbar-collapse -->
-        </div>
-        <!-- /wrapper -->
-    </nav>
-    <!-- END Navbar -->
+    {% include "base/navbar.html"%}
 
     
     <!-- BEGIN Intro -->

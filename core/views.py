@@ -421,7 +421,7 @@ class PostUploadsView(PostView, TemplateView):
 #User STARTS 
 
 class UserDetailView(TemplateView, Noun):
-    template_name = 'user.html'
+    template_name = 'history.html'
 
     def get_verbs(self):
         return [

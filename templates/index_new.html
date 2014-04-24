@@ -30,57 +30,7 @@
 
 <body data-spy="scroll" data-target="#navbar">
     <div id="lazyload"></div>
-    <!-- BEGIN Navbar -->
-    <nav id="navbars" class="navbar navbar-default navbar-fixed-top" role="navigation">
-        <!-- Brand and toggle get grouped for better mobile display -->
-        <div class="wrapper">
-            <div class="navbar-header">
-                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
-                    <span class="sr-only">Toggle navigation</span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                </button>
-                <a class="navbar-brand" href="javascript:;">
-                    <img src="{{ STATIC_URL }}memandang/images/logo.png" class="logo" alt="logo">indiepen.</a>
-            </div>
-
-            <div id="navbar" class="collapse navbar-collapse navbar-ex1-collapse">
-                <ul class="nav navbar-nav navbar-right">
-                    <li class=""><a href="#home-slide">HOME</a>
-                    </li>
-                    <li class=""><a href="#about">ABOUT</a>
-                    </li>
-                    <li class=""><a href="#contact">CONTACT</a>
-                    </li>
-                    <li class="dropdown">
-                        <a href="javascript:;" class="dropdown-toggle" data-toggle="dropdown">PAGES <b class="caret"></b></a>
-                        <ul class="dropdown-menu">
-                            <li><a href="index.html">Home Basic</a>
-                            </li>
-                            <li><a href="personal.html">Home Alternate</a>
-                            </li>
-                            <li><a href="blog.html">Blog</a>
-                            </li>
-                            <li><a href="blog-post.html">Blog Post</a>
-                            </li>
-                        </ul>
-                    </li>
-                    <li><a class="nav-spacer">&nbsp;</a>
-                    </li>
-                    <li><a href="javascript:;"><i class="icon-facebook"></i></a>
-                    </li>
-                    <li><a href="javascript:;"><i class="icon-twitter"></i></a>
-                    </li>
-                    <li><a href="javascript:;"><i class="icon-envelope-alt"></i></a>
-                    </li>
-                </ul>
-            </div>
-            <!-- /.navbar-collapse -->
-        </div>
-        <!-- /wrapper -->
-    </nav>
-    <!-- END Navbar -->
+    {% include "base/navbar.html"%}
 
     <!-- BEGIN Slider -->
     <div id="home-slide">
@@ -118,7 +68,7 @@
                     <div class="front-logo"></div>
                     <hr class="white">
                     <h1 class="white uppercase hugetext">SUBMIT A PROPOSAL</h1>
-                    <p><a href="{% if user.is_authenticated %}{% else %}{% endif %}" class="button button-white-side">Find Out More</a>
+                    <p><a href="#about" class="button button-white-side">Find Out More</a>
                     </p>
                 </div>
             </li>
@@ -130,7 +80,7 @@
     </div>
     <!-- END Slider -->
     <!-- BEGIN Intro -->
-    <section class="about">
+    <section id="about" class="about">
         <div class="container">
             <div class="wrapper">
                 <div class="row">
@@ -187,8 +137,8 @@
                                 <span></span>
                             </div>
                             <div class="featured-desc">
-                                <h3>Retina Ready</h3>
-                                <p>Suspendisse nibh velit, blandit et massa in, tempus vulputate magna.</p>
+                                <h3>Bridge the Gap</h3>
+                                <p>We've come to rely heavily on social sharing, but indie only goes so far. </p>
                             </div>
                         </div>
                     </div>

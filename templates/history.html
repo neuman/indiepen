@@ -5,54 +5,34 @@
 
 {% block showcase %}
 
-<div class="col-md-9">
-    <section class="panel">
-        <header class="panel-heading">
-            {{ object_instance }} Stream
-            <span class="tools pull-right">
-              <a class="fa fa-chevron-down" href="javascript:;"></a>
-              <a class="fa fa-times" href="javascript:;"></a>
-          </span>
-      </header>
-      <div class="panel-body">
-        <div class="timeline-messages">
-          {% for s in stream %}
-          <!-- Comment -->
-          <div class="msg-time-chat">
-            <a href="#" class="message-img"><span class="avatar glyphicon glyphicon-user"></span></a>
-            <div class="message-body msg-in ">
-                <span class="arrow"></span>
-                <div class="text row">
-                    <div class="col-xs-5 col-md-9">
-                    <p class="attribution">{{ s.timestamp }}</p>
-                    <a href="/users/{{ s.actor.id}}/">{{ s.actor.first_name }} {{ s.actor.last_name }}</a>{{ s.verb }} <a href="{{ s.target.get_absolute_url }}">{{ s.target }}</a>
-                        <p><a href="{{ m.get_absolute_url }}" >{{ m.get_file_name }}</a> {{ m.brief }}</p>
-                    </div>
-                    <div>
-                        {% with m=s.action_object.instance %}
-                            <div class="col-xs-6 col-md-3">
-                            {% if m.get_class_name == "Media" %}
-                                {% include "media/representation.html" with truncate=True%}
-                            {% endif %}
-                            </div>
-                        {% endwith %}
-                    </div>
-                </div>
-
-            </div>
+<ul class="dp_tmtimeline">
+  {% for s in stream %}
+  <li>
+    <time class="dp_tmtime" datetime="2013-04-10 18:30">
+      <span>{{ s.timestamp|date:"F j" }}</span>
+      <span>{{ s.timestamp.year }}</span>
+    </time>
+    <div class="dp_tmicon icon-pencil"></div>
+    <div class="dp_tmlabel animaze fromTop" style="opacity: 1; top: 0px;">
+      <div class="text row">
+        <div class="col-xs-5 col-md-9">
+          <a href="/users/{{ s.actor.id}}/">{{ s.actor.first_name }} {{ s.actor.last_name }}</a>{{ s.verb }} <a href="{{ s.target.get_absolute_url }}">{{ s.target }}</a>
+          <p><a href="{{ m.get_absolute_url }}" >{{ m.get_file_name }}</a> {{ m.brief }}</p>
         </div>
-        <!-- /comment -->
-        {% endfor %}
+        <div>
+          {% with m=s.action_object.instance %}
+          <div class="col-xs-6 col-md-3">
+            {% if m.get_class_name == "Media" %}
+            {% include "media/representation.html" with truncate=True%}
+            {% endif %}
+          </div>
+          {% endwith %}
+        </div>
+      </div>
     </div>
-</div>
-</section>
-</div>
-
-<div class="col-md-3">
-
-</div>
-
-
+  </li>
+  {% endfor %}
+</ul>
 
 {% endblock %}
 
