@@ -1,0 +1,91 @@
+@media (min-width: 768px) and (min-width: 850px)  {
+  .navbar-header {
+    float: left !important;
+  }
+}
+@media (min-width: 768px) and (min-width: 850px)  {
+  .navbar-collapse {
+    width: auto !important;
+    border-top: 0 !important;
+    box-shadow: none !important;
+  }
+  .navbar-collapse.collapse {
+    display: block !important;
+    height: auto !important;
+    padding-bottom: 0 !important;
+    overflow: visible !important;
+  }
+  .navbar-collapse.in {
+    overflow-y: visible !important;
+  }
+  .navbar-collapse .navbar-nav.navbar-left:first-child {
+    margin-left: -15px !important;
+  }
+  .navbar-collapse .navbar-nav.navbar-right:last-child {
+    margin-right: -15px !important;
+  }
+  .navbar-collapse .navbar-text:last-child {
+    margin-right: 0 !important;
+  }
+}
+@media (min-width: 768px) and (min-width: 850px)  {
+  .container > .navbar-header,
+  .container > .navbar-collapse {
+    margin-right: 0 !important;
+    margin-left: 0 !important;
+  }
+}
+@media (min-width: 768px) and (min-width: 850px)  {
+  .navbar > .container .navbar-brand {
+    margin-left: -15px !important;
+  }
+}
+@media (min-width: 768px) and (min-width: 850px)  {
+  .navbar-toggle {
+    display: none !important;
+  }
+}
+@media (max-width: 767px), (max-width: 849px) {
+  .navbar-nav .open .dropdown-menu {
+    position: static !important;
+    float: none !important;
+    width: auto !important;
+    margin-top: 0 !important;
+    background-color: transparent !important;
+    border: 0 !important;
+    box-shadow: none !important;
+  }
+  .navbar-nav .open .dropdown-menu > li > a,
+  .navbar-nav .open .dropdown-menu .dropdown-header {
+    padding: 5px 15px 5px 25px !important;
+  }
+  .navbar-nav .open .dropdown-menu > li > a {
+    line-height: 20px !important;
+  }
+  .navbar-nav .open .dropdown-menu > li > a:hover,
+  .navbar-nav .open .dropdown-menu > li > a:focus {
+    background-image: none !important;
+  }
+}
+@media (min-width: 768px) and (min-width: 850px)  {
+  .navbar-nav {
+    float: left !important;
+    margin: 0 !important;
+  }
+  .navbar-nav > li {
+    float: left !important;
+  }
+  .navbar-nav > li > a {
+    padding-top: 15px !important;
+    padding-bottom: 15px !important;
+  }
+}
+
+@media (min-width: 768px) and (min-width: 850px)  {
+  .navbar-left {
+    float: left !important ;
+  }
+  .navbar-right {
+    float: right !important;
+  }
+}
