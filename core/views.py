@@ -47,7 +47,7 @@ class MessageView(SiteRootView, TemplateView):
 
 
 class LandingView(TemplateView):
-    template_name = 'index.html'
+    template_name = 'index_new.html'
 
 class BootstrapView(TemplateView):
     template_name = 'grid.html'

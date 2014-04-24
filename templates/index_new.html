@@ -117,10 +117,10 @@
                 <div class="slides-filter"></div>
                 <div style="background-image: url('{{ STATIC_URL }}memandang/images/home-slide-3.jpg');" class="bg-parallax parallaxize"></div>
                 <div class="bigHeader slideUp">
-                    <h1 class="white uppercase hugetext">GET MORE EXTRAS</h1>
+                    <h1 class="white uppercase hugetext">SUBMIT A PROPOSAL</h1>
                     <hr class="white">
-                    <p class="uppercase white">Great play, extensive design &amp; buy the products</p>
-                    <p><a href="#introduction" class="button button-white-side">Discover This</a>
+                    <p class="uppercase white">What does your network care about?</p>
+                    <p><a href="{% if user.is_authenticated %}{% else %}{% endif %}" class="button button-white-side">Submit</a>
                     </p>
                 </div>
             </li>
@@ -137,7 +137,7 @@
             <div class="wrapper">
                 <div class="row">
                     <div class="col-lg-12">
-                        <h2 class="grey text-center">indiepen is a great template and we have special services for you and other beautiful Things.</h2>
+                        <h2 class="grey text-center">indiepen is a marketplace for the service of investigation.</h2>
                     </div>
                 </div>
             </div>
@@ -151,7 +151,7 @@
                 <div class="row">
                     <div class="col-lg-12  animaze fromTop">
                         <div class="title text-center">
-                            <h1>BENEFITS</h1>
+                            <h1>WHY THIS IS IMPORTANT</h1>
                             <hr/>
                         </div>
                     </div>
@@ -163,8 +163,8 @@
                                 <span></span>
                             </div>
                             <div class="featured-desc">
-                                <h3>Responsive</h3>
-                                <p>Suspendisse nibh velit, blandit et massa in, tempus vulputate magna.</p>
+                                <h3>We Need Watchdogs</h3>
+                                <p>Perverse incentives have lead traditional news organizations scrambling for pageviews leaving important news uncovered.</p>
                             </div>
                         </div>
                     </div>
@@ -176,8 +176,8 @@
                                 <span></span>
                             </div>
                             <div class="featured-desc">
-                                <h3>Rich Features</h3>
-                                <p>Suspendisse nibh velit, blandit et massa in, tempus vulputate magna.</p>
+                                <h3>Who's Paying For Your News?</h3>
+                                <p>Lots of research and news is payed for by interested parties.  If you don't know who's paying, you don't know what's propaganda.</p>
                             </div>
                         </div>
                     </div>
@@ -280,51 +280,7 @@
                                     <img src="{{ STATIC_URL }}memandang/images/portfolio-thumb-1.jpg" alt="portfolio-thumb-1">
                                 </a>
                             </div>
-                            <div class="col-lg-4 portfolio-item illustrations">
-                                <a class="popup" href="{{ STATIC_URL }}memandang/images/image-05-full.jpg">
-                                    <span class="project-hover">
-                                        <span>Designing Apps
-                                        </span>
-                                    </span>
-                                    <img src="{{ STATIC_URL }}memandang/images/portfolio-thumb-5.jpg" alt="portfolio-thumb-5">
-                                </a>
-                            </div>
-                            <div class="col-lg-4 portfolio-item websites">
-                                <a class="popup" href="{{ STATIC_URL }}memandang/images/image-03-full.jpg">
-                                    <span class="project-hover">
-                                        <span>Branding Identity
-                                        </span>
-                                    </span>
-                                    <img src="{{ STATIC_URL }}memandang/images/portfolio-thumb-3.jpg" alt="portfolio-thumb-3">
-                                </a>
-                            </div>
-                            <div class="col-lg-4 portfolio-item photo">
-                                <a class="popup" href="{{ STATIC_URL }}memandang/images/image-04-full.jpg">
-                                    <span class="project-hover">
-                                        <span>Photography
-                                        </span>
-                                    </span>
-                                    <img src="{{ STATIC_URL }}memandang/images/portfolio-thumb-4.jpg" alt="portfolio-thumb-4">
-                                </a>
-                            </div>
-                            <div class="col-lg-4 portfolio-item websites">
-                                <a class="popup" href="{{ STATIC_URL }}memandang/images/image-02-full.jpg">
-                                    <span class="project-hover">
-                                        <span>Website Design
-                                        </span>
-                                    </span>
-                                    <img src="{{ STATIC_URL }}memandang/images/portfolio-thumb-2.jpg" alt="portfolio-thumb-2">
-                                </a>
-                            </div>
-                            <div class="col-lg-4 portfolio-item illustrations">
-                                <a class="popup" href="{{ STATIC_URL }}memandang/images/image-06-full.jpg">
-                                    <span class="project-hover">
-                                        <span>Branding Illustration
-                                        </span>
-                                    </span>
-                                    <img src="{{ STATIC_URL }}memandang/images/portfolio-thumb-6.jpg" alt="portfolio-thumb-6">
-                                </a>
-                            </div>
+                            
                         </div>
                     </div>
                 </div>
@@ -332,42 +288,7 @@
         </div>
     </section>
     <!-- END Portfolio -->
-    <!-- BEGIN Testimoni -->
-    <section id="testimoni" class="testimoni">
-        <div class="container">
-            <div class="wrapper">
-                <div class="row">
-                    <div class="col-lg-12 animaze">
-                        <div class="title text-center">
-                            <h1 class="white">WHAT THEY SAY</h1>
-                            <hr class="white">
-                        </div>
-                        <div id="quote-slider">
-                            <ul>
-                                <li>
-                                    <div class="hexaout">
-                                        <img src="{{ STATIC_URL }}memandang/images/quote-avatar-2.jpg" class="hexapic" alt="">
-                                    </div>
-                                    <h2>When there is darkness, dare to be the first to shine a light.</h2>
-                                    <span>&mdash; Budi Sumadi, CEO Baju Buathik</span>
-                                </li>
-                                <li>
-                                    <div class="hexaout">
-                                        <img src="{{ STATIC_URL }}memandang/images/quote-avatar-1.jpg" class="hexapic" alt="">
-                                    </div>
-                                    <h2>It is important that we forgive ourselves for making mistakes. We need to learn from our errors and move on</h2>
-                                    <span>&mdash; Budi Sumadi, CEO Baju Buathik</span>
-                                </li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-    <!-- END Testimoni -->
-    <!-- BEGIN About -->
-    <section id="about" class="about">
+    <!-- BEGIN Call to Action -->
         <div class="slider-about-wrapper parallaxize" style="background:url('{{ STATIC_URL }}memandang/images/about-us-background.jpg');">
             <div class="slider-about">
                 <div class="container">
@@ -375,8 +296,8 @@
                         <div class="row">
                             <div class="col-lg-12 slide-text-wrapper">
                                 <div class="slide-text">
-                                    WE ARE
-                                    <span class="rotatez">AWESOME,CREATIVES,FANTASTIC,PROFESSIONAL</span>&nbsp;AGENCIES
+                                    INVESTIGATE
+                                    <span class="rotatez">fracking,gentrification,drones,missing money,other stuff,things,shiny things</span>&nbsp;
                                 </div>
                             </div>
                         </div>
@@ -384,6 +305,27 @@
                 </div>
             </div>
         </div>
+    <section class="action text-center">
+        <div class="action-wrapper">
+            <div class="container">
+                <div class="wrapper">
+                    <div class="row">
+                        <div class="col-lg-12 animaze fromTop">
+                            <h4 class="white text-center">WE'RE LOOKING FOR CITIZEN JOURNALISTS LIKE YOU </h4>
+                            <br/>
+                            <nav class="cl-effect-8">
+                                <a href="javascript:;" data-hover="test">Submit a Proposal</a>
+                            </nav>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- END Call to Action -->
+    <!-- BEGIN About -->
+    <section id="about" class="about">
+
         <div class="team">
             <div class="container">
                 <div class="wrapper">
@@ -449,26 +391,6 @@
         </div>
     </section>
     <!-- END About -->
-    <!-- BEGIN Call to Action -->
-    <section class="action text-center">
-        <div class="action-wrapper">
-            <div class="container">
-                <div class="wrapper">
-                    <div class="row">
-                        <div class="col-lg-12 animaze fromTop">
-                            <h4 class="white text-center">A BEAUTIFUL, RICH FEATURES & RESPONSIVE TEMPLATE FOR AGENCY OR PORTFOLIO</h4>
-                            <br/>
-                            <nav class="cl-effect-8">
-                                <a href="javascript:;" data-hover="test">Purchase indiepen</a>
-                                <a href="personal.html" data-hover="test">Check Alternate Template</a>
-                            </nav>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-    <!-- END Call to Action -->
     <!-- BEGIN Contact -->
     <section id="contact" class="contact" style="background:url('{{ STATIC_URL }}memandang/images/contact-background.jpg');">
         <div class="contact-wrapper">
@@ -507,36 +429,17 @@
                                             <div class="col-lg-6">
                                                 <div class="bio">
                                                     <h3>// indiepen</h3>
-                                                    <p>Phasellus quis lectus metus, at posuere neque. Sed pharetra nibh eget orci convallis at posuere leo convallis. Sed blandit augue vitae augue scelerisque bibendum.</p>
+                                                    <p>Questions and comments are welcome, so please, drop us a line.</p>
                                                 </div>
                                                 <ul class="bioextra">
                                                     <li>
-                                                        <strong>Call</strong>
-                                                        <i>+64 566 - 155 - 1235 &nbsp;&nbsp;/&nbsp;&nbsp; +15 127 - 887 - 331</i>
-                                                    </li>
-                                                    <li>
-                                                        <strong>Address 1</strong>
-                                                        <i>Raihan St. 1601 S. California Ave Palo Alto, CA 94304. US</i>
-                                                    </li>
-                                                    <li>
-                                                        <strong>Address 2</strong>
-                                                        <i>Heavenis Road 96 A - Burnmingham City, UK 775</i>
+                                                        <strong>Made In</strong>
+                                                        <i>Brooklyn NY</i>
                                                     </li>
                                                 </ul>
                                             </div>
                                         </div>
-                                        <div class="row">
-                                            <div class="col-lg-12">
-                                                <br/>
-                                                <p class="visit"><a data-rel="3" class="contactLink hovercolor" href="javascript:;"><i class="icon-map-marker"></i></a>
-                                                </p>
-                                                <p>St. Bulaksumur No 445
-                                                    <br>Sleman, Indonesia</p>
-                                                <a href="javascript:;"><i class="icon-facebook icon-social button-white-side"></i></a>
-                                                <a href="javascript:;"><i class="icon-google-plus icon-social button-white-side"></i></a>
-                                                <a href="javascript:;"><i class="icon-dribbble icon-social button-white-side"></i></a>
-                                            </div>
-                                        </div>
+                                        
                                     </li>
                                     <li>
                                         <!-- Map -->
@@ -586,7 +489,7 @@
     <script src="{{ STATIC_URL }}memandang/js/lib/jquery.inview.min.js"></script>
     <script src="{{ STATIC_URL }}memandang/js/lib/jquery.simple-text-rotator.min.js"></script>
     <script src="{{ STATIC_URL }}memandang/js/lib/jquery.mixitup.min.js"></script>
-    <script src="{{ STATIC_URL }}memandang/js/main_landing.js"></script>
+    <script src="{{ STATIC_URL }}memandang/js/main.js"></script>
 </body>
 
 </html>
