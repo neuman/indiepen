@@ -1,127 +1,101 @@
-
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
+
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="">
-    <meta name="author" content="Mosaddek">
-    <meta name="keyword" content="FlatLab, Dashboard, Bootstrap, Admin, Template, Theme, Responsive, Fluid, Retina">
-    <link rel="shortcut icon" href="{{ STATIC_URL }}img/favicon.html">
+    <meta name="author" content="Develpixel">
+    <link rel="shortcut icon" href="{{ STATIC_URL }}memandang/images/favicon/favicon.ico" type="image/x-icon">
+    <link rel="icon" href="{{ STATIC_URL }}memandang/images/favicon/favicon.ico" type="image/x-icon">
 
-    <title>Indiepen</title>
+    <title>indiepen - Business Template</title>
 
+    <!-- PACE.JS -->
+    <script src="{{ STATIC_URL }}memandang/js/lib/pace.min.js"></script>
     <!-- Bootstrap core CSS -->
-    {% load static %}
-    <script data-main="{{ STATIC_URL }}js/main" src="{{ STATIC_URL }}bower_components/requirejs/require.js"></script>
-    <link href="{{ STATIC_URL }}css/bootstrap.min.css" rel="stylesheet">
-    <link href="{{ STATIC_URL }}css/bootstrap-reset.css" rel="stylesheet">
-    <!--external css-->
-    <link href="{{ STATIC_URL }}bower_components/fontawesome/css/font-awesome.css" rel="stylesheet" />
-    <link href="{{ STATIC_URL }}assets/jquery-easy-pie-chart/jquery.easy-pie-chart.css" rel="stylesheet" type="text/css" media="screen"/>
-    <link rel="stylesheet" href="{{ STATIC_URL }}css/owl.carousel.css" type="text/css">
-    <!-- Custom styles for this template -->
-    <link href="{{ STATIC_URL }}css/style.css" rel="stylesheet">
-    <link href="{{ STATIC_URL }}css/style-responsive.css" rel="stylesheet" />
-    <link href="{{ STATIC_URL }}css/dropzone.css" rel="stylesheet" />
-    <link href="{{ STATIC_URL }}css/gallery.css" rel="stylesheet" />
-    <link href="{{ STATIC_URL }}bower_components/videojs/dist/video-js/video-js.css" rel="stylesheet">
-    <script>
-      videojs.options.flash.swf = "{{ STATIC_URL }}bower_components/videojs/dist/video-js/video-js.swf"
-    </script>
-    <style>
-      .video-js {padding-top: 56.25%}
-      .vjs-fullscreen {padding-top: 0px}
-    </style>
-
-    <!-- HTML5 shim and Respond.js IE8 support of HTML5 tooltipss and media queries -->
+    <link href="{{ STATIC_URL }}memandang/css/bootstrap.min.css" rel="stylesheet">
+    <link href="{{ STATIC_URL }}memandang/css/lib/font-awesome.min.css" rel="stylesheet">
+    <link href="{{ STATIC_URL }}memandang/css/styles.css" rel="stylesheet">
+    <link href="{{ STATIC_URL }}memandang/css/scheme/soft-green.css" rel="stylesheet" id="clscheme">
+    <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!--[if lt IE 9]>
-      <script src="js/html5shiv.js"></script>
-      <script src="js/respond.min.js"></script>
-      <![endif]-->
-  </head>
+      <script src="{{ STATIC_URL }}memandang/js/html5shiv.js"></script>
+      <script src="{{ STATIC_URL }}memandang/js/respond.min.js"></script>
+    <![endif]-->
+</head>
 
-  <body>
-
-      <section id="container" class="">
-          <!--header start-->
-          <header class="header white-bg">
-            <div class="sidebar-toggle-box">
-                <div data-original-title="Toggle Navigation" data-placement="right" class="icon-reorder tooltips"><span class="glyphicon glyphicon-align-justify"></span></div>
+<body data-spy="scroll" data-target="#navbar">
+    <div id="lazyload"></div>
+    <!-- BEGIN Navbar -->
+    <nav id="navbars" class="navbar navbar-default navbar-fixed-top" role="navigation">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="wrapper">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="javascript:;">
+                    <img src="{{ STATIC_URL }}memandang/images/logo.png" class="logo" alt="logo">indiepen.</a>
             </div>
-            <!--logo start-->
-            <a href="#" class="logo">Indie<span>pen</span></a>
-            <!--logo end-->
-            <div class="nav notify-row" id="top_menu">
-                <!--  notification start -->
-                <ul class="nav top-menu">
-            </ul>
-            <!--  notification end -->
-        </div>
-        <div class="top-nav ">
-            <!--search & user info start-->
-            <ul class="nav pull-right top-menu">
-                <li>
-                    <input type="text" class="form-control search" placeholder="Search">
-                </li>
-                <!-- user login dropdown start-->
-                {% if user.is_authenticated %}
-                <li class="dropdown">
-                    <a data-toggle="dropdown" class="dropdown-toggle" href="#">
-                        <span class="username">{{ user.first_name }} {{ user.last_name }}</span>
-                        <b class="caret"></b>
-                    </a>
-                    <ul class="dropdown-menu extended logout">
-                        <div class="log-arrow-up"></div>
-                        <li><a href="/users/{{ user.id }}/"><i class=" icon-suitcase"></i>Profile</a></li>
-                        <li><a href="{% url 'user_logout' %}"><i class="icon-key"></i> Log Out</a></li>
-                    </ul>
-                </li>
-                {% endif %}
-                <!-- user login dropdown end -->
-            </ul>
-            <!--search & user info end-->
-        </div>
-    </header>
-    <!--header end-->
-    <!--sidebar start-->
-    <aside>
-      <div id="sidebar"  class="nav-collapse ">
-          <!-- sidebar menu start-->
 
-          <ul class="sidebar-menu">
-              {% if available_verbs %}
-              <li class="sub-menu active">
-                <a href="javascript:;" class="">
-                    <i class="icon-cogs"></i>
-                    <span>{{ noun.get_class_name }}</span>
-                    <span class="arrow"></span>
-                </a>
-                <ul class="sub">
-                  {% block left_menu %}
-                  {% for verb in available_verbs %}
-                    {% if verb.visible %}
-                        <li><a href="{{ verb.url }}">{{ verb.display_name }}</a></li>
-                    {% endif %}
-                  {% endfor %}
-                  {% endblock %}
-              </ul>
-          </li>
-          {% endif %}
-      </ul>
-      <!-- sidebar menu end-->
-  </div>
-</aside>
-<!--sidebar end-->
-<!--main content start-->
-<section id="main-content">
-    <section class="wrapper">
-        <section class="">
-            <div class="panel-body progress-panel">
-              <div class="task-progress">
-                  
-              </div>
-          </div>
+            <div id="navbar" class="collapse navbar-collapse navbar-ex1-collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li class=""><a href="/">HOME</a>
+                    </li>
+                    <li class=""><a href="/">ABOUT</a>
+                    </li>
+                    <li class=""><a href="#contact">CONTACT</a>
+                    </li>
+                    {% if available_verbs %}
+                    <li class="dropdown">
+                        <a href="javascript:;" class="dropdown-toggle" data-toggle="dropdown">{{ noun.get_class_name }} <b class="caret"></b></a>
+                        <ul class="dropdown-menu">
+                          {% block left_menu %}
+                          {% for verb in available_verbs %}
+                            {% if verb.visible %}
+                                <li><a href="{{ verb.url }}">{{ verb.display_name }}</a></li>
+                            {% endif %}
+                          {% endfor %}
+                          {% endblock %}
+                        </ul>
+                        </li>
+                      {% endif %}
+                    
+                    <li><a class="nav-spacer">&nbsp;</a>
+                    </li>
+                    <li><a href="javascript:;"><i class="icon-facebook"></i></a>
+                    </li>
+                    <li><a href="javascript:;"><i class="icon-twitter"></i></a>
+                    </li>
+                    <li><a href="javascript:;"><i class="icon-envelope-alt"></i></a>
+                    </li>
+                </ul>
+            </div>
+            <!-- /.navbar-collapse -->
+        </div>
+        <!-- /wrapper -->
+    </nav>
+    <!-- END Navbar -->
+
+    
+    <!-- BEGIN Intro -->
+    <section class="intro">
+        <div class="container">
+        </div>
+    </section>
+    <!-- END Intro -->
+    <!-- BEGIN Howto -->
+    <section id="howto" class="howto">
+
+        <div class="container">
+
+            <div class="wrapper">
+
             {% for message in messages %}
                 <div class="alert alert-{{ message.tags }}">{{ message }}</div>
             {% endfor %}
@@ -132,14 +106,114 @@
             {% endif %}
           {% block showcase %}{% endblock %}
           {% block audit %}{% endblock %}
-      </section>
-  </section>
-</section>
 
-<!--state overview start-->
+            </div>
+        </div>
+    </section>
+    <!-- END Howto -->
 
-<!--main content end-->
-</section>
 
+    
+    <!-- BEGIN Contact -->
+    <section id="contact" class="contact" style="background:url('{{ STATIC_URL }}memandang/images/contact-background.jpg');">
+        <div class="contact-wrapper">
+            <div class="container">
+                <div class="wrapper">
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <div id="contact-slider">
+                                <ul>
+                                    <li>
+                                        <!-- Contact details -->
+                                        <div class="row">
+                                            <div class="col-lg-6">
+                                                <form class="contact-form" novalidate="" id="contactForm">
+                                                    <div class="col-lg-12">
+                                                        <div class="row">
+                                                            <div class="col-lg-6">
+                                                                <input type="text" class="form-control" placeholder="Your Name">
+                                                            </div>
+                                                            <div class="col-lg-6">
+                                                                <input type="text" class="form-control" placeholder="Email">
+                                                            </div>
+                                                        </div>
+                                                        <div class="row">
+                                                            <div class="col-lg-12">
+                                                                <input type="text" class="form-control" placeholder="Subject">
+                                                            </div>
+                                                            <div class="col-lg-12">
+                                                                <textarea class="form-control" placeholder="Message..." rows="5"></textarea>
+                                                            </div>
+                                                            <button class="button button-white-side">Send message</button>
+                                                        </div>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                            <div class="col-lg-6">
+                                                <div class="bio">
+                                                    <h3>// indiepen</h3>
+                                                    <p>Questions and comments are welcome, so please, drop us a line.</p>
+                                                </div>
+                                                <ul class="bioextra">
+                                                    <li>
+                                                        <strong>Made In</strong>
+                                                        <i>Brooklyn NY</i>
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                        
+                                    </li>
+                                    <li>
+                                        <!-- Map -->
+                                        <div class="map-wrapper">
+                                            <div id="map"></div>
+                                        </div>
+                                        <p><a data-rel="1" href="javascript:;" class="contactLink hovercolor return-to"><i class="icon-long-arrow-left"></i> Return to contact details</a>
+                                        </p>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="credits">
+                    <div class="container">
+                        <div class="row">
+                            <div class="col-lg-6 col-md-6 col-sm-6">
+                                <p class="credits-title">MADE WITH LOVE BY <a class="hovercolor" href="javascript:;">DEVEL PIXEL</a> &copy;&nbsp;2013.</p>
+                            </div>
+                            <div class="col-lg-6 col-md-6 col-sm-6">
+                                <p class="credits-title-link"><a class="hovercolor" href="javascript:;">Contact</a> / <a class="hovercolor" href="javascript:;">Press</a> / <a class="hovercolor" href="javascript:;">Blog</a> / <a class="hovercolor" href="javascript:;">Terms</a>
+                                </p>
+                            </div>
+                        </div>
+                        <div class="scroll-up"><a href="#home-slide"><i class="icon-angle-up"></i></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- END Contact -->
+
+    <!-- Bootstrap core JavaScript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="{{ STATIC_URL }}memandang/js/lib/jquery.min.js"></script>
+    <script src="{{ STATIC_URL }}memandang/js/bootstrap.min.js"></script>
+    <script src="{{ STATIC_URL }}memandang/js/lib/smoothscroll.js"></script>
+    <script src="{{ STATIC_URL }}memandang/js/lib/jquery.superslides.min.js"></script>
+    <script src="{{ STATIC_URL }}memandang/js/lib/jquery.sudoslider.min.js"></script>
+    <script src="{{ STATIC_URL }}memandang/js/lib/jquery.parallax.js"></script>
+    <script src="{{ STATIC_URL }}memandang/js/lib/jquery.magnific-popup.min.js"></script>
+    <script type="text/javascript" src="https://maps.google.com/maps/api/js?sensor=false&amp;language=en"></script>
+    <script src="{{ STATIC_URL }}memandang/js/lib/gmap3.min.js"></script>
+    <script src="{{ STATIC_URL }}memandang/js/lib/jquery.inview.min.js"></script>
+    <script src="{{ STATIC_URL }}memandang/js/lib/jquery.simple-text-rotator.min.js"></script>
+    <script src="{{ STATIC_URL }}memandang/js/lib/jquery.mixitup.min.js"></script>
+    <link href="{{ STATIC_URL }}css/dropzone.css" rel="stylesheet" />
+    <script src="{{ STATIC_URL }}memandang/js/main.js"></script>
 </body>
+
 </html>
