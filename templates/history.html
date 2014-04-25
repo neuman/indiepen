@@ -9,6 +9,7 @@
   {% for s in stream %}
   <li>
     <time class="dp_tmtime" datetime="2013-04-10 18:30">
+    <span><img src="http://graph.facebook.com/{{ s.actor.profile.get_thumbnail_url }}/picture?type=square" /></span>
       <span>{{ s.timestamp|date:"F j" }}</span>
       <span>{{ s.timestamp.year }}</span>
     </time>

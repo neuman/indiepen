@@ -42,6 +42,16 @@ def get_file_path(instance, filename):
     instance.name = blocks[0]
     return os.path.join('uploads/', filename)
 
+class UserProfile(models.Model):
+    user = models.ForeignKey(User, unique=True)
+    thumbnail_url = models.CharField(max_length=400)
+
+    def get_thumbnail_url(self):
+        return self.user.social_auth.all()[0].uid
+
+
+User.profile = property(lambda u: UserProfile.objects.get_or_create(user=u)[0])
+
 @python_2_unicode_compatible
 class Auditable(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
