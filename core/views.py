@@ -49,6 +49,12 @@ class MessageView(SiteRootView, TemplateView):
 class LandingView(TemplateView):
     template_name = 'index_new.html'
 
+    def get_context_data(self, **kwargs):
+        # Call the base implementation first to get a context
+        context = super(LandingView, self).get_context_data(**kwargs)
+        context['posts'] = cm.Post.objects.filter(published=True)
+        return context
+
 class BootstrapView(TemplateView):
     template_name = 'grid.html'
 

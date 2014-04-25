@@ -212,24 +212,24 @@
                     <div class="col-lg-12 animaze fromTop">
                         <div class="title text-center">
                             <h1>APPROVED PROJECTS</h1>
-                            <hr/>
                         </div>
-                        <h2 class="portfolioFilter text-center">WE DO WORK ABOUT <a href="javascript:;" data-filter="websites">WEBSITES</a>, <a href="javascript:;" data-filter="illustrations">ILLUSTRATIONS</a>, <a href="javascript:;" data-filter="photo">PHOTOGRAPHS</a>  <a href="javascript:;" data-filter="all">AND EVERYTHING</a>
-                        </h2>
-                    </div>
-                    <div class="col-lg-12 animaze fromBottom">
-                        <div class="row portfolioContainer  text-center">
-                            <div class="col-lg-4 portfolio-item websites">
-                                <a class="popup" href="{{ STATIC_URL }}memandang/images/image-01-full.jpg">
-                                    <span class="project-hover">
-                                        <span>Fukishima
-                                        </span>
-                                    </span>
-                                    <img src="{{ STATIC_URL }}memandang/images/portfolio-thumb-1.jpg" alt="portfolio-thumb-1">
-                                </a>
-                            </div>
-                            
-                        </div>
+  {% for post in posts %}
+    <section class="col-md-3 item">
+      <section class="panel">
+      <div class="panel-heading">
+        <a href="{{ post.get_absolute_url }}">{{ post.title }}</a>
+        {% if not post.published %}<span class="badge bg-warning">Not Yet Published</span>{% endif %}
+      </div>
+      <div class="panel-body">
+        
+        {% for m in post.get_summary_medias %}
+          {% include "media/representation.html" with truncate=True%}
+        {%endfor %}
+      </div>
+    </section>
+    </section>
+
+    {% endfor %}
                     </div>
                 </div>
             </div>
