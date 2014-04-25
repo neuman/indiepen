@@ -9,7 +9,7 @@
   {% for s in stream %}
   <li>
     <time class="dp_tmtime" datetime="2013-04-10 18:30">
-    <span><img src="http://graph.facebook.com/{{ s.actor.profile.get_thumbnail_url }}/picture?type=square" /></span>
+    <span><img src="http://graph.facebook.com/{{ s.actor.profile.get_facebook_id }}/picture?type=square" /></span>
       <span>{{ s.timestamp|date:"F j" }}</span>
       <span>{{ s.timestamp.year }}</span>
     </time>
@@ -17,7 +17,7 @@
     <div class="dp_tmlabel animaze fromTop" style="opacity: 1; top: 0px;">
       <div class="text row">
         <div class="col-xs-5 col-md-9">
-          <a href="/users/{{ s.actor.id}}/">{{ s.actor.first_name }} {{ s.actor.last_name }}</a>{{ s.verb }} <a href="{{ s.target.get_absolute_url }}">{{ s.target }}</a>
+          <a href="/users/{{ s.actor.id}}/">{{ s.actor.first_name }} {{ s.actor.last_name }}</a> {{ s.verb }} <a href="{{ s.target.get_absolute_url }}">{{ s.target }}</a>
           <p><a href="{{ m.get_absolute_url }}" >{{ m.get_file_name }}</a> {{ m.brief }}</p>
         </div>
         <div>

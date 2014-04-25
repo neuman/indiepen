@@ -46,8 +46,11 @@ class UserProfile(models.Model):
     user = models.ForeignKey(User, unique=True)
     thumbnail_url = models.CharField(max_length=400)
 
-    def get_thumbnail_url(self):
-        return self.user.social_auth.all()[0].uid
+    def get_facebook_id(self):
+        if self.thumbnail_url == '':
+            self.thumbnail_url = self.user.social_auth.all()[0].uid
+            self.save()
+        return self.thumbnail_url
 
 
 User.profile = property(lambda u: UserProfile.objects.get_or_create(user=u)[0])
