@@ -11,7 +11,7 @@
       </div>
     <div class="panel-body">
       <section >
-      {% with medias=post.get_summary_medias %}
+      {% with medias=post.get_medias %}
         {% include "media/list.html" with download=True%}
       {% endwith %}
       </section>

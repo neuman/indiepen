@@ -13,7 +13,7 @@
     <title>indiepen - Business Template</title>
 
     <!-- PACE.JS -->
-    <script src="{{ STATIC_URL }}memandang/js/lib/pace.min.js"></script>
+    
     <!-- Bootstrap core CSS -->
     <link href="{{ STATIC_URL }}memandang/css/bootstrap.min.css" rel="stylesheet">
     <link href="{{ STATIC_URL }}memandang/css/lib/font-awesome.min.css" rel="stylesheet">
@@ -27,22 +27,16 @@
 </head>
 
 <body data-spy="scroll" data-target="#navbar">
-    <div id="lazyload"></div>
+    
     {% include "base/navbar.html"%}
 
-    
-    <!-- BEGIN Intro -->
-    <section class="intro">
-        <div class="container">
-        </div>
-    </section>
     <!-- END Intro -->
     <!-- BEGIN Howto -->
     <section id="howto" class="howto">
 
         <div class="container">
 
-            <div class="wrapper">
+            <div >
 
             {% for message in messages %}
                 <div class="alert alert-{{ message.tags }}">{{ message }}</div>
@@ -146,15 +140,6 @@
     ================================================== -->
     <!-- Placed at the end of the document so the pages load faster -->
         <script data-main="{{ STATIC_URL }}js/main" src="{{ STATIC_URL }}bower_components/requirejs/require.js"></script>
-    <script src="{{ STATIC_URL }}memandang/js/lib/smoothscroll.js"></script>
-    <script src="{{ STATIC_URL }}memandang/js/lib/jquery.sudoslider.min.js"></script>
-    <script src="{{ STATIC_URL }}memandang/js/lib/jquery.parallax.js"></script>
-    <script src="{{ STATIC_URL }}memandang/js/lib/jquery.magnific-popup.min.js"></script>
-    <script type="text/javascript" src="https://maps.google.com/maps/api/js?sensor=false&amp;language=en"></script>
-    <script src="{{ STATIC_URL }}memandang/js/lib/gmap3.min.js"></script>
-    <script src="{{ STATIC_URL }}memandang/js/lib/jquery.inview.min.js"></script>
-    <script src="{{ STATIC_URL }}memandang/js/lib/jquery.simple-text-rotator.min.js"></script>
-    <script src="{{ STATIC_URL }}memandang/js/lib/jquery.mixitup.min.js"></script>
     <link href="{{ STATIC_URL }}css/dropzone.css" rel="stylesheet" />
 
 
