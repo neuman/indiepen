@@ -69,6 +69,8 @@ $(window).load(function() {
 
             });
 */
+
+
 jQuery.fn.doesExist = function(){
   return jQuery(this).length > 0;
 };
@@ -78,6 +80,15 @@ if($('.dropzone').doesExist()){
     paramName: "original_file"
   });
 };
+
+
+var masonry_container = document.querySelector('.js-masonry');
+imagesLoaded( masonry_container, function( instance ) {
+var msnry = new Masonry( masonry_container, {
+  // options...
+  itemSelector: '.item'
+});
+});
 
       //bootstrapify images included in markdown
       $('img:not([class])').addClass('img-thumbnail');
