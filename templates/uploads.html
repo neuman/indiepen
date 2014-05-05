@@ -6,5 +6,10 @@
 
 	<form id="my-dropzone" action="{{ upload_url }}" class="dropzone" method="post" enctype="multipart/form-data">{% csrf_token %}
 	</form>
+	<div>
+	<p>
+		Having trouble?  Try our <a href="{{ upload_url }}">simple uploader</a>.
+	</p>
+	</div>
 
 {% endblock %}

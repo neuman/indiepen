@@ -12,7 +12,7 @@
     <link rel="shortcut icon" href="{{ STATIC_URL }}memandang/images/favicon/favicon.ico" type="image/x-icon">
     <link rel="icon" href="{{ STATIC_URL }}memandang/images/favicon/favicon.ico" type="image/x-icon">
 
-    <title>indiepen - Business Template</title>
+    <title>indiepen - {{ noun }}</title>
 
     <!-- PACE.JS -->
     <script src="{{ STATIC_URL }}memandang/js/lib/pace.min.js"></script>
@@ -38,11 +38,13 @@
             <li>
                 <!-- Slide -->
                 <div class="slides-filter"></div>
-                <div style="background-image: url('{{ STATIC_URL }}memandang/images/home-slide-2.jpg');" class="bg-parallax parallaxize"></div>
+                <div style="background-image: url('{{ STATIC_URL }}memandang/images/home-slide-3.jpg');" class="bg-parallax parallaxize"></div>
                 <div class="bigHeader slideUp">
                     <div class="front-logo"></div>
                     <hr class="white">
-                    <h1 class="white uppercase hugetext">like medium, but with a business plan</h1>
+                    <p><a href="/login/facebook/" class="button button-white-side">Submit a Proposal</a>
+                    <a href="#about" class="button button-white-side">Find Out More</a>
+                    </p>
                 </div>
             </li>
             <li>
@@ -54,21 +56,9 @@
                     <hr class="white">
                     <h1 class="hugetext white">We're Social</h1>
                     <p>
-                        <a href="javascript:;"><i class="icon-facebook icon-social button-white-side"></i></a>
-                        <a href="javascript:;"><i class="icon-twitter icon-social button-white-side"></i></a>
-                        <a href="javascript:;"><i class="icon-google-plus icon-social button-white-side"></i></a>
-                    </p>
-                </div>
-            </li>
-            <li>
-                <!-- Slide -->
-                <div class="slides-filter"></div>
-                <div style="background-image: url('{{ STATIC_URL }}memandang/images/home-slide-3.jpg');" class="bg-parallax parallaxize"></div>
-                <div class="bigHeader slideUp">
-                    <div class="front-logo"></div>
-                    <hr class="white">
-                    <h1 class="white uppercase hugetext">SUBMIT A PROPOSAL</h1>
-                    <p><a href="#about" class="button button-white-side">Find Out More</a>
+                        <a href="https://www.facebook.com/indiepen"><i class="icon-facebook icon-social button-white-side"></i></a>
+                        <a href="https://www.twitter.com/indiepen_app"><i class="icon-twitter icon-social button-white-side"></i></a>
+                        <a href="http://indiepenapp.tumblr.com/"><i class="icon-tumblr icon-social button-white-side"></i></a>
                     </p>
                 </div>
             </li>
@@ -112,7 +102,7 @@
                             </div>
                             <div class="featured-desc">
                                 <h3>We Need Watchdogs</h3>
-                                <p>Perverse incentives have lead traditional news organizations scrambling for pageviews leaving important news uncovered.</p>
+                                <p>With so much of their imcome comimg from advertising, traditional news organizations are scrambling for pageviews, leaving important news uncovered.</p>
                             </div>
                         </div>
                     </div>
@@ -147,7 +137,6 @@
         </div>
     </section>
     <!-- END Howto -->
-
     <!-- BEGIN Services -->
     <section id="services" class="parallaxize services-wrapper">
         <div class="services">
@@ -156,7 +145,7 @@
                     <div class="row">
                         <div class="col-lg-12  animaze fromTop">
                             <div class="title text-center">
-                                <h1 class="white">CAPABILITY</h1>
+                                <h1 class="white">THE MODEL</h1>
                                 <hr class="white" />
                             </div>
                         </div>
@@ -166,20 +155,21 @@
                                     <li>
                                         <!-- Service -->
                                         <img src="{{ STATIC_URL }}memandang/images/product_2.jpg" alt="">
-                                        <h3 class="color text-center">We Create Something</h3>
-                                        <p>Design often necessitates considering the aesthetic and functional dimensions of both the design object and process. It involves research, thought, modeling, interactive adjustment, and re-design. Diverse kinds of objects may be designed, including clothing, graphical user interfaces and corporate identities.</p>
+                                        <h3 class="color text-center">Propose a </h3>
+                                        <p>By</p>
                                     </li>
                                     <li>
                                         <!-- Service -->
                                         <img src="{{ STATIC_URL }}memandang/images/product_1.jpg" alt="">
                                         <h3 class="color text-center">Do Typing</h3>
-                                        <p>Coding often necessitates considering the aesthetic and functional dimensions of both the design object and process. It involves research, thought, modeling, interactive adjustment, and re-design. Diverse kinds of objects may be designed, including clothing, graphical user interfaces and corporate identities.</p>
+                                        <p>Information doesnt want to be free, it is free.  Restricting content behind paywalls is archaic and counterproductive.  All content created through indiepen is available for free through the built in publishing platform.  We support the written word, podcasts, vlogs, photo journalism and even raw data files.  A high tide raises all boats. </p>
                                     </li>
                                     <li>
                                         <!-- Service -->
                                         <img src="{{ STATIC_URL }}memandang/images/product_4.jpg" alt="">
                                         <h3 class="color text-center">Passion On Drawing</h3>
-                                        <p>Illustration often necessitates considering the aesthetic and functional dimensions of both the design object and process. It involves research, thought, modeling, interactive adjustment, and re-design. Diverse kinds of objects may be designed, including clothing, graphical user interfaces and corporate identities.</p>
+                                        <p>You wouldnt trust a report on cigarettes from big tobacco, but when yoiu get your news from a traditional source you may be doing exactly that.  Indiepen has transparency baked in at every level.  We track the full history of every piece of contents creation and funding so you can see where every bit, byte, dollar, and pixel came from and make up your own mind. 
+                                        Journalists these days spend most of their time sorting through and then rewording press releases because its what their bosses tell them to do.  </p>
                                     </li>
                                     <li>
                                         <!-- Service -->
@@ -208,30 +198,34 @@
     <section id="portfolio" class="portfolio">
         <div class="container">
             <div class="wrapper">
-                <div class="row">
-                    <div class="col-lg-12 animaze fromTop">
-                        <div class="title text-center">
-                            <h1>APPROVED PROJECTS</h1>
+                    <div class="row">
+                        <div class="col-lg-12 animaze fromTop">
+                            <div class="title text-center">
+                                <h1>APPROVED PROJECTS</h1>
+                                <hr/>
+                            </div>
                         </div>
-  {% for post in posts %}
-    <section class="col-md-3 item">
-      <section class="panel">
-      <div class="panel-heading">
-        <a href="{{ post.get_absolute_url }}">{{ post.title }}</a>
-        {% if not post.published %}<span class="badge bg-warning">Not Yet Published</span>{% endif %}
-      </div>
-      <div class="panel-body">
-        
-        {% for m in post.get_summary_medias %}
-          {% include "media/representation.html" with truncate=True%}
-        {%endfor %}
-      </div>
-    </section>
-    </section>
+  
 
-    {% endfor %}
+
+                        <div class="col-lg-12 animaze fromBottom">
+                            <div class="row">
+                                {% for post in posts %}
+                                    <div class="col-lg-4 animaze fromBottom">
+                                        <div class="cprofile">
+                                            <h3><a href="{{ post.get_absolute_url }}">{{ post.title }}</a></h3>
+                                            {% for m in post.get_summary_medias %}
+                                            {% include "media/representation.html" with truncate=True linkback=False %}
+                                            {%endfor %}
+
+                                            <a href="javascript:;"><i class="icon-facebook icon-mini"></i></a>
+                                            <a href="javascript:;"><i class="icon-twitter icon-mini"></i></a>
+                                        </div>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        </div>
                     </div>
-                </div>
             </div>
         </div>
     </section>
@@ -262,7 +256,7 @@
                             <h4 class="white text-center">WE'RE LOOKING FOR CITIZEN JOURNALISTS LIKE YOU </h4>
                             <br/>
                             <nav class="cl-effect-8">
-                                <a href="javascript:;" data-hover="test">Submit a Proposal</a>
+                                <a href="/login/facebook/" data-hover="test">Submit a Proposal</a>
                             </nav>
                         </div>
                     </div>
@@ -390,10 +384,6 @@
                                         
                                     </li>
                                     <li>
-                                        <!-- Map -->
-                                        <div class="map-wrapper">
-                                            <div id="map"></div>
-                                        </div>
                                         <p><a data-rel="1" href="javascript:;" class="contactLink hovercolor return-to"><i class="icon-long-arrow-left"></i> Return to contact details</a>
                                         </p>
                                     </li>

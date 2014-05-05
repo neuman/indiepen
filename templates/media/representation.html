@@ -19,7 +19,9 @@
   {% else %}
     {{ m.get_content|markdown }}
   {% endif %}
-  <a href="{{ m.get_absolute_url }}">{{ m.get_file_name }}</a>
+  {% if linkback %}
+    <a href="{{ m.get_absolute_url }}">{{ m.get_file_name }}</a>
+  {% endif %}
 
 {% else %}
   <section class="thumbnail">
@@ -29,12 +31,16 @@
     </section>
 
 {% endif %}
-<p>
-  <a href="{{ m.get_absolute_url }}" >{{ m.get_file_name }}</a>
-  {% if download %}
+{% if linkback or download %}
+  <p>
+    {% if linkback %}
+     <a href="{{ m.get_absolute_url }}" >{{ m.get_file_name }}</a>
+    {% endif %}
+    {% if download %}
 
-  {% endif %}
-</p>
+    {% endif %}
+  </p>
+{% endif %}
 {% if brief %}  
   <div class="panel">
     <div class="row">

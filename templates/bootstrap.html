@@ -114,9 +114,6 @@
                                     </li>
                                     <li>
                                         <!-- Map -->
-                                        <div class="map-wrapper">
-                                            <div id="map"></div>
-                                        </div>
                                         <p><a data-rel="1" href="javascript:;" class="contactLink hovercolor return-to"><i class="icon-long-arrow-left"></i> Return to contact details</a>
                                         </p>
                                     </li>
@@ -148,10 +145,8 @@
     <!-- Bootstrap core JavaScript
     ================================================== -->
     <!-- Placed at the end of the document so the pages load faster -->
-    <script src="{{ STATIC_URL }}memandang/js/lib/jquery.min.js"></script>
-    <script src="{{ STATIC_URL }}memandang/js/bootstrap.min.js"></script>
+        <script data-main="{{ STATIC_URL }}js/main" src="{{ STATIC_URL }}bower_components/requirejs/require.js"></script>
     <script src="{{ STATIC_URL }}memandang/js/lib/smoothscroll.js"></script>
-    <script src="{{ STATIC_URL }}memandang/js/lib/jquery.superslides.min.js"></script>
     <script src="{{ STATIC_URL }}memandang/js/lib/jquery.sudoslider.min.js"></script>
     <script src="{{ STATIC_URL }}memandang/js/lib/jquery.parallax.js"></script>
     <script src="{{ STATIC_URL }}memandang/js/lib/jquery.magnific-popup.min.js"></script>
@@ -161,7 +156,10 @@
     <script src="{{ STATIC_URL }}memandang/js/lib/jquery.simple-text-rotator.min.js"></script>
     <script src="{{ STATIC_URL }}memandang/js/lib/jquery.mixitup.min.js"></script>
     <link href="{{ STATIC_URL }}css/dropzone.css" rel="stylesheet" />
-    <script src="{{ STATIC_URL }}memandang/js/main.js"></script>
+
+
+    <script src="{{ STATIC_URL }}js/main.js"></script>
+
 </body>
 
 </html>

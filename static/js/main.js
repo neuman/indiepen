@@ -20,7 +20,8 @@ requirejs.config({
     "jquery.nicescroll": "../bower_components/jquery.nicescroll/jquery.nicescroll",
     "stripe": "https://js.stripe.com/v2/?1",
     "jquery.jquery-ui": "../bower_components/jquery-ui/ui/minified/jquery-ui.min",
-    "videojs": "../bower_components/videojs/dist/video-js/video"
+    "videojs": "../bower_components/videojs/dist/video-js/video",
+    "jquery.superslides":"../bower_components/superslides/dist/jquery.superslides.js",
   },
   shim: {
     "jquery.bootstrap": {
@@ -46,9 +47,11 @@ console.log('requiring stuff');
 requirejs(["jquery","dropzone","imagesloaded","masonry","jquery.bootstrap","jquery.commonscripts","jquery.nicescroll","stripe", "jquery.jquery-ui", "videojs"], function($, Dropzone, imagesLoaded, Masonry, bootstrap, commonscripts, nicescroll, Stripe, ui, videojs) {
   console.log($);
   console.log(Stripe);
-  console.log($.ui);
 
       //owl carousel
+$(window).load(function() {
+    $("#lazyload").fadeOut();
+});
 
       $(document).ready(function() {
 
@@ -71,6 +74,116 @@ jQuery.fn.doesExist = function(){
 };
 
 
+
+    //SMOOTH SCROLL 
+    $('a[href^="#"]').bind('click.smoothscroll', function(e) {
+        e.preventDefault();
+        $('html,body').animate({
+            scrollTop: $(this.hash).offset().top
+        }, 1200);
+    });
+
+    //SUPER SLIDES
+    $('#home-slide').superslides({
+        animation: 'fade', // You can choose either fade or slide
+    });
+
+    //ANIMAZE
+    $('.animaze').bind('inview', function(event, visible) {
+        if (visible) {
+            $(this).stop().animate({
+                opacity: 1,
+                top: '0px'
+            }, 500);
+        }
+        /* REMOVE THIS if you want to repeat the animation after the element not in view
+              else {
+                $(this).stop().animate({ opacity: 0 });
+                $(this).removeAttr('style');
+              }*/
+    });
+    $('.animaze').stop().animate({
+        opacity: 0
+    });
+
+    //SERVICES
+    $("#$-service").sudoSlider({
+        customLink: 'a.servicesLink',
+        responsive: true,
+        speed: 350,
+        prevNext: false,
+        useCSS: true,
+        effect: "fadeOutIn",
+        continuous: true,
+        updateBefore: true
+    });
+
+    //TEXT ROTATOR
+    $(".rotatez").textrotator({
+        animation: "fade",
+        separator: ",",
+        speed: 1700
+    });
+
+    //PORTFOLIO
+    $('.portfolioContainer').mixitup({
+        filterSelector: '.portfolioFilter a',
+        targetSelector: '.portfolio-item',
+        effects: ['fade', 'scale']
+    });
+    
+    //QUOTE SLIDE
+    $("#quote-slider").sudoSlider({
+        customLink: 'a.quoteLink',
+        speed: 425,
+        prevNext: true,
+        responsive: true,
+        prevHtml: '<a href="#" class="quote-left-indicator"><i class="icon-arrow-left"></i></a>',
+        nextHtml: '<a href="#" class="quote-right-indicator"><i class="icon-arrow-right"></i></a>',
+        useCSS: true,
+        continuous: true,
+        effect: "fadeOutIn",
+        updateBefore: true
+    });
+
+    //MAGNIFIC POPUP
+    $('.popup').magnificPopup({
+        type: 'image'
+    });
+
+    //PARALLAX
+    $('.parallaxize').parallax("50%", 0.3);
+
+    // CONTACT SLIDER
+    $("#contact-slider").sudoSlider({
+        customLink: 'a.contactLink',
+        speed: 750,
+        responsive: true,
+        prevNext: false,
+        useCSS: false,
+        continuous: false,
+        updateBefore: true,
+        effect: "fadeOutIn"
+    });
+
+    //Map
+    $('#map').gmap3({
+            map: {
+                options: {
+                    maxZoom: 15
+                }
+            },
+            marker: {
+                address: "Haltern am See, Weseler Str. 151", // PUT YOUR ADDRESS HERE
+                options: {
+                    icon: new google.maps.MarkerImage(
+                        "http://cdn.webiconset.com/map-icons/images/pin6.png",
+                        new google.maps.Size(42, 69, "px", "px")
+                    )
+                }
+            }
+        },
+        "autofit");
 
 
 if($('.dropzone').doesExist()){
