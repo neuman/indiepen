@@ -1,9 +1,12 @@
 {% extends "bootstrap.html" %}
 
 {% block title %}Indiepen{% endblock %}
-
-{% block showcase %}
+{% block pre_extra %}
+<div class="size-small">
 {% include "project/graphs.html" with download=True%}
+</div>
+{% endblock %}
+{% block showcase %}
   <section class="panel js-masonry" data-masonry-options='{ "itemSelector": ".item" }'>
     <div class="panel-heading">
       {% if not noun.published %}<span class="badge bg-warning">Not Yet Published</span>{% endif %}

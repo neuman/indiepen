@@ -52,11 +52,18 @@ class UserProfile(models.Model):
             self.save()
         return self.thumbnail_url
 
+    def get_facebook_url(self):
+        return "http://facebook.com/profile.php?id="+self.get_facebook_id
+
     def get_projects(self):
         self.user.project_set.all()
 
     def get_visible_posts(self, user):
         return Post.objects.filter(project__members=self.user)
+
+    def get_total_pledged(self):
+        return Pledge.objects.aggregate(value=Min('value'))
+
 
 
 

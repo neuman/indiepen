@@ -1,6 +1,6 @@
 <li>
 <time class="dp_tmtime" datetime="2013-04-10 18:30">
-<span><img src="http://graph.facebook.com/{{ activity.actor.profile.get_facebook_id }}/picture?type=square" /></span>
+<span>{% include "social/facebook_thumb.html" with user=activity.actor%}</span>
   <span>{{ activity.timestamp|date:"F j" }}</span>
   <span>{{ activity.timestamp.year }}</span>
 </time>

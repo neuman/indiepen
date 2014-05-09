@@ -1894,6 +1894,29 @@ div.hexapic:hover {
 .action h4 {
     font-weight: 400;
 }
+/* ====================== ACTION ========================*/
+ .arrowed {
+    position: relative;
+}
+.arrowed:before {
+    top: 100%;
+    left: 50%;
+    border: solid transparent;
+    content:" ";
+    height: 0;
+    width: 0;
+    position: absolute;
+    pointer-events: none;
+    border-top-color: #f83a16;
+    border-width: 30px;
+    margin-left: -30px
+}
+.arrowed-wrapper {
+    background: #f83a16;
+}
+.arrowed h4 {
+    font-weight: 400;
+}
 /* ====================== Testimoni ========================*/
  .testimoni {
     background: #111;
@@ -2705,11 +2728,19 @@ article.post .post_excerpt a.readmore:hover {
     font:12px;
 }
 
- .size-small h1, h2, h3, h4, h5, h6 {
-     color: #1a1a1a;
-     letter-spacing: 0.01em;
-     text-transform: uppercase;
-     font-weight: 700;
-     font-family:'Open Sans', sans-serif;
+ .size-small h1, h2, h3, h4, h5, h6, p {
      font-size:12px;
+     margin:3px;
  }
+
+ .size-small .darkbar{
+    padding-bottom: 10px;
+
+ }
+
+/* ====================== Testimoni ========================*/
+ .darkbar {
+    background: #111;
+    padding-top: 60px;
+    padding-bottom: 60px;
+}
