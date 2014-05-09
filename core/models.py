@@ -52,6 +52,13 @@ class UserProfile(models.Model):
             self.save()
         return self.thumbnail_url
 
+    def get_projects(self):
+        self.user.project_set.all()
+
+    def get_visible_posts(self, user):
+        return Post.objects.filter(project__members=self.user)
+
+
 
 User.profile = property(lambda u: UserProfile.objects.get_or_create(user=u)[0])
 

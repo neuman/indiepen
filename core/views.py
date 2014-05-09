@@ -427,7 +427,7 @@ class PostUploadsView(PostView, TemplateView):
 #User STARTS 
 
 class UserDetailView(TemplateView, Noun):
-    template_name = 'history.html'
+    template_name = 'user/detail.html'
 
     def get_verbs(self):
         return [
@@ -441,6 +441,7 @@ class UserDetailView(TemplateView, Noun):
         user = User.objects.get(id=self.kwargs['pk'])
         context['user'] = user
         context['available_verbs'] = None
+        context['posts'] = user.profile.get_visible_posts(self.request.user)
         context['stream'] = actor_stream(user)
         return context
 

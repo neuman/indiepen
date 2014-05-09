@@ -32,6 +32,8 @@
 
     <!-- END Intro -->
     <!-- BEGIN Howto -->
+    {% block pre_extra %}
+    {% endblock %}
     <section id="howto" class="howto">
 
         <div class="container">
@@ -139,11 +141,9 @@
     <!-- Bootstrap core JavaScript
     ================================================== -->
     <!-- Placed at the end of the document so the pages load faster -->
-        <script data-main="{{ STATIC_URL }}js/main" src="{{ STATIC_URL }}bower_components/requirejs/require.js"></script>
     <link href="{{ STATIC_URL }}css/dropzone.css" rel="stylesheet" />
+    <script data-main="{{ STATIC_URL }}js/main" src="{{ STATIC_URL }}bower_components/requirejs/require.js"></script>
 
-
-    <script src="{{ STATIC_URL }}js/main.js"></script>
 
 </body>
 

@@ -15,7 +15,7 @@
 
 {% elif m.medium == "TXT" %}
   {% if truncate %}
-    {{ m.get_content |truncatechars:250 |markdown}}
+    <div class="truncate size-small">{{ m.get_content |truncatechars:250 |markdown}}</div>
   {% else %}
     {{ m.get_content|markdown }}
   {% endif %}

@@ -154,6 +154,7 @@ except Exception as e:
     STRIPE_PUBLIC_KEY = 'pk_test_gQYGUBwsm6rzvoSxBpSKbDC2'
     STRIPE_SECRET_KEY = 'sk_test_v3MTBY0TL2n2KjUCoGo7Sp23'
 
+AUTH_PROFILE_MODULE = 'core.UserProfile'
 
 #SOCIAL SOCIAL_AUTH
 AUTHENTICATION_BACKENDS = (

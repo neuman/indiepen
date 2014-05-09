@@ -1509,6 +1509,7 @@ i.icon-mini:hover {
     -webkit-transition: all 0.7s ease;
     -moz-transition: all 0.7s ease;
     -o-transition: all 0.7s ease;
+    overflow: hidden;
 }
 .cprofile img {
     width: 100%;
@@ -1897,7 +1898,7 @@ div.hexapic:hover {
  .testimoni {
     background: #111;
     padding-top: 60px;
-    padding-bottom: 120px;
+    padding-bottom: 60px;
 }
 #quote-slider .servicesLink {
     zoom: 1;
@@ -2207,6 +2208,7 @@ div.hexapic:hover {
     line-height: 1.4;
     position: relative;
     border-radius: 5px;
+    overflow: hidden;
 }
 .dp_tmtimeline > li:nth-child(odd) .dp_tmlabel {
     background: #CECECE;
@@ -2694,3 +2696,20 @@ article.post .post_excerpt a.readmore:hover {
     -moz-transform: translateY(0px) translateX(0px);
     transform: translateY(0px) translateX(0px);
 }
+
+.truncate {
+    height:200px;
+    overflow: hidden;
+}
+.size-small{
+    font:12px;
+}
+
+ .size-small h1, h2, h3, h4, h5, h6 {
+     color: #1a1a1a;
+     letter-spacing: 0.01em;
+     text-transform: uppercase;
+     font-weight: 700;
+     font-family:'Open Sans', sans-serif;
+     font-size:12px;
+ }

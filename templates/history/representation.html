@@ -1,0 +1,25 @@
+<li>
+<time class="dp_tmtime" datetime="2013-04-10 18:30">
+<span><img src="http://graph.facebook.com/{{ activity.actor.profile.get_facebook_id }}/picture?type=square" /></span>
+  <span>{{ activity.timestamp|date:"F j" }}</span>
+  <span>{{ activity.timestamp.year }}</span>
+</time>
+<div class="dp_tmicon icon-pencil"></div>
+<div class="dp_tmlabel animaze fromTop" style="opacity: 1; top: 0px;">
+  <div class="text row">
+    <div class="col-xs-5 col-md-9">
+      <a href="/users/{{ activity.actor.id}}/">{{ activity.actor.first_name }} {{ activity.actor.last_name }}</a> {{ activity.verb }} <a href="{{ activity.target.get_absolute_url }}">{{ activity.target }}</a>
+      <p><a href="{{ m.get_absolute_url }}" >{{ m.get_file_name }}</a> {{ m.brief }}</p>
+    </div>
+    <div>
+      {% with m=activity.action_object.instance %}
+      <div class="col-xs-6 col-md-3">
+        {% if m.get_class_name == "Media" %}
+        {% include "media/representation.html" with truncate=True%}
+        {% endif %}
+      </div>
+      {% endwith %}
+    </div>
+  </div>
+</div>
+</li>
