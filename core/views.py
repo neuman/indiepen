@@ -420,6 +420,7 @@ class PostUploadsView(PostView, TemplateView):
         context = super(PostUploadsView, self).get_context_data(**kwargs)
         context['upload_url'] = reverse(viewname='post_media_create', args=(self.kwargs['pk'],), current_app='core')
         context['briefs'] = ["You must create a first post that explains your project before you can submit for approval.","On Indiepen, a post is really just a collection of media and it's history.  You can upload any images or text files and worry about ordering and formatting them later.  Unlike most publishing platforms, text is treated just like any other media and must be uploaded as a file. Please use <a href='http://whatismarkdown.com/'>markdown</a> (.md) or plaintext (.txt) files for written content."]
+        context['preview_url'] = cm.PostDetailVerb(self.noun).get_url()
         return context
 
 #Post ENDS
