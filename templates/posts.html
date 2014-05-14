@@ -2,9 +2,9 @@
 {% load markdown_deux_tags %}
 {% block title %}Indiepen{% endblock %}
 {% block showcase %}
-  <section class="js-masonry" data-masonry-options='{ "itemSelector": ".item" }'>
+  <section class="portfolio js-masonry" data-masonry-options='{ "itemSelector": ".item" }'>
     {% for post in posts %}
-    <section class="col-md-3 item">
+    <section class="col-md-6 item">
       <section class="panel">
         <div class="panel-heading">
           <a href="{{ post.get_absolute_url }}">{{ post.title }}</a>

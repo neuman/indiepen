@@ -17,7 +17,7 @@
   {% if truncate %}
     <div class="truncate size-small">{{ m.get_content |truncatechars:250 |markdown}}</div>
   {% else %}
-    {{ m.get_content|markdown }}
+    <div class="size-medium">{{ m.get_content|markdown }}</div>
   {% endif %}
   {% if linkback %}
     <a href="{{ m.get_absolute_url }}">{{ m.get_file_name }}</a>

@@ -9,27 +9,9 @@
 {% endblock %}
 
 {% block showcase %}
-<h1 class="text-center">POSTS</h1>
-        <div class="js-masonry" data-masonry-options='{ "itemSelector": ".item" }'>
-
-          {% for post in project.get_posts %}
-          <section class="col-md-3 item">
-            <section class="panel">
-              <div class="panel-heading">
-                <a href="{{ post.get_absolute_url }}">{{ post.title }}</a>
-                {% if not post.published %}<span class="badge bg-warning">Not Yet Published</span>{% endif %}
-              </div>
-              <div class="panel-body">
-
-                {% for m in post.get_summary_medias %}
-                {% include "media/representation.html" with truncate=True%}
-                {%endfor %}
-              </div>
-            </section>
-          </section>
-
-          {% endfor %}
-        </div>
+  {% for post in project.get_posts %}
+    {% include "post/longform.html" %}
+  {% endfor %}
 {% endblock %}
 
 {% block audit %}

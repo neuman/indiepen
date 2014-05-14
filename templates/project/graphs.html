@@ -4,7 +4,7 @@
       <div class="row">
         <div class="">
           <div class="">
-            <h1 class="white text-center">{% for member in project.get_members %}<a href="/users/{{ member.id }}/">{% include "social/facebook_thumb.html" with user=member%}</a> {% endfor%}{{ project.title }} {% if noun %}> {{ noun }}{% endif %}</h1>
+            <h1 class="white text-center">{% for member in project.get_members %}<a href="/users/{{ member.id }}/">{% include "social/facebook_thumb.html" with user=member%}</a> {% endfor%}{{ project.title }}</h1>
           </div>
         </div>
      </div>

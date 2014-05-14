@@ -2733,14 +2733,24 @@ article.post .post_excerpt a.readmore:hover {
      margin:3px;
  }
 
+  .size-medium h1, h2, h3, h4, h5, h6, p {
+     font-size:16px;
+ }
+
  .size-small .darkbar{
     padding-bottom: 10px;
-
  }
 
 /* ====================== Testimoni ========================*/
  .darkbar {
     background: #111;
     padding-top: 60px;
+    padding-bottom: 60px;
+}
+
+.top-pad {
+    padding-top: 60px;
+}
+.bottom-pad {
     padding-bottom: 60px;
 }

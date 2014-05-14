@@ -65,16 +65,14 @@ requirejs(["jquery", "dropzone", "imagesloaded", "masonry", "jquery.bootstrap", 
         };
 
 
-        if ($('.js-masonry').doesExist()) {
-            var masonry_container = document.querySelector('.js-masonry');
-            imagesLoaded(masonry_container, function(instance) {
-                var msnry = new Masonry(masonry_container, {
-                    // options...
-                    itemSelector: '.item'
-                });
+        $(".tileate").each(function() {
+            console.log("tileate");
+            var msnry = new Masonry($(this)[0], {
+                // options...
+                itemSelector: '.item'
             });
-        };
 
+        });
 
 
         //bootstrapify images included in markdown
