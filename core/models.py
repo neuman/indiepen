@@ -47,10 +47,13 @@ class UserProfile(models.Model):
     thumbnail_url = models.CharField(max_length=400)
 
     def get_facebook_id(self):
-        if self.thumbnail_url == '':
-            self.thumbnail_url = self.user.social_auth.all()[0].uid
-            self.save()
-        return self.thumbnail_url
+        try:
+            if self.thumbnail_url == '':
+                self.thumbnail_url = self.user.social_auth.all()[0].uid
+                self.save()
+            return self.thumbnail_url
+        except Exception as e:
+            return None
 
     def get_facebook_url(self):
         return "http://facebook.com/profile.php?id="+self.get_facebook_id
