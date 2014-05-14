@@ -17,7 +17,7 @@
                 <ul class="nav navbar-nav navbar-right">
                     {% if available_verbs %}
                     <li class="dropdown">
-                        <a href="javascript:;" class="dropdown-toggle" data-toggle="dropdown">{{ noun.get_class_name }} <b class="caret"></b></a>
+                        <a href="javascript:;" class="dropdown-toggle" data-toggle="dropdown">This {{ noun.get_class_name }} <b class="caret"></b></a>
                         <ul class="dropdown-menu">
                           {% block left_menu %}
                           {% for verb in available_verbs %}

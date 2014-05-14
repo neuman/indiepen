@@ -313,6 +313,8 @@ class PostDetailView(PostView, TemplateView):
         context['post'] = post
         context['project'] = post.project
         context['medias'] = post.get_medias()
+        if self.noun.submitted != True:
+            context['publish_url'] = cm.PostSubmitVerb(self.noun).get_url()
         context['available_verbs'] = post.get_available_verbs(self.request.user)
         stream = []
         for a in action_object_stream(post):
