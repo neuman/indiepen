@@ -439,12 +439,15 @@ class UserDetailView(TemplateView, Noun):
             #cm.PostDetailVerb(cm.Post.objects.get(id=self.kwargs['pk']))
             ]
 
+    def get_noun(self, **kwargs):
+        return cm.Media.objects.get(id=self.kwargs['pk'])
+
     def get_context_data(self, **kwargs):
 
         # Call the base implementation first to get a context
         context = super(UserDetailView, self).get_context_data(**kwargs)
         user = User.objects.get(id=self.kwargs['pk'])
-        context['user'] = user
+        context['noun'] = user
         context['available_verbs'] = None
         context['posts'] = user.profile.get_visible_posts(self.request.user)
         context['stream'] = actor_stream(user)
