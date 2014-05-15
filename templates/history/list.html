@@ -1,0 +1,6 @@
+{% load markdown_deux_tags %}
+<ul class="dp_tmtimeline">
+  {% for activity in stream %}
+    {% include "history/representation.html" %}
+  {% endfor %}
+</ul>

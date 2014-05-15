@@ -1,0 +1,16 @@
+<h1 class="text-center">{{ post }}</h1>
+<p class="text-center">{{ post.updated_at }}</p>
+  <section class="panel">
+    <div class="panel-heading">
+      {% if not post.published %}<span class="badge bg-warning">Not Yet Published</span>{% endif %}
+      {% if post.submitted %}<span class="badge bg-warning">Submitted for Approval</span>{% endif %}
+      </div>
+    <div class="panel-body">
+      <section class="tileate">
+      {% with medias=post.get_medias %}
+        {% include "media/list.html" with download=True%}
+      {% endwith %}
+      </section>
+    </div>
+  </section>
+  <br>

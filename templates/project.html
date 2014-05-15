@@ -3,64 +3,15 @@
 
 {% block title %}Indiepen{% endblock %}
 
+
+{% block pre_extra %}
+{% include "project/graphs.html" with download=True%}
+{% endblock %}
+
 {% block showcase %}
-  <div class="panel">
-    <div class="panel-body">
-  	<!--<img class="img-circle" src='http://lorempixel.com/600/600'></img>-->
-    <h1>{{ project.title }}</h1>
-    <p class="big-first-letter">{{ project.brief }}</p>
-
-    <div class="progress progress-sm">
-        <div class="progress-bar label-default" style="width: {{ project.get_percent_upfront }}%">
-        </div>
-        {% for ask in project.get_asks_per_post %}
-          <div class="progress-bar {% if forloop.counter|divisibleby:2 %}progress-bar-primary{% else %}progress-bar-success{% endif %} " style="width: {{ project.get_percent_per_post }}%">
-          </div>
-        {% endfor %}
-    </div>
-
-    <div class="progress progress-sm">
-        <div class="progress-bar label-warning" style="width: {{ project.get_percent_pledged }}%">
-        </div>
-    </div>
-      <p>
-      <span class="label label-default">${{ project.upfront_ask }} Up Front</span>
-      <span class="label label-primary">{{ project.get_number_of_posts }} Posts at ${{ project.get_ask_per_post }} Per Post</span>
-      <span class="label label-success">${{ project.get_ask_total }} Total</span>
-      <span class="label label-warning">${{ project.get_total_pledged }} Pledged So Far</span>
-      </p>
-      <p>Members: {% for m in project.get_members %} {{ m.email }} {% endfor%} </p>
-	</div>
-	<ul class="list-group">
-	  <li class="list-group-item">End Date: {{ project.end_date }}</li>
-	  <li class="list-group-item">Planned Number of Posts: {{ project.planned_posts }}</li>
-	  <li class="list-group-item">Scheduled To Be Published: {{ project.schedule }}</li>
-	</ul>
-</div>
-</div>
-
-<div class="js-masonry" data-masonry-options='{ "itemSelector": ".item" }'>
-
   {% for post in project.get_posts %}
-    <section class="col-md-3 item">
-      <section class="panel">
-      <div class="panel-heading">
-        <a href="{{ post.get_absolute_url }}">{{ post.title }}</a>
-        {% if not post.published %}<span class="badge bg-warning">Not Yet Published</span>{% endif %}
-      </div>
-      <div class="panel-body">
-        
-        {% for m in post.get_summary_medias %}
-          {% include "media/representation.html" with truncate=True%}
-        {%endfor %}
-      </div>
-    </section>
-    </section>
-
-    {% endfor %}
-</div>
-                
-
+    {% include "post/longform.html" %}
+  {% endfor %}
 {% endblock %}
 
 {% block audit %}

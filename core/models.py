@@ -42,6 +42,36 @@ def get_file_path(instance, filename):
     instance.name = blocks[0]
     return os.path.join('uploads/', filename)
 
+class UserProfile(models.Model):
+    user = models.ForeignKey(User, unique=True)
+    thumbnail_url = models.CharField(max_length=400)
+
+    def get_facebook_id(self):
+        try:
+            if self.thumbnail_url == '':
+                self.thumbnail_url = self.user.social_auth.all()[0].uid
+                self.save()
+            return self.thumbnail_url
+        except Exception as e:
+            return None
+
+    def get_facebook_url(self):
+        return "http://facebook.com/profile.php?id="+self.get_facebook_id
+
+    def get_projects(self):
+        self.user.project_set.all()
+
+    def get_visible_posts(self, user):
+        return Post.objects.filter(project__members=self.user)
+
+    def get_total_pledged(self):
+        return Pledge.objects.aggregate(value=Min('value'))
+
+
+
+
+User.profile = property(lambda u: UserProfile.objects.get_or_create(user=u)[0])
+
 @python_2_unicode_compatible
 class Auditable(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
@@ -112,7 +142,7 @@ class Project(Auditable, Noun):
     schedule = models.TextField(default='', help_text="examples: Daily, Every Other Tuesday, Single Post")
     planned_posts = models.PositiveIntegerField(help_text="How many posts do you intend to produce?")
     end_date = models.DateField(help_text="This is when the project will close fully, all unused money is returned to the pledgers. Must be within the next 6 months. Please use the following format: <em>YYYY-MM-DD</em>.")
-    ask_total = models.FloatField()
+    ask_total = models.FloatField(default=0)
     ask_per_post = models.FloatField(help_text="How much it will cost to get each post made.  This can include expenses for living, travel, accomodations, per diems, etc.")
     upfront_ask = models.FloatField(help_text="Here you can ask for the crowd to cover any upfront expenses you have.  Please include a detailed breakdown in the project brief. examples: plane tickets, equipment")
     #phase = models.CharField(max_length=3, choices=PROJECT_PHASE_CHOICES, null=True, blank=True)
@@ -304,13 +334,14 @@ class Media(Auditable, Noun):
     history = HistoricalRecords()
     verb_classes = [MediaDetailVerb, MediaUpdateVerb, HistoryListVerb, MediaPostDetailVerb]
 
-    noodles = {}
-
     def __unicode__(self):
         return self.name
 
     def get_absolute_url(self):
         return reverse(viewname='media_detail', args=[self.id], current_app=APPNAME)
+
+    def get_status(self):
+        return self.status
 
     def is_visible_to(self, user):
         post = get_media_post(self)
@@ -326,6 +357,9 @@ class Media(Auditable, Noun):
             return self.internal_file.url
         except ValueError:
             return None
+
+    def get_thumbnail_url(self):
+        return 
 
     def set_internal_file_s3_key(self, key):
         self.internal_file.name = key
@@ -425,14 +459,14 @@ def get_user_payment_method(user):
     else:
         return None
 
-
 class Post(Auditable, Noun):
     project = models.ForeignKey(Project)
     title = models.CharField(max_length=60)
     media = models.ManyToManyField(Media, null=True, blank=True)
+    submitted = models.BooleanField(default=False)
     published = models.BooleanField(default=False)
     history = HistoricalRecords()
-    verb_classes = [PostDetailVerb,PostCreateMediaVerb,HistoryListVerb, PostCreateMediasVerb, PostReorderMediasVerb, PostProjectDetailVerb]
+    verb_classes = [PostDetailVerb,PostCreateMediaVerb,HistoryListVerb, PostCreateMediasVerb, PostReorderMediasVerb, PostSubmitVerb, PostProjectDetailVerb]
 
     def __unicode__(self):
         return self.title

@@ -46,25 +46,14 @@ class MessageView(SiteRootView, TemplateView):
         return context
 
 
-class DetailView(TemplateView):
-    template_name = 'index.html'
-
-    def get_detail(self, pk):
-        tr = v1_api.canonical_resource_for('project')
-
-        try:
-            project = tr.cached_obj_get(pk=pk)
-        except cm.Project.DoesNotExist:
-            raise Http404
-
-        bundle = tr.full_dehydrate(tr.build_bundle(obj=project))
-        data = bundle.data
-        return data
+class LandingView(TemplateView):
+    template_name = 'index_new.html'
 
     def get_context_data(self, **kwargs):
-        base = super(DetailView, self).get_context_data(**kwargs)
-        base['data'] = self.get_detail(base['params']['pk'])
-        return base
+        # Call the base implementation first to get a context
+        context = super(LandingView, self).get_context_data(**kwargs)
+        context['posts'] = cm.Post.objects.filter(published=True)
+        return context
 
 class BootstrapView(TemplateView):
     template_name = 'grid.html'
@@ -315,14 +304,17 @@ class PostReorderMediaView(PostView, FormView, AjaxableResponseMixin):
         return context
 
 class PostDetailView(PostView, TemplateView):
-    template_name = 'media.html'
+    template_name = 'post.html'
 
     def get_context_data(self, **kwargs):
         # Call the base implementation first to get a context
         context = super(PostDetailView, self).get_context_data(**kwargs)
         post = self.noun
         context['post'] = post
+        context['project'] = post.project
         context['medias'] = post.get_medias()
+        if self.noun.submitted != True:
+            context['publish_url'] = cm.PostSubmitVerb(self.noun).get_url()
         context['available_verbs'] = post.get_available_verbs(self.request.user)
         stream = []
         for a in action_object_stream(post):
@@ -332,6 +324,24 @@ class PostDetailView(PostView, TemplateView):
                 stream.append(a)
         context['stream'] = stream
         return context
+
+class PostSubmitView(PostView, FormView):
+    template_name = 'form.html'
+    form_class = cf.BooleanForm
+
+    def get_context_data(self, **kwargs):
+        context = super(PostSubmitView, self).get_context_data(**kwargs)
+        context['briefs'] = ["Freeze and submit your project for publishing by the indiepen staff.","As long as it meets our guidelines, we'll publish it.","This action cannot be undone so make sure everything is ready. "]
+        return context
+
+    def form_valid(self, form):
+        self.noun.submitted = True
+        self.noun.save()
+        return super(PostSubmitView, self).form_valid(form)
+
+    def get_success_url(self):
+        action.send(self.request.user, verb='submitted', action_object=cm.get_history_most_recent(self.noun), target=self.noun)
+        return self.noun.get_absolute_url()
 
 class PostPublishView(PostView, FormView):
     template_name = 'form.html'
@@ -355,7 +365,7 @@ class PostListView(SiteRootView, TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super(PostListView, self).get_context_data(**kwargs)
-        context['posts'] = cm.Post.objects.all().order_by('-updated_at')
+        context['posts'] = cm.Post.objects.filter(published=True).order_by('-updated_at')
         return context
 
 class PostMediaCreateView(PostView, CreateView):
@@ -393,12 +403,14 @@ class PostMediaCreateView(PostView, CreateView):
         p = cm.Post.objects.get(id=self.kwargs['pk'])
         p.media.add(self.new_instance)
         #if not audio/video, set internal file to original file
-        if self.object.medium not in (cm.EXTENSIONS['AUD']+cm.EXTENSIONS['VID']):
-            self.object.internal_file = self.object.original_file
-            self.object.save()
-        else:
+        print (self.object.medium == 'AUD') or (self.object.medium =='VID')
+        if (self.object.medium == 'AUD') or (self.object.medium =='VID'):
             #kick off transcoding task if media is a video
             ct.convert_media_elastic.delay(self.object.id, settings.ELASTIC_TRANSCODER_PIPELINE_NAME)
+        else:
+            #otherwise no transcoding is needed
+            self.object.internal_file = self.object.original_file
+            self.object.save()
         #save action after files are set 
         action.send(self.request.user, verb='uploaded', action_object=cm.get_history_most_recent(self.new_instance), target=self.object)
         return reverse(viewname='post_media_create', args=(self.kwargs['pk'],), current_app='core')
@@ -411,7 +423,8 @@ class PostUploadsView(PostView, TemplateView):
         # Call the base implementation first to get a context
         context = super(PostUploadsView, self).get_context_data(**kwargs)
         context['upload_url'] = reverse(viewname='post_media_create', args=(self.kwargs['pk'],), current_app='core')
-        context['briefs'] = ["You must create a first post that explains your project before you can submit for approval.","On Indiepen, a post is really just a collection of media.  You can upload any images or text files and worry about ordering and formatting them later.  Unlike most publishing platforms, text is treated just like any other media and must be uploaded as a file. Please use markdown (.md) or plaintext (.txt) files for written content."]
+        context['briefs'] = ["You must create a first post that explains your project before you can submit for approval.","On Indiepen, a post is really just a collection of media and it's history.  You can upload any images or text files and worry about ordering and formatting them later.  Unlike most publishing platforms, text is treated just like any other media and must be uploaded as a file. Please use <a href='http://whatismarkdown.com/'>markdown</a> (.md) or plaintext (.txt) files for written content."]
+        context['preview_url'] = cm.PostDetailVerb(self.noun).get_url()
         return context
 
 #Post ENDS
@@ -419,20 +432,24 @@ class PostUploadsView(PostView, TemplateView):
 #User STARTS 
 
 class UserDetailView(TemplateView, Noun):
-    template_name = 'user.html'
+    template_name = 'user/detail.html'
 
     def get_verbs(self):
         return [
             #cm.PostDetailVerb(cm.Post.objects.get(id=self.kwargs['pk']))
             ]
 
+    def get_noun(self, **kwargs):
+        return cm.Media.objects.get(id=self.kwargs['pk'])
+
     def get_context_data(self, **kwargs):
 
         # Call the base implementation first to get a context
         context = super(UserDetailView, self).get_context_data(**kwargs)
         user = User.objects.get(id=self.kwargs['pk'])
-        context['user'] = user
+        context['noun'] = user
         context['available_verbs'] = None
+        context['posts'] = user.profile.get_visible_posts(self.request.user)
         context['stream'] = actor_stream(user)
         return context
 

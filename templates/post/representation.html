@@ -1,0 +1,14 @@
+<section class="col-md-3 item">
+      <section class="panel">
+      <div class="panel-heading">
+        <a href="{{ post.get_absolute_url }}">{{ post.title }}</a>
+        {% if not post.published %}<span class="badge bg-warning">Not Yet Published</span>{% endif %}
+      </div>
+      <div class="panel-body">
+        
+        {% for m in post.get_summary_medias %}
+          {% include "media/representation.html" with truncate=True%}
+        {%endfor %}
+      </div>
+    </section>
+    </section>

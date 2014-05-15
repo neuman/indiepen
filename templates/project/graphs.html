@@ -1,0 +1,50 @@
+<section id="darkbar" class="darkbar">
+  <div class="container">
+    <div class="wrapper">
+      <div class="row">
+        <div class="">
+          <div class="">
+            <h1 class="white text-center">{% for member in project.get_members %}<a href="/users/{{ member.id }}/">{% include "social/facebook_thumb.html" with user=member%}</a> {% endfor%}{{ project.title }}</h1>
+          </div>
+        </div>
+     </div>
+   </div>
+ </div>
+</section>
+<section class="arrowed text-center">
+  <div class="arrowed-wrapper">
+    <div class="container">
+        <div class="row">
+          <div class="col-lg-12">
+              <div class="col-lg-3 col-sm-6">
+                <section class="">
+                  <h1 class="white text-center">{{ project.planned_posts }}</h1>
+                  <p class="text-center">Planned Posts</p>
+                </section>
+              </div>
+              <div class="col-lg-3 col-sm-6">
+                <section class="">
+                  <h1 class="white text-center">${{ project.get_ask_per_post }}</h1>
+                  <p class="text-center">Fee Per Post</p>
+                </section>
+              </div>
+              <div class="col-lg-3 col-sm-6">
+                <section class="">
+                  <h1 class="white text-center">${{ project.upfront_ask }}</h1>
+                  <p class="text-center">Upfront Costs</p>
+                </section>
+              </div>
+              <div class="col-lg-3 col-sm-6">
+                <section class="">
+                  <h1 class="white text-center">{{ project.end_date }}</h1>
+                  <p class="text-center">Deadline</p>
+                </section>
+              </div>
+
+          </div>
+        </div>
+
+
+    </div>
+  </div>
+</section>

@@ -1,0 +1,54 @@
+@primary-color: #D1B179;
+/* Green Theme Color for Example */
+.navbar-nav>li>.dropdown-menu {
+    border-bottom: 2px solid @primary-color;
+}
+/* Color */
+.hovercolor:hover,
+.dropdown-menu li a:hover,
+.navbar-default .navbar-brand:hover,
+.navbar-default .navbar-nav>li>a:hover, .navbar-default .navbar-nav>li.active>a,
+.services-arrow-prev,
+.services-arrow-next,
+.portfolioFilter a:hover,
+.quote-arrow-prev:hover, .quote-arrow-next:hover,
+.credits .credits-title a:hover,
+.credits .scroll-up a:hover,
+.dp_tmtimeline > li .dp_tmtime span:last-child,
+article.post h1.post-title a:hover,
+article.post .post_excerpt a.readmore,
+.page:hover, .page.gradient:hover,
+.blog-post-navigate .navigate-next:hover,
+.blog-post-navigate .navigate-prev:hover
+{
+    color: @primary-color;
+}
+/* background */
+.button.theme-color,
+.pace .pace-progress, 
+i.icon-mini:hover,
+.callta,
+.credits .scroll-up,
+.lightbox-item .lightbox-item-overlay-content,
+.featured-box:hover .featured-icon span, .featured-box:hover .featured-icon,
+.services,
+.r-hex-inner-2,
+.dp_tmtimeline:before,
+.dp_tmtimeline > li .dp_tmicon {
+    background: @primary-color;
+}
+.lightbox-item .lightbox-item-overlay-content {
+    background: fade(@primary-color,70%);
+}
+
+.dp_tmtimeline > li:nth-child(odd) .dp_tmtime span:last-child {
+    color: fade(@primary-color,70%);
+}
+.dp_tmtimeline > li .dp_tmicon{
+    box-shadow: 0 0 0 8px fade(@primary-color,90%);
+}
+
+.button.theme-color:hover,
+.blog-header-color{
+    background: fade(@primary-color,70%);
+}

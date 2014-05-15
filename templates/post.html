@@ -1,0 +1,21 @@
+{% extends "bootstrap.html" %}
+
+{% block title %}Indiepen{% endblock %}
+{% block pre_extra %}
+<div class="size-small">
+{% include "project/graphs.html" with download=True%}
+</div>
+{% endblock %}
+{% block showcase %}
+  {% include "post/longform.html" %}
+  {% if publish_url %}
+	<div class="text-center">
+		<nav class="cl-effect-9">
+			<h1><a href="{{ publish_url }}" data-hover="test">Submit For Publishing</a></h1>
+		</nav>
+	</div>
+  {% endif %}
+{% endblock %}
+
+{% block audit %}
+{% endblock %}

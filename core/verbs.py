@@ -56,6 +56,14 @@ class NounView(SuccessMessageMixin):
         
         return super(NounView, self).dispatch(*args, **kwargs)
 
+    def get_success_message(self, cleaned_data):
+        view_name = resolve(self.request.path_info).url_name
+        denied_messages = []
+        for verb in self.get_view_required_unavailable_verbs(view_name, self.request.user):
+            denied_messages.append(verb.success_message)
+
+        return ''.join(denied_messages)
+
     class Meta:
         abstract = True
 
@@ -115,7 +123,6 @@ class ProjectCreateVerb(CoreVerb):
     view_name='project_create'
     condition_name = 'is_authenticated'
     required = True
-
 
     @availability_login_required
     def is_available(self, user):
@@ -237,10 +244,18 @@ class PostMemberVerb(CoreVerb):
 
     @availability_login_required
     def is_available(self, user):
-        return self.noun.project.members.filter(id=user.id).count() > 0
+        if self.noun.submitted == True:
+            return False
+        else:
+            return self.noun.project.members.filter(id=user.id).count() > 0
 
     def get_url(self):
         return reverse(viewname=self.view_name, args=[self.noun.id], current_app=self.app)
+
+class PostSubmitVerb(PostMemberVerb):
+    display_name = "Submit For Publishing"
+    view_name = 'post_submit'
+    success_message = "Your post has now been submitted!  An indiepen staffer has been alerted and will check it for compliance with our guidelines before publishing.  You'll be notified when it's live."
 
 class PostCreateMediasVerb(PostMemberVerb):
     display_name = "Upload Post Files"
