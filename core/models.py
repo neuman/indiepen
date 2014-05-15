@@ -334,13 +334,14 @@ class Media(Auditable, Noun):
     history = HistoricalRecords()
     verb_classes = [MediaDetailVerb, MediaUpdateVerb, HistoryListVerb, MediaPostDetailVerb]
 
-    noodles = {}
-
     def __unicode__(self):
         return self.name
 
     def get_absolute_url(self):
         return reverse(viewname='media_detail', args=[self.id], current_app=APPNAME)
+
+    def get_status(self):
+        return self.status
 
     def is_visible_to(self, user):
         post = get_media_post(self)
@@ -356,6 +357,9 @@ class Media(Auditable, Noun):
             return self.internal_file.url
         except ValueError:
             return None
+
+    def get_thumbnail_url(self):
+        return 
 
     def set_internal_file_s3_key(self, key):
         self.internal_file.name = key
