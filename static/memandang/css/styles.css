@@ -1361,7 +1361,7 @@ i.icon-mini:hover {
 }
 /* ================================ ABOUT ==================== */
  .slider-about {
-    background: rgba(0, 0, 0, 0.8);
+    background: rgba(67, 92, 98, 0.8);
 }
 .slider-about-wrapper {
     background-position: center bottom;
@@ -2002,7 +2002,7 @@ div.hexapic:hover {
     margin-bottom: 20px;
 }
 .contact-wrapper {
-    background: rgba(0, 0, 0, 0.8);
+    background: rgba(67, 92, 98, 0.8);
     padding-top: 90px;
     padding-bottom: 60px;
 }
@@ -2743,7 +2743,7 @@ article.post .post_excerpt a.readmore:hover {
 
 /* ====================== Testimoni ========================*/
  .darkbar {
-    background: #111;
+    background: #5f564c;
     padding-top: 60px;
     padding-bottom: 60px;
 }
