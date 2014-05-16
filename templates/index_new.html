@@ -29,6 +29,14 @@
 </head>
 
 <body data-spy="scroll" data-target="#navbar">
+<div id="fb-root"></div>
+<script>(function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0];
+  if (d.getElementById(id)) return;
+  js = d.createElement(s); js.id = id;
+  js.src = "//connect.facebook.net/en_US/sdk.js#xfbml=1&appId=1399331067001450&version=v2.0";
+  fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));</script>
     <div id="lazyload"></div>
     {% include "base/navbar.html"%}
 
@@ -141,7 +149,7 @@
                             </div>
                             <div class="featured-desc">
                                 <h3>TRANSPARENCY</h3>
-                                <p>Indiepen tracks who contributions of money and content to each project and makes it publicly available when that content is published. It's impossible to eliminate bias, but in this way we hope to expose it so that your audience can make up their own mind who to trust.</p>
+                                <p>Indiepen tracks who puts in contributions of money and content to each project and publicizes that history when the content is published. It's impossible to eliminate bias, but in this way we hope to expose it so that your audience can make up their own mind who to trust.</p>
                             </div>
                         </div>
                     </div>
