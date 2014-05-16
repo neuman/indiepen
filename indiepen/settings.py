@@ -48,7 +48,6 @@ INSTALLED_APPS = (
     'tastypie',
     'taggit',
     'actstream',
-    'guardian',
 )
 
 MIDDLEWARE_CLASSES = (
