@@ -58,7 +58,7 @@ dp(document).ready(function() {
         targetSelector: '.portfolio-item',
         effects: ['fade', 'scale']
     });
-    
+
     //QUOTE SLIDE
     dp("#quote-slider").sudoSlider({
         customLink: 'a.quoteLink',
@@ -93,24 +93,6 @@ dp(document).ready(function() {
         effect: "fadeOutIn"
     });
 
-    //Map
-    dp('#map').gmap3({
-            map: {
-                options: {
-                    maxZoom: 15
-                }
-            },
-            marker: {
-                address: "Haltern am See, Weseler Str. 151", // PUT YOUR ADDRESS HERE
-                options: {
-                    icon: new google.maps.MarkerImage(
-                        "http://cdn.webiconset.com/map-icons/images/pin6.png",
-                        new google.maps.Size(42, 69, "px", "px")
-                    )
-                }
-            }
-        },
-        "autofit");
 });
 dp(window).load(function() {
     dp("#lazyload").fadeOut();

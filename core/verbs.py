@@ -158,6 +158,9 @@ class SiteRoot(Noun):
     class Meta:
         abstract = True
 
+    def __unicode__(self):
+        return ''
+
 class PledgeVerb(CoreVerb):
     denied_message = "Sorry, you already pledged!"
     view_name='pledge_create'
