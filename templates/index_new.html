@@ -12,7 +12,7 @@
     <link rel="shortcut icon" href="{{ STATIC_URL }}memandang/images/favicon/favicon.ico" type="image/x-icon">
     <link rel="icon" href="{{ STATIC_URL }}memandang/images/favicon/favicon.ico" type="image/x-icon">
 
-    <title>indiepen - {{ noun }}</title>
+    <title>indiepen - Welcome</title>
 
     <!-- PACE.JS -->
     <script src="{{ STATIC_URL }}memandang/js/lib/pace.min.js"></script>
@@ -191,40 +191,24 @@
                 <div class="wrapper">
                     <div class="row">
                         <div class="col-lg-12">
-                            <div class="title text-center">
-                                <h1>THE TEAM</h1>
-                                <hr/>
-                            </div>
-                        </div>
-                        <div class="col-lg-12">
                             <div class="row">
+                                                            <div class="col-lg-4">
+
+                                </div>
                                 <div class="col-lg-4">
                                     <div class="cprofile text-center">
-                                        <div class="lightbox-item">
+                                        <div>
                                             <img src="{{ STATIC_URL }}img/staff/selfie.png" alt="Project Name 2">
-                                            <div class="lightbox-item-overlay-content"><a class="preview popup" href="{{ STATIC_URL }}memandang/images/about-us-avatar-2.jpg" data-fancybox-group="pf-gallery" title="Your Name"><i class="icon-search"></i></a><a class="permalink" href="mailto:email@email.com" target="_blank"><i class="icon-envelope-alt"></i></a>
-                                            </div>
                                         </div>
                                         <h3>Eric Neuman</h3>
                                         <span>Founder</span>
-                                        <p>Full-stack engineer and product expert, Eric co-founded and was CTO/VP Products at DecisionDesk for 5 Years before becoming an Adviser. Whether it's building an MVP or refining your existing product, he can help you get it done right.</p>
+                                        <p>Information junkie, full-stack engineer and product expert, Eric co-founded and was CTO/VP Products at DecisionDesk for 5 Years before becoming an Advisor. Now he's turning his tech and entrepreneurial skills towards common good projects.</p>
                                         <a href="http://www.facebook.com/eric.neuman"><i class="icon-facebook icon-mini"></i></a>
                                         <a href="http://www.twitter.com/eric_neuman"><i class="icon-twitter icon-mini"></i></a>
                                     </div>
                                 </div>
                                 <div class="col-lg-4">
-                                    <div class="cprofile text-center">
-                                        <div class="lightbox-item">
-                                            <img src="{{ STATIC_URL }}img/staff/selfie.png" alt="Project Name 2">
-                                            <div class="lightbox-item-overlay-content"><a class="preview popup" href="{{ STATIC_URL }}memandang/images/about-us-avatar-2.jpg" data-fancybox-group="pf-gallery" title="Your Name"><i class="icon-search"></i></a><a class="permalink" href="mailto:email@email.com" target="_blank"><i class="icon-envelope-alt"></i></a>
-                                            </div>
-                                        </div>
-                                        <h3>Eric Neuman</h3>
-                                        <span>Founder</span>
-                                        <p>Full-stack engineer and product expert, Eric co-founded and was CTO/VP Products at DecisionDesk for 5 Years before becoming an Adviser. Whether it's building an MVP or refining your existing product, he can help you get it done right.</p>
-                                        <a href="http://www.facebook.com/eric.neuman"><i class="icon-facebook icon-mini"></i></a>
-                                        <a href="http://www.twitter.com/eric_neuman"><i class="icon-twitter icon-mini"></i></a>
-                                    </div>
+
                                 </div>
                             </div>
                         </div>
@@ -234,53 +218,9 @@
         </div>
     </section>
     <!-- END About -->
-    <!-- BEGIN Contact -->
-    <section id="contact" class="contact" style="background:url('{{ STATIC_URL }}memandang/images/contact-background.jpg');">
-        <div class="contact-wrapper">
-            <div class="container">
-                <div class="wrapper">
-                    <div class="row">
-                        <div class="col-lg-12">
-                            <div id="contact-slider">
-                                <ul>
-                                    <li>
-                                        <!-- Contact details -->
-                                        <div class="row">
-                                            <div class="col-lg-12">
-                                                <div class="bio">
-                                                    <h3 class="text-center">// indiepen</h3>
-                                                    <p class="text-center" >Questions and comments are welcome, so please, drop us a line.</p>
-                                                    <p class="text-center" >Made in Brooklyn NY</p>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        
-                                    </li>
-                                    <li>
-                                        <p><a data-rel="1" href="javascript:;" class="contactLink hovercolor return-to"><i class="icon-long-arrow-left"></i> Return to contact details</a>
-                                        </p>
-                                    </li>
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="credits">
-                    <div class="container">
-                        <div class="row">
-                            <div class="col-lg-12 col-md-6 col-sm-6">
-                                <p class="credits-title-link text-center"><a class="hovercolor" href="javascript:;">Contact</a> / <a class="hovercolor" href="javascript:;">Press</a> / <a class="hovercolor" href="javascript:;">Blog</a> / <a class="hovercolor" href="javascript:;">Terms</a>
-                                </p>
-                            </div>
-                        </div>
-                        <div class="scroll-up"><a href="#home-slide"><i class="icon-angle-up"></i></a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-    <!-- END Contact -->
+    {% block post_extra %}
+    {% endblock %}
+    {% include "base/contact.html"%}
 
     <!-- Bootstrap core JavaScript
     ================================================== -->
