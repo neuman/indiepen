@@ -466,7 +466,7 @@ class Post(Auditable, Noun):
     submitted = models.BooleanField(default=False)
     published = models.BooleanField(default=False)
     history = HistoricalRecords()
-    verb_classes = [PostDetailVerb,PostCreateMediaVerb,HistoryListVerb, PostCreateMediasVerb, PostReorderMediasVerb, PostSubmitVerb, PostProjectDetailVerb]
+    verb_classes = [PostDetailVerb,PostCreateMediaVerb,HistoryListVerb, PostCreateMediasVerb, PostSubmitVerb, PostProjectDetailVerb]
 
     def __unicode__(self):
         return self.title
