@@ -7,6 +7,8 @@ from api import v1_api
 
 urlpatterns = patterns('',
     url(r'^$', cv.LandingView.as_view(), name="landing"),
+    url(r'faq/$', cv.FAQView.as_view(), name="faq"),
+    url(r'suggest/$', cv.SuggestView.as_view(), name="suggest"),
     url(r'bootstrap/$', cv.BootstrapView.as_view(), name='bootstrap'),
     ('^activity/', include('actstream.urls')),
 

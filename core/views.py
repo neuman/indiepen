@@ -55,6 +55,12 @@ class LandingView(TemplateView):
         context['posts'] = cm.Post.objects.filter(published=True)
         return context
 
+class FAQView(TemplateView):
+    template_name = 'flat/faq.html'
+
+class SuggestView(TemplateView):
+    template_name = 'flat/suggest.html'
+
 class BootstrapView(TemplateView):
     template_name = 'grid.html'
 
