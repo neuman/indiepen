@@ -1,0 +1,52 @@
+{% extends "bootstrap.html" %}
+{% load markdown_deux_tags %}
+{% block title %}Indiepen{% endblock %}
+{% block showcase %}
+<div class="panel-group" id="accordion">
+  <div class="panel panel-default">
+    <div class="panel-heading">
+      <h4 class="panel-title">
+        <a data-toggle="collapse" data-parent="#accordion" href="#collapseOne">
+          Who Owns The Content
+        </a>
+      </h4>
+    </div>
+    <div id="collapseOne" class="panel-collapse collapse in">
+      <div class="panel-body">
+        Content funded through indiepen remains owned by its creator, however, a percentage of ownership is permanently liscensed to indiepen.  This is done to allow indiepen to handle any future liscensing of content to third parties.  
+      </div>
+    </div>
+  </div>
+  <div class="panel panel-default">
+    <div class="panel-heading">
+      <h4 class="panel-title">
+        <a data-toggle="collapse" data-parent="#accordion" href="#collapseTwo">
+          What Fees Are Involved
+        </a>
+      </h4>
+    </div>
+    <div id="collapseTwo" class="panel-collapse collapse">
+      <div class="panel-body">
+        Indiepen takes an industry standard 5% of any transaction to cover our server and engineering costs.  In addition, 2.9% + 30¢ of each transaction must be taken in order to cover the fees of our payment processor, Stripe. 
+      </div>
+    </div>
+  </div>
+  <div class="panel panel-default">
+    <div class="panel-heading">
+      <h4 class="panel-title">
+        <a data-toggle="collapse" data-parent="#accordion" href="#collapseThree">
+          Why Was My Project Not Approved
+        </a>
+      </h4>
+    </div>
+    <div id="collapseThree" class="panel-collapse collapse">
+      <div class="panel-body">
+        Indiepen staff explicitly reserves for itself curatorial, not editorial power.  This means that we go out of our way to not make any decisions about what content should or should not be allowed on the site.  However, sometimes legal restrictions force us to reject a proposal.  In such an event we will work with you to create a proposal that we can allow on the site.  
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+{% block audit %}
+{% endblock %}
+
